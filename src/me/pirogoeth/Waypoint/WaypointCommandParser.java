@@ -1,11 +1,13 @@
 package me.pirogoeth.Waypoint;
 
+import java.util.Map;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.util.config.Configuration;
+import org.bukkit.util.config.ConfigurationNode;
 
 public class WaypointCommandParser {
     public static Waypoint plugin;
@@ -79,11 +81,11 @@ public class WaypointCommandParser {
             }
             else if (subc.equalsIgnoreCase("tp") || subc.equalsIgnoreCase("teleport"))
             {
-            	if (arg == null) { player.sendMessage("Usage: /wp <add|del|tp|list|help> [name]"); }
+            	if (arg == null) { player.sendMessage(ChatColor.AQUA + "Usage: /wp <add|del|tp|list|help> [name]"); }
             	// code
             	if (config.getProperty(UserNodeChomp(player, arg, "world")) == null)
             	{
-            		player.sendMessage("[Waypoint] Point '" + arg + "' does not exist!");
+            		player.sendMessage(ChatColor.RED + "[Waypoint] Point '" + arg + "' does not exist!");
             		return true;
             	}
             	World w = plugin.getServer().getWorld(config.getProperty(UserNodeChomp(player, arg, "world")).toString());
@@ -107,9 +109,19 @@ public class WaypointCommandParser {
             }
             else if (subc.equalsIgnoreCase("list"))
             {
-            	// code
+            	player.sendMessage(ChatColor.YELLOW + "====[Waypoint] Point list:====");
+            	Map<String, ConfigurationNode> a = config.getNodes("users." + player.getName());
+            	for (Map.Entry<String, ConfigurationNode> entry : a.entrySet())
+            	{
+            		player.sendMessage(ChatColor.GREEN + " - " + entry.getKey());
+            	}
             	return true;
     		}
+            else if (subc.equalsIgnoreCase("help"))
+            {
+            	// code
+            	return true;
+            }
             else
             {
             	player.sendMessage("Usage: /wp <add|del|tp|list|help> [name]");
