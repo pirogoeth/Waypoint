@@ -90,11 +90,15 @@ public class WaypointCommandParser {
             	}
             	World w = plugin.getServer().getWorld(config.getProperty(UserNodeChomp(player, arg, "world")).toString());
             	double x = (Double) config.getProperty(UserNodeChomp(player, arg, "coord.X"));
-    			double y = (Double) config.getProperty(UserNodeChomp(player, arg, "coord.Y"));
-    			double z = (Double) config.getProperty(UserNodeChomp(player, arg, "coord.Z"));
-    			float pitch = (Float) config.getProperty(UserNodeChomp(player, arg, "coord.pitch"));
-    			float yaw = (Float) config.getProperty(UserNodeChomp(player, arg, "coord.yaw"));
-    			Location l = new Location(w, x, y, z, yaw, pitch);
+                // XXX - biggest problem ever.
+                double y;
+                float fy = new Float(config.getProperty(UserNodeChomp(player, arg, "coord.Y")).toString());
+                y = fy.doubleValue();
+                // XXX - end
+    		double z = (Double) config.getProperty(UserNodeChomp(player, arg, "coord.Z"));
+    		float pitch = (Float) config.getProperty(UserNodeChomp(player, arg, "coord.pitch"));
+    		float yaw = (Float) config.getProperty(UserNodeChomp(player, arg, "coord.yaw"));
+    		Location l = new Location(w, x, y, z, yaw, pitch);
                 boolean su = player.teleport(l);
                 if (su == true)
                 {
@@ -111,9 +115,14 @@ public class WaypointCommandParser {
             {
             	player.sendMessage(ChatColor.YELLOW + "====[Waypoint] Point list:====");
             	Map<String, ConfigurationNode> a = config.getNodes("users." + player.getName());
+            	if (a.size() == 0)
+            	{
+            	    player.sendMessage(ChatColor.AQUA + " - No points have beeb created.");
+            	    return true;
+            	}
             	for (Map.Entry<String, ConfigurationNode> entry : a.entrySet())
             	{
-            		player.sendMessage(ChatColor.GREEN + " - " + entry.getKey());
+                    player.sendMessage(ChatColor.GREEN + " - " + entry.getKey());
             	}
             	return true;
     		}

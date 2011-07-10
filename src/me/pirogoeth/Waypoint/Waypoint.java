@@ -50,7 +50,7 @@ public class Waypoint extends JavaPlugin {
     	if (config.getProperty("enabled") == "false") { return; } 
     	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Event.Priority.High, this);
     	setupPermissions();
-    	log.info("[Waypoint] Enabled version 1.0");
+    	log.info("[Waypoint] Enabled version 1.1");
     	config.save();
     }
     
