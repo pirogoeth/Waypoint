@@ -1,0 +1,10 @@
+name: Waypoint
+main: me.pirogoeth.Waypoint.Waypoint
+version: 1.0
+author: pirogoeth and OoO
+commands:
+    wp:
+        description: Manage waypoints for yourself.
+        usage: /wp <add|del|tp;list> [name]
+        alias: waypoint
+        permission: waypoint.all
