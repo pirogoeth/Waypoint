@@ -20,14 +20,12 @@ import me.pirogoeth.Waypoint.WaypointCommandParser;
 
 @SuppressWarnings("unused")
 public class Waypoint extends JavaPlugin {
-	
-	// player stuff
+    // player stuff
     public static PermissionHandler permissionHandler;
-	private final WaypointPlayerListener playerListener = new WaypointPlayerListener(this);
-	
-	// file stuff
-	public static String maindir = "plugins/Waypoint";
-	public static File configfile = new File (maindir + File.separator + "config.yml");
+    private final WaypointPlayerListener playerListener = new WaypointPlayerListener(this);
+    // file stuff
+    public static String maindir = "plugins/Waypoint";
+    public static File configfile = new File (maindir + File.separator + "config.yml");
 	
 	// logger
     Logger log = Logger.getLogger("Minecraft");
