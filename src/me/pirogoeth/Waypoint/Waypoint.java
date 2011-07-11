@@ -26,16 +26,12 @@ public class Waypoint extends JavaPlugin {
     // file stuff
     public static String maindir = "plugins/Waypoint";
     public static File configfile = new File (maindir + File.separator + "config.yml");
-	
-	// logger
+    // logger
     Logger log = Logger.getLogger("Minecraft");
-    
     // configuration
     public Configuration config = new Configuration(configfile);
-    
     // command parsing
-	private final WaypointCommandParser commandParser = new WaypointCommandParser(this);
-	
+    private final WaypointCommandParser commandParser = new WaypointCommandParser(this);
     // plug-in code
     public void onEnable () {
     	new File(maindir).mkdir();
@@ -51,28 +47,26 @@ public class Waypoint extends JavaPlugin {
     	log.info("[Waypoint] Enabled version 1.1");
     	config.save();
     }
-    
     public void onDisable () {
     	config.save();
     	log.info("[Waypoint] Disabled");
     }
-    
     private void setupPermissions () {
         if (permissionHandler != null) {
             return;
         }
-        
+
         Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
-        
+
         if (permissionsPlugin == null) {
             log.info("[Waypoint] Permission system not detected, defaulting to OP");
             return;
         }
-        
+
         permissionHandler = ((Permissions) permissionsPlugin).getHandler();
+
         log.info("[Waypoint] Found and will use permissions system: "+((Permissions)permissionsPlugin).getDescription().getFullName());
     }
-    
     public boolean onCommand(CommandSender sender, Command cmd, String cmdlabel, String args[])
     {
         if (sender.getClass().getName().toString() == "org.bukkit.craftbukkit.command.ColouredConsoleSender")
