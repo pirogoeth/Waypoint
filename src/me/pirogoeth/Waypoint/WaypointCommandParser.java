@@ -18,14 +18,12 @@ public class WaypointCommandParser {
     	plugin = instance;
     	config = plugin.config;
     }
-	
     public static String UserNodeChomp(Player p, String targetname, String sub)
     {
     	String a = "users." + p.getName().toString() + "." + targetname + "." + sub;
     	return a;
     }
-    
-	public static boolean CommandParser(Player player, String command, String[] args)
+    public static boolean CommandParser(Player player, String command, String[] args)
     {
 		if (command.equalsIgnoreCase("wp") || command.equalsIgnoreCase("waypoint"))
     	{
@@ -57,8 +55,8 @@ public class WaypointCommandParser {
             	config.setProperty(UserNodeChomp(player, arg, "coord.X"), player.getLocation().getX());
             	config.setProperty(UserNodeChomp(player, arg, "coord.Y"), player.getLocation().getY());
             	config.setProperty(UserNodeChomp(player, arg, "coord.Z"), player.getLocation().getZ());
-            	config.setProperty(UserNodeChomp(player, arg, "coord.pitch"), player.getLocation().getPitch());
-            	config.setProperty(UserNodeChomp(player, arg, "coord.yaw"), player.getLocation().getYaw());
+            	// config.setProperty(UserNodeChomp(player, arg, "coord.pitch"), player.getLocation().getPitch());
+            	// config.setProperty(UserNodeChomp(player, arg, "coord.yaw"), player.getLocation().getYaw());
             	config.setProperty(UserNodeChomp(player, arg, "world"), player.getLocation().getWorld().getName().toString());
             	config.save();
             	player.sendMessage(ChatColor.GREEN + "[Waypoint] Set point '" + arg + "' in world '" + player.getLocation().getWorld().getName().toString() + "'.");
@@ -76,7 +74,6 @@ public class WaypointCommandParser {
             	config.removeProperty("users." + player.getName().toString() + "." + arg);
             	player.sendMessage("[Waypoint] Point '" + arg + "' has been deleted.");
             	config.save();
-            	
             	return true;
             }
             else if (subc.equalsIgnoreCase("tp") || subc.equalsIgnoreCase("teleport"))
@@ -90,15 +87,11 @@ public class WaypointCommandParser {
             	}
             	World w = plugin.getServer().getWorld(config.getProperty(UserNodeChomp(player, arg, "world")).toString());
             	double x = (Double) config.getProperty(UserNodeChomp(player, arg, "coord.X"));
-                // XXX - biggest problem ever.
-                double y;
-                float fy = new Float(config.getProperty(UserNodeChomp(player, arg, "coord.Y")).toString());
-                y = fy.doubleValue();
-                // XXX - end
+                double y = (Double) config.getProperty(UserNodeChomp(player, arg, "coord.Y"));
     		double z = (Double) config.getProperty(UserNodeChomp(player, arg, "coord.Z"));
-    		float pitch = (Float) config.getProperty(UserNodeChomp(player, arg, "coord.pitch"));
-    		float yaw = (Float) config.getProperty(UserNodeChomp(player, arg, "coord.yaw"));
-    		Location l = new Location(w, x, y, z, yaw, pitch);
+    		// final float pitch = (Float) config.getProperty(UserNodeChomp(player, arg, "coord.pitch"));
+    		// final float yaw = (Float) config.getProperty(UserNodeChomp(player, arg, "coord.yaw"));
+    		Location l = new Location(w, x, y, z);
                 boolean su = player.teleport(l);
                 if (su == true)
                 {
