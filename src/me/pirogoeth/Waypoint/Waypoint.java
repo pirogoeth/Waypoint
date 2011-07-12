@@ -39,16 +39,17 @@ public class Waypoint extends JavaPlugin {
     	if (config.getProperty("enabled") == null)
     	{
     		config.setProperty("enabled", "true");
+    		config.setProperty("set_home_to_bed", "false");
     		config.setProperty("users", "");
+    		config.setProperty("invites", "");
     	}
     	if (config.getProperty("enabled") == "false") { return; } 
-    	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Event.Priority.High, this);
+    	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_LEAVE, playerListener, Event.Priority.Normal, this);
     	setupPermissions();
-    	log.info("[Waypoint] Enabled version 1.1");
+    	log.info("[Waypoint] Enabled version " + this.getDescription().getVersion());
     	config.save();
     }
     public void onDisable () {
-    	config.save();
     	log.info("[Waypoint] Disabled");
     }
     private void setupPermissions () {

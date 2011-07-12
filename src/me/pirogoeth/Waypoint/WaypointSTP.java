@@ -7,11 +7,10 @@ import java.util.logging.Logger;
 
 public class WaypointSTP {
     public static Logger log = Logger.getLogger("Minecraft");
-    
-    public static Player getPlayerFromSender (CommandSender sender) 
+    public static Player getPlayerFromSender (CommandSender sender)
     {
-   		Player p = (Player)sender;
-   		return p;
+        Player p = (Player)sender;
+   	return p;
     }
     public static String getPlayerName (CommandSender sender)
     {
