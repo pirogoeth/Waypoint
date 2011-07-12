@@ -36,9 +36,8 @@ public class Waypoint extends JavaPlugin {
     public void onEnable () {
     	new File(maindir).mkdir();
     	config.load();
-    	if (config.getProperty("enabled") == null)
+    	if (config.getProperty("set_home_at_bed") == null)
     	{
-    		config.setProperty("enabled", "true");
     		config.setProperty("set_home_at_bed", "false");
     		config.setProperty("users", "");
     		config.setProperty("invites", "");
@@ -53,7 +52,7 @@ public class Waypoint extends JavaPlugin {
     	config.save();
     }
     public void onDisable () {
-    	log.info("[Waypoint] Disabled");
+    	log.info("[Waypoint] Disabled version " + this.getDescription().getVersion());
     }
     private void setupPermissions () {
         if (permissionHandler != null) {
