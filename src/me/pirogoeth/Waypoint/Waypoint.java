@@ -39,12 +39,15 @@ public class Waypoint extends JavaPlugin {
     	if (config.getProperty("enabled") == null)
     	{
     		config.setProperty("enabled", "true");
-    		config.setProperty("set_home_to_bed", "false");
+    		config.setProperty("set_home_at_bed", "false");
     		config.setProperty("users", "");
     		config.setProperty("invites", "");
     	}
-    	if (config.getProperty("enabled") == "false") { return; } 
-    	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_LEAVE, playerListener, Event.Priority.Normal, this);
+    	if ((String)config.getString("set_home_at_bed") == "true");
+    	{
+    	    getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_LEAVE, playerListener, Event.Priority.Normal, this);
+    	    log.info("[Waypoint] Set home to bed is enabled.");
+    	}
     	setupPermissions();
     	log.info("[Waypoint] Enabled version " + this.getDescription().getVersion());
     	config.save();
