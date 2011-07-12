@@ -37,6 +37,17 @@ public class WaypointCommandParser {
         String a = "invites." + p.getName().toString() + "." + node;
         return a;
     }
+    public static void TransferNode(String path, ConfigurationNode node)
+    {
+        Map<String, Object> a = node.getAll();
+        for (Map.Entry<String, Object> entry : a.entrySet())
+        {
+            config.setProperty(path + "." + entry.getKey(), entry.getValue());
+            // debug
+            // log.info("Key: " + entry.getKey() + " Value: " + (String)entry.getValue().toString());
+        }
+        return;
+    }
     public static boolean CheckPointExists(Player p, String point)
     {
         String a = "users." + p.getName().toString() + "." + point;
@@ -160,16 +171,21 @@ public class WaypointCommandParser {
                     return true;
                 }
                 Player p = plugin.getServer().getPlayer((String)arg);
+                if (p == null)
+                {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] Player " + arg + " is offline. Please resend the invitation when he/she is online.");
+                    return true;
+                }
                 if (CheckPointExists(player, point) == false)
                 {
                     player.sendMessage(ChatColor.RED + "You do not own a point named '" + point + "'.");
                     return true;
                 }
                 ConfigurationNode node = config.getNode(BaseNodeChomp(player, point));
-                config.setProperty(InviteNodeChomp(p, point), node);
+                TransferNode(InviteNodeChomp(p, point), node);
                 p.sendMessage(ChatColor.AQUA + "[Waypoint] Player " + player.getName().toString() + " has invited you to use their waypoint '" + point + "'.");
-                p.sendMessage(ChatColor.GREEN + "Type /wp accept " + player.getName().toString() + " to accept their invite.");
-                p.sendMessage(ChatColor.GREEN + "Or type /wp decline " + player.getName().toString() + " to decline the invite.");
+                p.sendMessage(ChatColor.GREEN + "Type /wp accept " + point + " to accept their invite.");
+                p.sendMessage(ChatColor.GREEN + "Or type /wp decline " + point + " to decline the invite.");
                 player.sendMessage(ChatColor.AQUA + "[Waypoint] Sent invite to " + p.getName().toString() + ".");
                 config.save();
                 return true;
@@ -177,7 +193,7 @@ public class WaypointCommandParser {
 	    else if (subc.equalsIgnoreCase("accept"))
 	    {
             	if (arg == null) { player.sendMessage(ChatColor.AQUA + "Usage: /wp <add|del|tp|list|invite|help> [name]"); }
-	        if (!plugin.permissionHandler.has(player, "waypoint.basic.invite.accept")) { 
+	        if (!plugin.permissionHandler.has(player, "waypoint.basic.invite.accept")) {
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
 	            return true;
 	        }
@@ -188,8 +204,8 @@ public class WaypointCommandParser {
 	        }
 	        ConfigurationNode n = config.getNode(InviteNodeChomp(player, arg));
 	        config.removeProperty(InviteNodeChomp(player, arg));
-	        config.setProperty(BaseNodeChomp(player, arg), n);
-	        player.sendMessage(ChatColor.AQUA + "[Waypoint] The point '" + arg + "' is now available in your collection.");
+	        TransferNode(BaseNodeChomp(player, arg), n);
+                player.sendMessage(ChatColor.AQUA + "[Waypoint] The point '" + arg + "' is now available in your collection.");
 	        config.save();
 	    }
 	    else if (subc.equalsIgnoreCase("decline"))
@@ -214,11 +230,16 @@ public class WaypointCommandParser {
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                     return true;
 	        }
+	        if (config.getProperty("users." + player.getName().toString()) == null)
+	        {
+	            player.sendMessage(ChatColor.RED + "[Waypoint] You do not have any points to list.");
+	            return true;
+	        }
             	player.sendMessage(ChatColor.YELLOW + "====[Waypoint] Point list:====");
             	Map<String, ConfigurationNode> a = config.getNodes("users." + player.getName());
             	if (a.size() == 0)
             	{
-            	    player.sendMessage(ChatColor.AQUA + " - No points have beeb created.");
+            	    player.sendMessage(ChatColor.AQUA + " - No points have been created.");
             	    return true;
             	}
             	for (Map.Entry<String, ConfigurationNode> entry : a.entrySet())
@@ -234,12 +255,14 @@ public class WaypointCommandParser {
                 double y = player.getLocation().getY();
                 double z = player.getLocation().getZ();
                 config.setProperty(UserNodeChomp(player, "testnode", "coord.X"), x);
-                config.setProperty(UserNodeChomp(player, "testnode", "coord.X"), y);
-                config.setProperty(UserNodeChomp(player, "testnode", "coord.X"), z);
+                config.setProperty(UserNodeChomp(player, "testnode", "coord.Y"), y);
+                config.setProperty(UserNodeChomp(player, "testnode", "coord.Z"), z);
+                config.save();
                 ConfigurationNode n = config.getNode(UserNodeChomp(player, "testnode", "coord"));
-                config.removeProperty(UserNodeChomp(player, "testnode", "coord"));
-                config.setProperty(UserNodeChomp(player, "testnode", "coord"), n);
+                TransferNode(UserNodeChomp(player, "testnode", "coord"), n);
+                config.save();
                 config.removeProperty(BaseNodeChomp(player, "testnode"));
+                config.save();
                 log.info("Configuration node nesting test successful.");
                 return true;
             }
@@ -322,6 +345,7 @@ public class WaypointCommandParser {
                 config.setProperty(UserNodeChomp(player, "home", "coord.Z"), player.getLocation().getZ());
                 player.sendMessage(ChatColor.AQUA + "[Waypoint] Your home location has been set.");
                 config.save();
+                return true;
             }
             else if (subc.equalsIgnoreCase("help"))
             {

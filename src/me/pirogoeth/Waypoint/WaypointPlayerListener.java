@@ -33,6 +33,6 @@ public class WaypointPlayerListener extends PlayerListener {
         plugin.config.setProperty(UserNodeChomp(player, "home", "coord.Z"), z);
         plugin.config.setProperty(UserNodeChomp(player, "home", "world"), w.getName().toString());
         plugin.config.save();
-        player.sendMessage(ChatColor.AQUA + "[Waypoint] " + player.getName().toString() + ", your home has been set to the bed you juist got out of.");
+        player.sendMessage(ChatColor.AQUA + "[Waypoint] " + player.getName().toString() + ", your home has been set to the bed you just got out of.");
     }
 }

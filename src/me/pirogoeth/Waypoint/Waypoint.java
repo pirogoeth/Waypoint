@@ -43,7 +43,7 @@ public class Waypoint extends JavaPlugin {
     		config.setProperty("users", "");
     		config.setProperty("invites", "");
     	}
-    	if ((String)config.getString("set_home_at_bed") == "true");
+     	if ((String)config.getString("set_home_at_bed") == "true");
     	{
     	    getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_LEAVE, playerListener, Event.Priority.Normal, this);
     	    log.info("[Waypoint] Set home to bed is enabled.");
