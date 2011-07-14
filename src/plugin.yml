@@ -6,28 +6,42 @@ commands:
     wp:
         description: Manage waypoints for yourself.
         usage: /wp <add|del|tp;list> [name]
-        alias: waypoint
+        aliases: 
+            - waypoint
         permission: waypoint.basic
     home:
         description: Save your home location.
         usage: /home [add]
-        alias: home
+        aliases: 
+            - home
         permission: waypoint.home
     spawn:
         description: Teleport to world spawn points.
-        usage: /wpspawn <world>
+        usage: /spawn <world>
+        aliases:
+            - wpspawn
         permission: waypoint.spawn
     spawnadmin:
         description: Manage spawn details.
-        usage: /wpspawnadmin <save|load;set> [world]
+        usage: /spawnadmin <save|load;set> [world]
+        aliases:
+            - wpspawnadmin
         permission: waypoint.admin.spawn
+    warp:
+        description: Manage public warps.
+        usage: /warp <add|del|set|list|<or warpname>> <warpname or key:value>
+        aliases:
+            - wpwarp
+        permission: waypoint.warp
     tp:
         description: Teleport to another user/another user to you.
         usage: /tp <user> [target]
-        alias: wptp
+        aliases: 
+            - wptp
         permission: waypoint.teleport
     tphere:
         description: Teleport a user to you.
         usage: /tphere <user>
-        alias: wptphere
+        aliases: 
+            - wptphere
         permission: waypoint.teleport.here

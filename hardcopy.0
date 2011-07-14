@@ -1,0 +1,16 @@
+  GNU nano 2.2.4               File: src/me/pirogoeth/Waypoint/WaypointCommandParser.java
+                    player.sendMessage(ChatColor.RED + "/warp add <warpname>");
+                    return true;
+                }
+                if (!plugin.permissionHandler.has(player, "waypoint.warp.delete") || (String)config.getProperty(plugin.warpM$
+                {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission to use this command.");
+                    return true;
+                }
+                plugin.warpManager.CreateWarp(player, arg);
+                return true;
+            }
+
+
+^G Get Help         ^O WriteOut         ^R Read File        ^Y Prev Page        ^K Cut Text         ^C Cur Pos
+^X Exit             ^J Justify          ^W Where Is         ^V Next Page        ^U UnCut Text       ^T To Spell

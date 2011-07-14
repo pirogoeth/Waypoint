@@ -13,7 +13,7 @@ import me.pirogoeth.Waypoint.WaypointSTP;
 
 public class WaypointSpawn {
     public static Waypoint plugin;
-    public Configuration config;
+    public static Configuration config;
     Logger log = Logger.getLogger("Minecraft");
     public WaypointSpawn (Waypoint instance)
     {
@@ -65,9 +65,9 @@ public class WaypointSpawn {
         double x = l.getX();
         double y = l.getY();
         double z = l.getZ();
-        config.setProperty("spawn."+world.getName()+".coord.X", x);
-        config.setProperty("spawn."+world.getName()+"coord.Y", y);
-        config.setProperty("spawn."+world.getName()+"coord.Z", z);
+        config.setProperty(SNodeChomp(world, "coord.X"), x);
+        config.setProperty(SNodeChomp(world, "coord.Y"), y);
+        config.setProperty(SNodeChomp(world, "coord.Z"), z);
         config.save();
         log.info("[Waypoint] Forced save of spawn location for world: " + world.getName().toString());
         return;

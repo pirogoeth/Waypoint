@@ -18,13 +18,13 @@ import me.pirogoeth.Waypoint.WaypointPlayerListener;
 import me.pirogoeth.Waypoint.WaypointSTP;
 import me.pirogoeth.Waypoint.WaypointSpawn;
 import me.pirogoeth.Waypoint.WaypointCommandParser;
+import me.pirogoeth.Waypoint.WaypointWarps;
 
 @SuppressWarnings("unused")
 public class Waypoint extends JavaPlugin {
     // server stuff
     public static PermissionHandler permissionHandler;
     private final WaypointPlayerListener playerListener = new WaypointPlayerListener(this);
-    public final WaypointSpawn spawnManager = new WaypointSpawn(this);
     // file stuff
     public static String maindir = "plugins/Waypoint";
     public static File configfile = new File (maindir + File.separator + "config.yml");
@@ -34,6 +34,9 @@ public class Waypoint extends JavaPlugin {
     public Configuration config = new Configuration(configfile);
     // command parsing
     private final WaypointCommandParser commandParser = new WaypointCommandParser(this);
+    // additional stuff
+    public final WaypointSpawn spawnManager = new WaypointSpawn(this);
+    public final WaypointWarps warpManager = new WaypointWarps(this);
     // plug-in code
     public void onEnable () {
     	new File(maindir).mkdir();
@@ -44,6 +47,7 @@ public class Waypoint extends JavaPlugin {
     		config.setProperty("users", "");
     		config.setProperty("home", "");
     		config.setProperty("spawn", "");
+    		config.setProperty("warps", "");
     		config.setProperty("invites", "");
     		config.save();
     		spawnManager.ConfigWriteSpawnLocations();

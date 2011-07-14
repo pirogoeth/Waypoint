@@ -12,6 +12,7 @@ import org.bukkit.util.config.ConfigurationNode;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import me.pirogoeth.Waypoint.WaypointSpawn;
+import me.pirogoeth.Waypoint.WaypointWarps;
 
 public class WaypointCommandParser {
     public static Waypoint plugin;
@@ -90,7 +91,7 @@ public class WaypointCommandParser {
             if (subc.equalsIgnoreCase("add"))
             {
             	if (arg == null) { player.sendMessage("Usage: /wp <add|del|tp|list|help> [name]"); }
-	        if (!plugin.permissionHandler.has(player, "waypoint.basic.add")) { 
+	        if (!plugin.permissionHandler.has(player, "waypoint.basic.add")) {
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command."); 
 	            return true;
 	        }
@@ -292,7 +293,7 @@ public class WaypointCommandParser {
             	return true;
             }
     	}
-        else if (command.equalsIgnoreCase("home"))
+        else if (command.equalsIgnoreCase("home") || command.equalsIgnoreCase("wphome"))
         {
             if (!plugin.permissionHandler.has(player, "waypoint.home")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
@@ -362,7 +363,7 @@ public class WaypointCommandParser {
             	return true;
             };
         }
-        else if (command.equalsIgnoreCase("spawn"))
+        else if (command.equalsIgnoreCase("spawn") || command.equalsIgnoreCase("wpspawn"))
         {
             if (!plugin.permissionHandler.has(player, "waypoint.spawn")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
@@ -386,7 +387,7 @@ public class WaypointCommandParser {
             plugin.spawnManager.SendPlayerToSpawn(w, player);
             return true;
     	}
-    	else if (command.equalsIgnoreCase("spawnadmin"))
+    	else if (command.equalsIgnoreCase("spawnadmin") || command.equalsIgnoreCase("wpspawnadmin"))
         {
             if (!plugin.permissionHandler.has(player, "waypoint.admin.spawn")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
@@ -418,12 +419,14 @@ public class WaypointCommandParser {
                 {
                     World w = plugin.getServer().getWorld(player.getWorld().getName().toString());
                     plugin.spawnManager.SaveWorldSpawnLocation((World)w);
+                    player.sendMessage(ChatColor.BLUE + "[Waypoint] Forcibly saved spawn point for world: " + w.getName().toString());
                     return true;
                 }
                 World w = plugin.getServer().getWorld(arg);
                 if (w == null)
                 { player.sendMessage(ChatColor.RED + "[Waypoint] Invalid world: " + arg); return true; }
                 plugin.spawnManager.SaveWorldSpawnLocation(w);
+                player.sendMessage(ChatColor.BLUE + "[Waypoint] Forcibly saved spawn point for world: " + w.getName().toString());
                 return true;
             }
             else if (subc.equalsIgnoreCase("load"))
@@ -435,9 +438,11 @@ public class WaypointCommandParser {
                 if (arg == null)
                 {
                     plugin.spawnManager.LoadWorldSpawnLocation(player.getWorld());
+                    player.sendMessage(ChatColor.BLUE + "[Waypoint] Forcibly reloaded spawn point for world: " + player.getWorld().getName().toString());
                     return true;
                 }
                 plugin.spawnManager.LoadWorldSpawnLocation(player.getWorld());
+                player.sendMessage(ChatColor.BLUE + "[Waypoint] Forcibly reloaded spawn point for world: " + player.getWorld().getName().toString());
                 return true;
             }
             else if (subc.equalsIgnoreCase("set"))
@@ -447,6 +452,8 @@ public class WaypointCommandParser {
                     return true;
                 }
                 plugin.spawnManager.SetSpawnFromPlayer(player.getWorld(), player);
+                player.getWorld().save();
+                player.sendMessage(ChatColor.BLUE + "[Waypoint] Set spawn point for world: " + player.getWorld().getName());
                 return true;
             }
         }
@@ -529,6 +536,148 @@ public class WaypointCommandParser {
             target.teleport(l);
             target.sendMessage(ChatColor.GREEN + "[Waypoint] You Have been teleported to " + player.getName().toString() + ".");
             return true;
+        }
+        else if (command.equalsIgnoreCase("warp") || command.equalsIgnoreCase("wpwarp"))
+        {
+            if (!plugin.permissionHandler.has(player, "waypoint.warp")) {
+                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                return true;
+            }
+	    String subc = "";
+	    String arg = "";
+	    String k = "";
+	    String v = "";
+    	    try {
+    	    subc = args[0];
+            }
+            catch (java.lang.ArrayIndexOutOfBoundsException e) {
+    	        player.sendMessage("Usage: /warp <add|del|set|list|<warp name>> [key] [value]");
+                return true;
+    	    };
+            subc = subc.toLowerCase().toString();
+            try {
+                arg = args[1];
+                k = args[2];
+                v = args[3];
+            }
+            catch (Exception e) {
+    	        arg = null;
+    	        k = null;
+    	        v = null;
+            };
+            if (subc.equalsIgnoreCase("add"))
+            {
+                if (arg == null)
+                {
+                    player.sendMessage(ChatColor.RED + "/warp add <warpname>");
+                    return true;
+                }
+                if (!plugin.permissionHandler.has(player, "waypoint.warp.create"))
+                {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission to use this command.");
+                    return true;
+                }
+                plugin.warpManager.CreateWarp(player, arg);
+                return true;
+            }
+            else if (subc.equalsIgnoreCase("del"))
+            {
+                if (arg == null)
+                {
+                    player.sendMessage(ChatColor.RED + "/warp del <warpname>");
+                    return true;
+                }
+                if (!plugin.permissionHandler.has(player, "waypoint.warp.delete") || (String)config.getProperty(plugin.warpManager.WarpNode(arg, "owner")) != player.getName().toString())
+                {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission to use this command.");
+                    return true;
+                }
+                plugin.warpManager.DeleteWarp(arg);
+                return true;
+            }
+            else if (subc.equalsIgnoreCase("set"))
+            {
+                if (arg == null)
+                {
+                    player.sendMessage(ChatColor.RED + "/warp set <warpname> <key> <value>");
+                    return true;
+                }
+                else if (k == null)
+                {
+                    player.sendMessage(ChatColor.RED + "/warp set <warpname> <key> <value>");
+                    return true;
+                }
+                else if (v == null)
+                {
+                    player.sendMessage(ChatColor.RED + "/warp set <warpname> <key> <value>");
+                    return true;
+                }
+                else if (!k.equalsIgnoreCase("owner") || !k.equalsIgnoreCase("permission"))
+                {
+                    player.sendMessage(ChatColor.GREEN + "Settable warp options:");
+                    player.sendMessage(ChatColor.BLUE + " - owner -- the owner of the warp.");
+                    player.sendMessage(ChatColor.BLUE + " - permission -- who can use this warp.");
+                    return true;
+                }
+                if ((String)config.getProperty(plugin.warpManager.WarpNode(arg, "owner")) != player.getName().toString())
+                {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] You do not have modify this warp.");
+                    return true;
+                }
+                k = k.toLowerCase().toString();
+                v = v.toLowerCase().toString();
+                if (config.getProperty(plugin.warpManager.WarpNode(arg, "permission")) == null)
+                {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] This warp does not exist.");
+                    return true;
+                }
+                boolean f = plugin.warpManager.SetWarpProp(arg, k, v);
+                if (!f)
+                {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] An error occurred while trying to set the properties of warp " + arg);
+                    return true;
+                }
+                else if (f)
+                {
+                    player.sendMessage(ChatColor.GREEN + "[Waypoint] Successfully set the property '" + k + "' to '" + v + "' for warp " + arg);
+                    return true;
+                }
+                return true;
+            }
+            else if (subc.equalsIgnoreCase("list"))
+            {
+                if (!plugin.permissionHandler.has(player, "waypoint.warp.list"))
+                {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] You do not have the permission to access this command.");
+                    return true;
+                }
+                Map<String, ConfigurationNode> a = config.getNodes("warps");
+                if (a.size() == 0)
+                {
+                    player.sendMessage(ChatColor.YELLOW + "[Waypoint] There are currently no warps to be displayed.");
+                    return true;
+                }
+                player.sendMessage(ChatColor.GREEN + "====[Waypoint] Warps available to you:====");
+                for (Map.Entry<String, ConfigurationNode> entry : a.entrySet())
+                {
+                    ConfigurationNode node = entry.getValue();
+                    String warppermission = (String) node.getProperty("permission");
+                    if (warppermission == null)
+                    {
+                       player.sendMessage(ChatColor.RED + "[Waypoint] Internal error during iteration! Please report this to the author.");
+                       return true;
+                    }
+                    if (plugin.warpManager.checkperms(player, warppermission))
+                    {
+                        player.sendMessage(ChatColor.AQUA + " - " + entry.getKey());
+                    }
+                }
+            }
+            else if (config.getProperty(plugin.warpManager.WarpBase(subc)) != null)
+            {
+                plugin.warpManager.PlayerToWarp(player, (String)subc);
+                return true;
+            }
         }
         return false;
     };
