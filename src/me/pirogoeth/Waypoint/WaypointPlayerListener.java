@@ -20,6 +20,11 @@ public class WaypointPlayerListener extends PlayerListener {
         String a = "users." + p.getName().toString() + "." + arg + "." + sub;
         return a;
     }
+    public static String HomeNodeChomp (Player p, World w, String sub)
+    {
+        String a = "home." + p.getName().toString() + "." + w.getName().toString() + "." + sub;
+        return a;
+    }
     public void onPlayerBedLeave(PlayerBedLeaveEvent event)
     {
         Player player = event.getPlayer();
@@ -28,11 +33,10 @@ public class WaypointPlayerListener extends PlayerListener {
         double y = player.getLocation().getY();
         double z = player.getLocation().getZ();
         World w = player.getLocation().getWorld();
-        plugin.config.setProperty(UserNodeChomp(player, "home", "coord.X"), x);
-        plugin.config.setProperty(UserNodeChomp(player, "home", "coord.Y"), y);
-        plugin.config.setProperty(UserNodeChomp(player, "home", "coord.Z"), z);
-        plugin.config.setProperty(UserNodeChomp(player, "home", "world"), w.getName().toString());
+        plugin.config.setProperty(HomeNodeChomp(player, player.getWorld(), "coord.X"), x);
+        plugin.config.setProperty(HomeNodeChomp(player, player.getWorld(), "coord.Y"), y);
+        plugin.config.setProperty(HomeNodeChomp(player, player.getWorld(), "coord.Z"), z);
         plugin.config.save();
-        player.sendMessage(ChatColor.AQUA + "[Waypoint] " + player.getName().toString() + ", your home has been set to the bed you just got out of.");
+        player.sendMessage(ChatColor.AQUA + "[Waypoint] " + player.getName().toString() + ", your home for world " + player.getWorld().getName().toString() + " has been set to the bed you just got out of.");
     }
 }

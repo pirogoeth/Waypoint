@@ -11,7 +11,7 @@ import org.bukkit.util.config.ConfigurationNode;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
-import org.bukkit.plugin.Plugin;
+import me.pirogoeth.Waypoint.WaypointSpawn;
 
 public class WaypointCommandParser {
     public static Waypoint plugin;
@@ -30,6 +30,11 @@ public class WaypointCommandParser {
     public static String UserNodeChomp(Player p, String targetname, String sub)
     {
         String a = "users." + p.getName().toString() + "." + targetname + "." + sub;
+        return a;
+    }
+    public static String HomeNodeChomp(Player p, World world, String sub)
+    {
+        String a = "home." + p.getName().toString() + "." + world.getName().toString() + "." + sub;
         return a;
     }
     public static String InviteNodeChomp(Player p, String node)
@@ -211,7 +216,7 @@ public class WaypointCommandParser {
 	    else if (subc.equalsIgnoreCase("decline"))
 	    {
             	if (arg == null) { player.sendMessage(ChatColor.AQUA + "Usage: /wp <add|del|tp|list|invite|help> [name]"); }
-	        if (!plugin.permissionHandler.has(player, "waypoint.basic.invite.accept")) { 
+	        if (!plugin.permissionHandler.has(player, "waypoint.basic.invite.decline")) { 
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
 	            return true;
 	        }
@@ -250,6 +255,10 @@ public class WaypointCommandParser {
             }
             else if (subc.equalsIgnoreCase("test"))
             {
+	        if (!plugin.permissionHandler.has(player, "waypoint.debug.config_node_test")) {
+	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                    return true;
+	        }
                 // testing node crap
             	double x = player.getLocation().getX();
                 double y = player.getLocation().getY();
@@ -275,13 +284,6 @@ public class WaypointCommandParser {
             	player.sendMessage(ChatColor.RED + "   tp - teleport to a waypoint in your list.");
             	player.sendMessage(ChatColor.RED + "   list - list the waypoints in your list.");
             	player.sendMessage(ChatColor.RED + "   help - this message.");
-            	player.sendMessage(ChatColor.GREEN + "/home:");
-            	player.sendMessage(ChatColor.RED + "   with args, will teleport you to your home.");
-            	player.sendMessage(ChatColor.RED + "   set - sets your home to the location you are currently standing at.");
-            	player.sendMessage(ChatColor.GREEN + "ways to set your home:");
-            	if (config.getProperty("set_home_at_bed") == "true") { player.sendMessage(ChatColor.RED + "getting into a bed will set your home to the position of that bed."); }
-            	player.sendMessage(ChatColor.RED + "typing /home without having a home already set.");
-            	player.sendMessage(ChatColor.RED + "typing /home set.");
             	return true;
             }
             else
@@ -301,26 +303,25 @@ public class WaypointCommandParser {
     	        subc = args[0];
     	    }
             catch (java.lang.ArrayIndexOutOfBoundsException e) {
-                if (config.getProperty(UserNodeChomp(player, "home", "world")) != null)
+                if (config.getProperty(HomeNodeChomp(player, player.getWorld(), "coord.X")) != null)
                 {
-                    String sw = (String)config.getProperty(UserNodeChomp(player, "home", "world"));
-                    World w = plugin.getServer().getWorld(sw);
-                    double x = (Double)config.getProperty(UserNodeChomp(player, "home", "coord.X"));
-                    double y = (Double)config.getProperty(UserNodeChomp(player, "home", "coord.Y"));
-                    double z = (Double)config.getProperty(UserNodeChomp(player, "home", "coord.Z"));
+                    World w = player.getWorld();
+                    double x = (Double)config.getProperty(HomeNodeChomp(player, w, "coord.X"));
+                    double y = (Double)config.getProperty(HomeNodeChomp(player, w, "coord.Y"));
+                    double z = (Double)config.getProperty(HomeNodeChomp(player, w, "coord.Z"));
                     Location l = new Location(w, x, y, z);
                     player.setCompassTarget(l);
                     player.teleport(l);
                     player.sendMessage(ChatColor.GREEN + "Welcome home, " + player.getName().toString() + ".");
                     return true;
                 }
-                else if (config.getProperty(UserNodeChomp(player, "home", "world")) == null)
+                else if (config.getProperty(HomeNodeChomp(player, player.getWorld(), "coord.X")) == null)
                 {
-                    config.setProperty(UserNodeChomp(player, "home", "world"), player.getWorld().getName().toString());
-                    config.setProperty(UserNodeChomp(player, "home", "coord.X"), player.getLocation().getX());
-                    config.setProperty(UserNodeChomp(player, "home", "coord.Y"), player.getLocation().getY());
-                    config.setProperty(UserNodeChomp(player, "home", "coord.Z"), player.getLocation().getZ());
-                    player.sendMessage(ChatColor.AQUA + "[Waypoint] Your home point was not set, so it was automatically set to the point you are currently at now.");
+                    World w = player.getWorld();
+                    config.setProperty(HomeNodeChomp(player, w, "coord.X"), player.getLocation().getX());
+                    config.setProperty(HomeNodeChomp(player, w, "coord.Y"), player.getLocation().getY());
+                    config.setProperty(HomeNodeChomp(player, w, "coord.Z"), player.getLocation().getZ());
+                    player.sendMessage(ChatColor.AQUA + "[Waypoint] Your home point for world " + w.getName().toString() + " was not set, so it was automatically set to the point you are currently at now.");
                     config.save();
                     return true;
                 }
@@ -335,14 +336,15 @@ public class WaypointCommandParser {
             };
             if (subc.equalsIgnoreCase("set"))
             {
-                if (!plugin.permissionHandler.has(player, "waypoint.home.set")) { 
+                World w = player.getWorld();
+                if (!plugin.permissionHandler.has(player, "waypoint.home.set")) {
                     player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                     return true;
                 }
-                config.setProperty(UserNodeChomp(player, "home", "world"), player.getWorld().getName().toString());
-                config.setProperty(UserNodeChomp(player, "home", "coord.X"), player.getLocation().getX());
-                config.setProperty(UserNodeChomp(player, "home", "coord.Y"), player.getLocation().getY());
-                config.setProperty(UserNodeChomp(player, "home", "coord.Z"), player.getLocation().getZ());
+                config.setProperty(HomeNodeChomp(player, w, "world"), player.getWorld().getName().toString());
+                config.setProperty(HomeNodeChomp(player, w, "coord.X"), player.getLocation().getX());
+                config.setProperty(HomeNodeChomp(player, w, "coord.Y"), player.getLocation().getY());
+                config.setProperty(HomeNodeChomp(player, w, "coord.Z"), player.getLocation().getZ());
                 player.sendMessage(ChatColor.AQUA + "[Waypoint] Your home location has been set.");
                 config.save();
                 return true;
@@ -350,12 +352,6 @@ public class WaypointCommandParser {
             else if (subc.equalsIgnoreCase("help"))
             {
             	player.sendMessage(ChatColor.BLUE + "Waypoint, version " + plugin.getDescription().getVersion());
-            	player.sendMessage(ChatColor.GREEN + "/wp:");
-            	player.sendMessage(ChatColor.RED + "   add - add a waypoint to your list.");
-            	player.sendMessage(ChatColor.RED + "   del - remove a waypoint from your list.");
-            	player.sendMessage(ChatColor.RED + "   tp - teleport to a waypoint in your list.");
-            	player.sendMessage(ChatColor.RED + "   list - list the waypoints in your list.");
-            	player.sendMessage(ChatColor.RED + "   help - this message.");
             	player.sendMessage(ChatColor.GREEN + "/home:");
             	player.sendMessage(ChatColor.RED + "   with args, will teleport you to your home.");
             	player.sendMessage(ChatColor.RED + "   set - sets your home to the location you are currently standing at.");
@@ -365,7 +361,175 @@ public class WaypointCommandParser {
             	player.sendMessage(ChatColor.RED + "typing /home set.");
             	return true;
             };
-        };
+        }
+        else if (command.equalsIgnoreCase("spawn"))
+        {
+            if (!plugin.permissionHandler.has(player, "waypoint.spawn")) {
+                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                return true;
+            }
+  	    String subc = "";
+    	    try {
+    	        subc = args[0];
+    	    }
+    	    catch (ArrayIndexOutOfBoundsException e) {
+    	        World w = player.getWorld();
+                plugin.spawnManager.SendPlayerToSpawn(w, player);
+    	        return true;
+    	    }
+    	    World w = plugin.getServer().getWorld((String)subc);
+    	    if (w == null)
+    	    {
+    	        player.sendMessage("[Waypoint] World '" + subc + "' does not exist.");
+    	        return true;
+    	    }
+            plugin.spawnManager.SendPlayerToSpawn(w, player);
+            return true;
+    	}
+    	else if (command.equalsIgnoreCase("spawnadmin"))
+        {
+            if (!plugin.permissionHandler.has(player, "waypoint.admin.spawn")) {
+                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                return true;
+            }
+	    String subc = "";
+    	    try {
+    	    subc = args[0];
+            }
+            catch (java.lang.ArrayIndexOutOfBoundsException e) {
+    	        player.sendMessage("Usage: /spawnadmin <save|load;set> <world>");
+                return true;
+    	    };
+            subc = subc.toLowerCase().toString();
+            String arg = null;
+            try {
+            arg = args[1];
+            }
+            catch (Exception e) {
+    	        arg = null;
+            };
+            if (subc.equalsIgnoreCase("save"))
+            {
+                if (!plugin.permissionHandler.has(player, "waypoint.admin.spawn.save")) {
+                    player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                    return true;
+                }
+                if (arg == null)
+                {
+                    World w = plugin.getServer().getWorld(player.getWorld().getName().toString());
+                    plugin.spawnManager.SaveWorldSpawnLocation((World)w);
+                    return true;
+                }
+                World w = plugin.getServer().getWorld(arg);
+                if (w == null)
+                { player.sendMessage(ChatColor.RED + "[Waypoint] Invalid world: " + arg); return true; }
+                plugin.spawnManager.SaveWorldSpawnLocation(w);
+                return true;
+            }
+            else if (subc.equalsIgnoreCase("load"))
+            {
+                if (!plugin.permissionHandler.has(player, "waypoint.admin.spawn.load")) {
+                    player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                    return true;
+                }
+                if (arg == null)
+                {
+                    plugin.spawnManager.LoadWorldSpawnLocation(player.getWorld());
+                    return true;
+                }
+                plugin.spawnManager.LoadWorldSpawnLocation(player.getWorld());
+                return true;
+            }
+            else if (subc.equalsIgnoreCase("set"))
+            {
+                if (!plugin.permissionHandler.has(player, "waypoint.admin.spawn.set")) {
+                    player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                    return true;
+                }
+                plugin.spawnManager.SetSpawnFromPlayer(player.getWorld(), player);
+                return true;
+            }
+        }
+        else if (command.equalsIgnoreCase("tp") || command.equalsIgnoreCase("wptp"))
+        {
+            if (!plugin.permissionHandler.has(player, "waypoint.teleport.teleport")) {
+                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                return true;
+            }
+	    String subc = "";
+    	    try {
+    	    subc = args[0];
+            }
+            catch (java.lang.ArrayIndexOutOfBoundsException e) {
+    	        player.sendMessage("Usage: /tp <target> [user]");
+                return true;
+    	    };
+            subc = subc.toLowerCase().toString();
+            String arg = null;
+            try {
+            arg = args[1];
+            }
+            catch (Exception e) {
+    	        arg = null;
+            };
+            if (arg == null)
+            {
+                Player target = plugin.getServer().getPlayer((String)subc);
+                if (target == null) 
+                {
+                    player.sendMessage("[Waypoint] Player " + subc + " is not logged in.");
+                    return true;
+                }
+                Location l = target.getLocation();
+                player.teleport(l);
+                return true;
+            }
+            else if (arg != null)
+            {
+                Player p = plugin.getServer().getPlayer((String)subc);
+                Player target = plugin.getServer().getPlayer((String)arg);
+                if (p == null)
+                {
+                    player.sendMessage("[Waypoint] Player " + subc + " is not online.");
+                    return true;
+                }
+                else if (target == null)
+                {
+                    player.sendMessage("[Waypoint] Player " + arg + " is not online.");
+                    return true;
+                }
+                Location l = target.getLocation();
+                p.teleport(l);
+                p.sendMessage("[Waypoint] You have been teleported by " + player.getName().toString() + ".");
+                return true;
+            }
+        }
+        else if (command.equalsIgnoreCase("tphere") || command.equalsIgnoreCase("wptphere"))
+        {
+            if (!plugin.permissionHandler.has(player, "waypoint.teleport.here")) {
+                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                return true;
+            }
+	    String subc = "";
+    	    try {
+    	    subc = args[0];
+            }
+            catch (java.lang.ArrayIndexOutOfBoundsException e) {
+    	        player.sendMessage("Usage: /tp <target> [user]");
+                return true;
+    	    };
+            subc = subc.toLowerCase().toString();
+            Player target = plugin.getServer().getPlayer((String)subc);
+            if (target == null)
+            {
+                player.sendMessage(ChatColor.AQUA + "[Waypoint] Player " + subc + " is not online.");
+                return true;
+            }
+            Location l = player.getLocation();
+            target.teleport(l);
+            target.sendMessage(ChatColor.GREEN + "[Waypoint] You Have been teleported to " + player.getName().toString() + ".");
+            return true;
+        }
         return false;
     };
 };

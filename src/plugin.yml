@@ -1,6 +1,6 @@
 name: Waypoint
 main: me.pirogoeth.Waypoint.Waypoint
-version: 1.3
+version: 1.4
 author: pirogoeth
 commands:
     wp:
@@ -13,3 +13,21 @@ commands:
         usage: /home [add]
         alias: home
         permission: waypoint.home
+    spawn:
+        description: Teleport to world spawn points.
+        usage: /wpspawn <world>
+        permission: waypoint.spawn
+    spawnadmin:
+        description: Manage spawn details.
+        usage: /wpspawnadmin <save|load;set> [world]
+        permission: waypoint.admin.spawn
+    tp:
+        description: Teleport to another user/another user to you.
+        usage: /tp <user> [target]
+        alias: wptp
+        permission: waypoint.teleport
+    tphere:
+        description: Teleport a user to you.
+        usage: /tphere <user>
+        alias: wptphere
+        permission: waypoint.teleport.here

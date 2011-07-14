@@ -16,13 +16,15 @@ import java.io.File;
 
 import me.pirogoeth.Waypoint.WaypointPlayerListener;
 import me.pirogoeth.Waypoint.WaypointSTP;
+import me.pirogoeth.Waypoint.WaypointSpawn;
 import me.pirogoeth.Waypoint.WaypointCommandParser;
 
 @SuppressWarnings("unused")
 public class Waypoint extends JavaPlugin {
-    // player stuff
+    // server stuff
     public static PermissionHandler permissionHandler;
     private final WaypointPlayerListener playerListener = new WaypointPlayerListener(this);
+    public final WaypointSpawn spawnManager = new WaypointSpawn(this);
     // file stuff
     public static String maindir = "plugins/Waypoint";
     public static File configfile = new File (maindir + File.separator + "config.yml");
@@ -40,7 +42,11 @@ public class Waypoint extends JavaPlugin {
     	{
     		config.setProperty("set_home_at_bed", "false");
     		config.setProperty("users", "");
+    		config.setProperty("home", "");
+    		config.setProperty("spawn", "");
     		config.setProperty("invites", "");
+    		config.save();
+    		spawnManager.ConfigWriteSpawnLocations();
     	}
      	if ((String)config.getString("set_home_at_bed") == "true");
     	{
