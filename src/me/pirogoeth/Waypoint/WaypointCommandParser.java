@@ -1,6 +1,7 @@
 package me.pirogoeth.Waypoint;
 
 import java.util.Map;
+import java.util.Arrays;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
@@ -85,7 +86,7 @@ public class WaypointCommandParser {
     		try {
     			arg = args[1];
     		}
-    		catch (Exception e) {
+    		catch (java.lang.ArrayIndexOutOfBoundsException e) {
     			arg = null;
     		};
             if (subc.equalsIgnoreCase("add"))
@@ -332,7 +333,7 @@ public class WaypointCommandParser {
             try {
                 arg = args[1];
             }
-            catch (Exception e) {
+            catch (java.lang.ArrayIndexOutOfBoundsException e) {
                 arg = null;
             };
             if (subc.equalsIgnoreCase("set"))
@@ -406,7 +407,7 @@ public class WaypointCommandParser {
             try {
             arg = args[1];
             }
-            catch (Exception e) {
+            catch (java.lang.ArrayIndexOutOfBoundsException e) {
     	        arg = null;
             };
             if (subc.equalsIgnoreCase("save"))
@@ -476,7 +477,7 @@ public class WaypointCommandParser {
             try {
             arg = args[1];
             }
-            catch (Exception e) {
+            catch (java.lang.ArrayIndexOutOfBoundsException e) {
     	        arg = null;
             };
             if (arg == null)
@@ -548,7 +549,7 @@ public class WaypointCommandParser {
 	    String k = "";
 	    String v = "";
     	    try {
-    	    subc = args[0];
+                subc = args[0];
             }
             catch (java.lang.ArrayIndexOutOfBoundsException e) {
     	        player.sendMessage("Usage: /warp <add|del|set|list|<warp name>> [key] [value]");
@@ -557,14 +558,18 @@ public class WaypointCommandParser {
             subc = subc.toLowerCase().toString();
             try {
                 arg = args[1];
+            }
+            catch (java.lang.ArrayIndexOutOfBoundsException e) {
+    	        arg = null;
+            };
+            try {
                 k = args[2];
                 v = args[3];
             }
-            catch (Exception e) {
-    	        arg = null;
+            catch (java.lang.ArrayIndexOutOfBoundsException e) {
     	        k = null;
     	        v = null;
-            };
+            }
             if (subc.equalsIgnoreCase("add"))
             {
                 if (arg == null)
@@ -578,6 +583,7 @@ public class WaypointCommandParser {
                     return true;
                 }
                 plugin.warpManager.CreateWarp(player, arg);
+                player.sendMessage(ChatColor.AQUA + "[Waypoint] Warp " + arg + " has been created.");
                 return true;
             }
             else if (subc.equalsIgnoreCase("del"))
@@ -587,12 +593,19 @@ public class WaypointCommandParser {
                     player.sendMessage(ChatColor.RED + "/warp del <warpname>");
                     return true;
                 }
-                if (!plugin.permissionHandler.has(player, "waypoint.warp.delete") || (String)config.getProperty(plugin.warpManager.WarpNode(arg, "owner")) != player.getName().toString())
+                if (config.getProperty(plugin.warpManager.WarpBase(arg)) == null)
+                {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] There is no warp by that name.");
+                    return true;
+                }
+                String owner = (String)config.getProperty(plugin.warpManager.WarpNode(arg, "owner"));
+                if (!plugin.permissionHandler.has(player, "waypoint.warp.delete") || !owner.equals(player.getName().toString()))
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission to use this command.");
                     return true;
                 }
                 plugin.warpManager.DeleteWarp(arg);
+                player.sendMessage(ChatColor.AQUA + "[Waypoint] Warp " + arg + " has been deleted.");
                 return true;
             }
             else if (subc.equalsIgnoreCase("set"))
@@ -612,16 +625,19 @@ public class WaypointCommandParser {
                     player.sendMessage(ChatColor.RED + "/warp set <warpname> <key> <value>");
                     return true;
                 }
-                else if (!k.equalsIgnoreCase("owner") || !k.equalsIgnoreCase("permission"))
-                {
-                    player.sendMessage(ChatColor.GREEN + "Settable warp options:");
-                    player.sendMessage(ChatColor.BLUE + " - owner -- the owner of the warp.");
-                    player.sendMessage(ChatColor.BLUE + " - permission -- who can use this warp.");
-                    return true;
-                }
+                // XXX - remove this for:
+                //   custom properties?
+                //
+                // else if (!k.equalsIgnoreCase("owner") || !k.equalsIgnoreCase("permission"))
+                // {
+                //    player.sendMessage(ChatColor.GREEN + "Settable warp options:");
+                //    player.sendMessage(ChatColor.BLUE + " - owner -- the owner of the warp.");
+                //    player.sendMessage(ChatColor.BLUE + " - permission -- who can use this warp.");
+                //    return true;
+                // }
                 if ((String)config.getProperty(plugin.warpManager.WarpNode(arg, "owner")) != player.getName().toString())
                 {
-                    player.sendMessage(ChatColor.RED + "[Waypoint] You do not have modify this warp.");
+                    player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission modify this warp.");
                     return true;
                 }
                 k = k.toLowerCase().toString();
@@ -634,7 +650,7 @@ public class WaypointCommandParser {
                 boolean f = plugin.warpManager.SetWarpProp(arg, k, v);
                 if (!f)
                 {
-                    player.sendMessage(ChatColor.RED + "[Waypoint] An error occurred while trying to set the properties of warp " + arg);
+                    player.sendMessage(ChatColor.RED + "[Waypoint] An error occurred while trying to set the properties of warp:" + arg);
                     return true;
                 }
                 else if (f)
@@ -651,11 +667,12 @@ public class WaypointCommandParser {
                     player.sendMessage(ChatColor.RED + "[Waypoint] You do not have the permission to access this command.");
                     return true;
                 }
-                Map<String, ConfigurationNode> a = config.getNodes("warps");
-                if (a.size() == 0)
+                Map<String, ConfigurationNode> a;
+                a = config.getNodes("warps");
+                if (a == null || a.size() == 0)
                 {
-                    player.sendMessage(ChatColor.YELLOW + "[Waypoint] There are currently no warps to be displayed.");
-                    return true;
+                   player.sendMessage(ChatColor.YELLOW + "[Waypoint] There are currently no warps to be displayed.");
+                   return true;
                 }
                 player.sendMessage(ChatColor.GREEN + "====[Waypoint] Warps available to you:====");
                 for (Map.Entry<String, ConfigurationNode> entry : a.entrySet())
@@ -672,6 +689,7 @@ public class WaypointCommandParser {
                         player.sendMessage(ChatColor.AQUA + " - " + entry.getKey());
                     }
                 }
+                return true;
             }
             else if (config.getProperty(plugin.warpManager.WarpBase(subc)) != null)
             {

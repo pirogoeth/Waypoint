@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.util.config.Configuration;
 import java.util.logging.Logger;
+import java.util.List;
 import java.io.File;
 
 import me.pirogoeth.Waypoint.WaypointPlayerListener;
@@ -48,6 +49,9 @@ public class Waypoint extends JavaPlugin {
     		config.setProperty("home", "");
     		config.setProperty("spawn", "");
     		config.setProperty("warps", "");
+    		// warp access group config
+    	        String[] warpgroups = { "general", "mod", "admin" };
+    		config.setProperty("warp.groups", warpgroups);
     		config.setProperty("invites", "");
     		config.save();
     		spawnManager.ConfigWriteSpawnLocations();

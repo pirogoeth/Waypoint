@@ -1,6 +1,8 @@
 package me.pirogoeth.Waypoint;
 
 import java.util.Map;
+import java.util.List;
+import java.util.Arrays;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
@@ -32,7 +34,7 @@ public class WaypointWarps {
     }
     public static boolean checkperms (Player p, String pnode)
     {
-        if (!plugin.permissionHandler.has(p, pnode))
+        if (!plugin.permissionHandler.has(p, "waypoint.warp.access." + pnode))
         {
             return false;
         }
@@ -54,7 +56,7 @@ public class WaypointWarps {
         config.setProperty(WarpNode(warpname, "coord.Z"), z);
         config.setProperty(WarpNode(warpname, "world"), worldname);
         config.setProperty(WarpNode(warpname, "owner"), owner);
-        config.setProperty(WarpNode(warpname, "permission"), "waypoint.warp.group.general");
+        config.setProperty(WarpNode(warpname, "permission"), "general");
         config.save();
         return;
     }
@@ -68,15 +70,29 @@ public class WaypointWarps {
         config.save();
         return true;
     }
+    public static boolean CheckGroup (String group)
+    {
+        String[] pgroup = (String[]) config.getProperty("warp.groups");
+        List<String> groupl = Arrays.asList(pgroup);
+        return groupl.contains(group);
+    }
     public static boolean SetWarpProp (String warpname, String key, String value)
     {
         if (config.getProperty(WarpNode(warpname, "world")) == null)
         {
             return false;
         }
-        config.setProperty(WarpNode(warpname, key), value);
-        config.save();
-        return true;
+        if (key.equalsIgnoreCase("permission") && CheckGroup(value) || key.equalsIgnoreCase("owner"))
+        {
+            config.setProperty(WarpNode(warpname, key), value);
+            config.save();
+            return true;
+        }
+        else if (key.equalsIgnoreCase("permission") && !CheckGroup(value))
+        {
+            return false;
+        }
+    return false;
     }
     public static boolean PlayerToWarp (Player p, String warpname)
     {

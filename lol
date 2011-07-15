@@ -1,0 +1,18 @@
+added manifest
+adding: me/(in = 0) (out= 0)(stored 0%)
+adding: me/pirogoeth/(in = 0) (out= 0)(stored 0%)
+adding: me/pirogoeth/Waypoint/(in = 0) (out= 0)(stored 0%)
+adding: me/pirogoeth/Waypoint/WaypointSTP.class(in = 1304) (out= 590)(deflated 54%)
+adding: me/pirogoeth/Waypoint/Waypoint.java(in = 3882) (out= 1232)(deflated 68%)
+adding: me/pirogoeth/Waypoint/WaypointWarps.java(in = 4160) (out= 1006)(deflated 75%)
+adding: me/pirogoeth/Waypoint/WaypointSpawn.class(in = 4202) (out= 1995)(deflated 52%)
+adding: me/pirogoeth/Waypoint/Waypoint.class(in = 5298) (out= 2440)(deflated 53%)
+adding: me/pirogoeth/Waypoint/WaypointPlayerListener.class(in = 3213) (out= 1479)(deflated 53%)
+adding: me/pirogoeth/Waypoint/WaypointCommandParser.class(in = 19980) (out= 8669)(deflated 56%)
+adding: me/pirogoeth/Waypoint/WaypointSTP.java(in = 707) (out= 274)(deflated 61%)
+adding: me/pirogoeth/Waypoint/WaypointWarps.class(in = 4892) (out= 2366)(deflated 51%)
+adding: me/pirogoeth/Waypoint/WaypointCommandParser.java(in = 32460) (out= 4281)(deflated 86%)
+adding: me/pirogoeth/Waypoint/WaypointSpawn.java(in = 3244) (out= 811)(deflated 75%)
+adding: me/pirogoeth/Waypoint/WaypointPlayerListener.java(in = 1858) (out= 617)(deflated 66%)
+adding: plugin.yml(in = 1347) (out= 400)(deflated 70%)
+done.
