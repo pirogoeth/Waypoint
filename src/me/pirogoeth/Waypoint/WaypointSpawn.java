@@ -1,6 +1,5 @@
 package me.pirogoeth.Waypoint;
 
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
@@ -9,7 +8,6 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
-import me.pirogoeth.Waypoint.WaypointSTP;
 
 public class WaypointSpawn {
     public static Waypoint plugin;
@@ -28,7 +26,7 @@ public class WaypointSpawn {
     public void ConfigWriteSpawnLocations ()
     {
         List<World> w = plugin.getServer().getWorlds();
-        Iterator wIter = w.iterator();
+        Iterator<World> wIter = w.iterator();
         while (wIter.hasNext())
         {
             World tw = (World)wIter.next();

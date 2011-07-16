@@ -1,6 +1,5 @@
 package me.pirogoeth.Waypoint;
 
-import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
 import java.util.logging.Logger;
@@ -9,9 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
-
-import me.pirogoeth.Waypoint.WaypointSTP;
 
 public class WaypointWarps {
     public static Waypoint plugin;
@@ -22,19 +18,20 @@ public class WaypointWarps {
         plugin = instance;
         config = plugin.config;
     }
-    public static String WarpNode (String warpname, String subnode)
+    public String WarpNode (String warpname, String subnode)
     {
         String a = "warps." + warpname + "." + subnode;
         return a;
     }
-    public static String WarpBase (String warpname)
+    public String WarpBase (String warpname)
     {
         String a = "warps." + warpname;
         return a;
     }
-    public static boolean checkperms (Player p, String pnode)
+    public boolean checkperms (Player p, String pnode)
     {
-        if (!plugin.permissionHandler.has(p, "waypoint.warp.access." + pnode))
+        String permission = String.format("waypoint.warp.access.%s", pnode);
+        if (!plugin.permissionHandler.has(p, permission))
         {
             return false;
         }
@@ -70,13 +67,13 @@ public class WaypointWarps {
         config.save();
         return true;
     }
-    public static boolean CheckGroup (String group)
+    public boolean CheckGroup (String group)
     {
         String[] pgroup = (String[]) config.getProperty("warp.groups");
         List<String> groupl = Arrays.asList(pgroup);
         return groupl.contains(group);
     }
-    public static boolean SetWarpProp (String warpname, String key, String value)
+    public boolean SetWarpProp (String warpname, String key, String value)
     {
         if (config.getProperty(WarpNode(warpname, "world")) == null)
         {
@@ -94,7 +91,7 @@ public class WaypointWarps {
         }
     return false;
     }
-    public static boolean PlayerToWarp (Player p, String warpname)
+    public boolean PlayerToWarp (Player p, String warpname)
     {
         if (config.getProperty(WarpNode(warpname, "world")) == null)
         {
@@ -102,7 +99,7 @@ public class WaypointWarps {
             return false;
         }
         String permission = (String) config.getProperty(WarpNode(warpname, "permission"));
-        if (!checkperms(p, permission))
+        if (checkperms(p, permission) == false)
         {
             p.sendMessage(ChatColor.RED + "[Waypoint] You do not have permissions to access this warp.");
             return false;

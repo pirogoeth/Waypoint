@@ -1,7 +1,6 @@
 package me.pirogoeth.Waypoint;
 
 import java.util.Map;
-import java.util.Arrays;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
@@ -9,11 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
-
-import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.bukkit.Permissions.Permissions;
-import me.pirogoeth.Waypoint.WaypointSpawn;
-import me.pirogoeth.Waypoint.WaypointWarps;
 
 public class WaypointCommandParser {
     public static Waypoint plugin;
@@ -329,13 +323,6 @@ public class WaypointCommandParser {
                 }
             };
             subc = subc.toLowerCase().toString();
-            String arg = null;
-            try {
-                arg = args[1];
-            }
-            catch (java.lang.ArrayIndexOutOfBoundsException e) {
-                arg = null;
-            };
             if (subc.equalsIgnoreCase("set"))
             {
                 World w = player.getWorld();
@@ -694,6 +681,11 @@ public class WaypointCommandParser {
             else if (config.getProperty(plugin.warpManager.WarpBase(subc)) != null)
             {
                 plugin.warpManager.PlayerToWarp(player, (String)subc);
+                return true;
+            }
+            else if (config.getProperty(plugin.warpManager.WarpBase(subc)) == null)
+            {
+                player.sendMessage(ChatColor.LIGHT_PURPLE + "[Waypoint] Warp " + subc + " does not exist.");
                 return true;
             }
         }
