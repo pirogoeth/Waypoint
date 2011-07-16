@@ -622,7 +622,8 @@ public class WaypointCommandParser {
                 //    player.sendMessage(ChatColor.BLUE + " - permission -- who can use this warp.");
                 //    return true;
                 // }
-                if ((String)config.getProperty(plugin.warpManager.WarpNode(arg, "owner")) != player.getName().toString())
+                String owner = (String) config.getProperty(plugin.warpManager.WarpNode(arg, "owner"));
+                if (!owner.equals(player.getName().toString()))
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission modify this warp.");
                     return true;

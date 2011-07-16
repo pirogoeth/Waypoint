@@ -70,8 +70,12 @@ public class WaypointWarps {
     public boolean CheckGroup (String group)
     {
         String[] pgroup = (String[]) config.getProperty("warp.groups");
-        List<String> groupl = Arrays.asList(pgroup);
-        return groupl.contains(group);
+        for (String a : pgroup)
+        {
+            if (a.equals(group))
+            { return true; }
+        }
+        return false;
     }
     public boolean SetWarpProp (String warpname, String key, String value)
     {

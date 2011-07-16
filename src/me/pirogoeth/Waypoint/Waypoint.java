@@ -26,7 +26,7 @@ import me.pirogoeth.Waypoint.WaypointWarps;
 public class Waypoint extends JavaPlugin {
     // server stuff
     public PermissionHandler permissionHandler;
-    public WaypointOpHandler opHandler = new WaypointOpHandler(this);
+    // unused due to fail : public WaypointOpHandler opHandler = new WaypointOpHandler(this);
     private final WaypointPlayerListener playerListener = new WaypointPlayerListener(this);
     // file stuff
     public static String maindir = "plugins/Waypoint";
@@ -52,7 +52,7 @@ public class Waypoint extends JavaPlugin {
     		config.setProperty("spawn", "");
     		config.setProperty("warps", "");
     		// warp access group config
-    	    String[] warpgroups = { "general", "mod", "admin" };
+                String[] warpgroups = { "general", "mod", "admin" };
     		config.setProperty("warp.groups", warpgroups);
     		config.setProperty("invites", "");
     		config.save();
