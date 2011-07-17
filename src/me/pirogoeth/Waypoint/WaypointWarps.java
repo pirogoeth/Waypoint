@@ -1,7 +1,7 @@
 package me.pirogoeth.Waypoint;
 
 import java.util.List;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
@@ -31,7 +31,7 @@ public class WaypointWarps {
     public boolean checkperms (Player p, String pnode)
     {
         String permission = String.format("waypoint.warp.access.%s", pnode);
-        if (!plugin.permissionHandler.has(p, permission))
+        if (!plugin.permissions.has(p, permission))
         {
             return false;
         }
@@ -70,12 +70,12 @@ public class WaypointWarps {
     public boolean CheckGroup (String group)
     {
         String[] pgroup = (String[]) config.getProperty("warp.groups");
-        for (String a : pgroup)
+        HashSet<String> groups = new HashSet<String>();
+        for (String p : pgroup)
         {
-            if (a.equals(group))
-            { return true; }
+            groups.add(new String(p));
         }
-        return false;
+        return groups.contains(group);
     }
     public boolean SetWarpProp (String warpname, String key, String value)
     {

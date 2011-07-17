@@ -26,7 +26,7 @@ public class WaypointPlayerListener extends PlayerListener {
     public void onPlayerBedLeave(PlayerBedLeaveEvent event)
     {
         Player player = event.getPlayer();
-        if (!plugin.permissionHandler.has(player, "waypoint.home.set_on_bed_leave")) { return; };
+        if (!plugin.permissions.has(player, "waypoint.home.set_on_bed_leave")) { return; };
         double x = player.getLocation().getX();
         double y = player.getLocation().getY();
         double z = player.getLocation().getZ();

@@ -15,17 +15,17 @@ import java.util.logging.Logger;
 import java.util.List;
 import java.io.File;
 
+import me.pirogoeth.Waypoint.WaypointPermission;
 import me.pirogoeth.Waypoint.WaypointPlayerListener;
 import me.pirogoeth.Waypoint.WaypointSTP;
 import me.pirogoeth.Waypoint.WaypointSpawn;
-import me.pirogoeth.Waypoint.WaypointOpHandler;
 import me.pirogoeth.Waypoint.WaypointCommandParser;
 import me.pirogoeth.Waypoint.WaypointWarps;
 
 @SuppressWarnings("unused")
 public class Waypoint extends JavaPlugin {
-    // server stuff
-    public PermissionHandler permissionHandler;
+    // permission stuff
+    public WaypointPermission permissions;
     // unused due to fail : public WaypointOpHandler opHandler = new WaypointOpHandler(this);
     private final WaypointPlayerListener playerListener = new WaypointPlayerListener(this);
     // file stuff
@@ -63,29 +63,33 @@ public class Waypoint extends JavaPlugin {
     	    getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_LEAVE, playerListener, Event.Priority.Normal, this);
     	    log.info("[Waypoint] Set home to bed is enabled.");
     	}
-    	setupPermissions();
+    	// XXX - replace setupPermissions() with a custom class to
+    	//  handle all types of permissions limiting.
+    	// setupPermissions();
+    	permissions = new WaypointPermission(this);
     	log.info("[Waypoint] Enabled version " + this.getDescription().getVersion());
     	config.save();
     }
     public void onDisable () {
     	log.info("[Waypoint] Disabled version " + this.getDescription().getVersion());
     }
-    private void setupPermissions () {
-        if (permissionHandler != null) {
-            return;
-        }
 
-        Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
+    /*
+      private void setupPermissions () {
+      if (permissionHandler != null) {
+          return;
+      }
 
-        if (permissionsPlugin == null) {
-            log.info("[Waypoint] Permission system not detected, defaulting to OP");
-            return;
-        }
+      Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
 
-        permissionHandler = ((Permissions) permissionsPlugin).getHandler();
-
-        log.info("[Waypoint] Found and will use permissions system: "+((Permissions)permissionsPlugin).getDescription().getFullName());
+      if (permissionsPlugin == null) {
+           log.info("[Waypoint] Permission system not detected, defaulting to OP");
+           return;
+       }
+      permissionHandler = ((Permissions) permissionsPlugin).getHandler();
+      log.info("[Waypoint] Found and will use permissions system: "+((Permissions)permissionsPlugin).getDescription().getFullName());
     }
+    */
     public boolean onCommand(CommandSender sender, Command cmd, String cmdlabel, String args[])
     {
         if (sender.getClass().getName().toString() == "org.bukkit.craftbukkit.command.ColouredConsoleSender")
