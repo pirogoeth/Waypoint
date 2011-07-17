@@ -21,6 +21,18 @@ commands:
         aliases:
             - wpspawn
         permission: waypoint.spawn
+    setspawn:
+        description: Shortcut for /spawnadmin set
+        usage: /setspawn
+        aliases:
+            - wpsetspawn
+        permission: waypoint.admin.spawn.set
+    setwarp:
+        description: Shortcut for /warp add
+        usage: /setwarp <name>
+        aliases:
+            - wpsetwarp
+        permission: waypoint.warp.create
     spawnadmin:
         description: Manage spawn details.
         usage: /spawnadmin <save|load;set> [world]

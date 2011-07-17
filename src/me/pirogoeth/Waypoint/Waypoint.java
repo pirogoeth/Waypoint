@@ -13,6 +13,8 @@ import org.bukkit.event.Event;
 import org.bukkit.util.config.Configuration;
 import java.util.logging.Logger;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.io.File;
 
 import me.pirogoeth.Waypoint.WaypointPermission;
@@ -52,7 +54,11 @@ public class Waypoint extends JavaPlugin {
     		config.setProperty("spawn", "");
     		config.setProperty("warps", "");
     		// warp access group config
-                String[] warpgroups = { "general", "mod", "admin" };
+                List<String> warpgroups = new ArrayList<String>();
+                warpgroups.add("general");
+                warpgroups.add("mod");
+                warpgroups.add("admin");
+                // end warp access group config
     		config.setProperty("warp.groups", warpgroups);
     		config.setProperty("invites", "");
     		config.save();

@@ -351,6 +351,26 @@ public class WaypointCommandParser {
             	return true;
             };
         }
+        else if (command.equalsIgnoreCase("setspawn") || command.equalsIgnoreCase("wpsetspawn"))
+        {
+            if (!plugin.permissions.has(player, "waypoint.admin.spawn.set")) {
+                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                return true;
+            }
+	    String subc = "";
+    	    try {
+    	    subc = args[0];
+            }
+            catch (java.lang.ArrayIndexOutOfBoundsException e) {
+    	        player.sendMessage("Usage: /setspawn");
+                return true;
+    	    };
+            subc = subc.toLowerCase().toString();
+            World w = player.getWorld();
+            plugin.spawnManager.SendPlayerToSpawn(w, player);
+            player.sendMessage(ChatColor.AQUA + "[Waypoint] Spawn for world " + player.getWorld().getName() + " has been set.");
+            return true;
+        }
         else if (command.equalsIgnoreCase("spawn") || command.equalsIgnoreCase("wpspawn"))
         {
             if (!plugin.permissions.has(player, "waypoint.spawn")) {
@@ -523,6 +543,25 @@ public class WaypointCommandParser {
             Location l = player.getLocation();
             target.teleport(l);
             target.sendMessage(ChatColor.GREEN + "[Waypoint] You Have been teleported to " + player.getName().toString() + ".");
+            return true;
+        }
+        else if (command.equalsIgnoreCase("setwarp") || command.equalsIgnoreCase("wpsetwarp"))
+        {
+            if (!plugin.permissions.has(player, "waypoint.warp.create")) {
+                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                return true;
+            }
+	    String subc = "";
+    	    try {
+    	    subc = args[0];
+            }
+            catch (java.lang.ArrayIndexOutOfBoundsException e) {
+    	        player.sendMessage("Usage: /setwarp <name>");
+                return true;
+    	    };
+            subc = subc.toLowerCase().toString();
+            plugin.warpManager.CreateWarp(player, subc);
+            player.sendMessage(ChatColor.AQUA + "[Waypoint] Warp " + subc + " has been created.");
             return true;
         }
         else if (command.equalsIgnoreCase("warp") || command.equalsIgnoreCase("wpwarp"))
