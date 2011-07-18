@@ -75,6 +75,7 @@ public class Waypoint extends JavaPlugin {
     	permissions = new WaypointPermission(this);
     	log.info("[Waypoint] Enabled version " + this.getDescription().getVersion());
     	config.save();
+    	warpManager.LoadGroups();
     }
     public void onDisable () {
     	log.info("[Waypoint] Disabled version " + this.getDescription().getVersion());

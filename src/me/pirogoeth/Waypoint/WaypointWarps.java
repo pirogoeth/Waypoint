@@ -1,6 +1,7 @@
 package me.pirogoeth.Waypoint;
 
 import java.util.List;
+import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;
@@ -13,10 +14,20 @@ public class WaypointWarps {
     public static Waypoint plugin;
     public static Configuration config;
     public static Logger log = Logger.getLogger("Minecraft");
+    public List<String> groups;
     public WaypointWarps (Waypoint instance)
     {
         plugin = instance;
         config = plugin.config;
+    }
+    public void LoadGroups ()
+    {
+        groups = config.getStringList("warp.groups", null);
+        Iterator<String> i = groups.iterator();
+        StringBuffer s = new StringBuffer(i.next());
+        while (i.hasNext()) { s.append(", ").append(i.next()); }
+        log.info(String.format("[Waypoint] Warps: loaded permission groups: %s", s.toString()));
+        return;
     }
     public String WarpNode (String warpname, String subnode)
     {
@@ -31,14 +42,7 @@ public class WaypointWarps {
     public boolean checkperms (Player p, String pnode)
     {
         String permission = String.format("waypoint.warp.access.%s", pnode);
-        if (!plugin.permissions.has(p, permission))
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return plugin.permissions.has(p, permission);
     }
     public void CreateWarp (Player p, String warpname)
     {
@@ -69,7 +73,6 @@ public class WaypointWarps {
     }
     public boolean CheckGroup (String group)
     {
-        List<String> groups = config.getStringList("warp.groups", null);
         return groups.contains(group);
     }
     public boolean SetWarpProp (String warpname, String key, String value)
