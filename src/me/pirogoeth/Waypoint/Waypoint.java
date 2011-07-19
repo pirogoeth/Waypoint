@@ -17,19 +17,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.File;
 
-import me.pirogoeth.Waypoint.WaypointPermission;
-import me.pirogoeth.Waypoint.WaypointPlayerListener;
-import me.pirogoeth.Waypoint.WaypointSTP;
-import me.pirogoeth.Waypoint.WaypointSpawn;
-import me.pirogoeth.Waypoint.WaypointCommandParser;
-import me.pirogoeth.Waypoint.WaypointWarps;
+// various core utilities
+import me.pirogoeth.Waypoint.Util.Permission;
+import me.pirogoeth.Waypoint.Util.PlayerUtil;
+// basic listeners
+import me.pirogoeth.Waypoint.Events.PListener;
+// core support classes
+import me.pirogoeth.Waypoint.Core.Parser;
+import me.pirogoeth.Waypoint.Core.Spawn;
+import me.pirogoeth.Waypoint.Core.Warps;
 
 @SuppressWarnings("unused")
 public class Waypoint extends JavaPlugin {
     // permission stuff
-    public WaypointPermission permissions;
+    public Permission permissions;
     // unused due to fail : public WaypointOpHandler opHandler = new WaypointOpHandler(this);
-    private final WaypointPlayerListener playerListener = new WaypointPlayerListener(this);
+    private final PListener playerListener = new PListener(this);
     // file stuff
     public static String maindir = "plugins/Waypoint";
     public static File configfile = new File (maindir + File.separator + "config.yml");
@@ -38,10 +41,10 @@ public class Waypoint extends JavaPlugin {
     // configuration
     public Configuration config = new Configuration(configfile);
     // command parsing
-    private final WaypointCommandParser commandParser = new WaypointCommandParser(this);
+    private final Parser commandParser = new Parser(this);
     // additional stuff
-    public final WaypointSpawn spawnManager = new WaypointSpawn(this);
-    public final WaypointWarps warpManager = new WaypointWarps(this);
+    public final Spawn spawnManager = new Spawn(this);
+    public final Warps warpManager = new Warps(this);
     // plug-in code
     public void onEnable () {
     	new File(maindir).mkdir();
@@ -72,7 +75,7 @@ public class Waypoint extends JavaPlugin {
     	// XXX - replace setupPermissions() with a custom class to
     	//  handle all types of permissions limiting.
     	// setupPermissions();
-    	permissions = new WaypointPermission(this);
+    	permissions = new Permission(this);
     	log.info("[Waypoint] Enabled version " + this.getDescription().getVersion());
     	config.save();
     	warpManager.LoadGroups();
@@ -80,23 +83,6 @@ public class Waypoint extends JavaPlugin {
     public void onDisable () {
     	log.info("[Waypoint] Disabled version " + this.getDescription().getVersion());
     }
-
-    /*
-      private void setupPermissions () {
-      if (permissionHandler != null) {
-          return;
-      }
-
-      Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
-
-      if (permissionsPlugin == null) {
-           log.info("[Waypoint] Permission system not detected, defaulting to OP");
-           return;
-       }
-      permissionHandler = ((Permissions) permissionsPlugin).getHandler();
-      log.info("[Waypoint] Found and will use permissions system: "+((Permissions)permissionsPlugin).getDescription().getFullName());
-    }
-    */
     public boolean onCommand(CommandSender sender, Command cmd, String cmdlabel, String args[])
     {
         if (sender.getClass().getName().toString() == "org.bukkit.craftbukkit.command.ColouredConsoleSender")
@@ -105,7 +91,7 @@ public class Waypoint extends JavaPlugin {
     		sender.sendMessage("[Waypoint] You need to be a player to use this plugin.");
     		return true;
         }
-    	Player player = WaypointSTP.getPlayerFromSender(sender);
-    	return WaypointCommandParser.CommandParser(player, cmdlabel, args);
+    	Player player = PlayerUtil.getPlayerFromSender(sender);
+    	return Parser.CommandParser(player, cmdlabel, args);
     }
  }
