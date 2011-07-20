@@ -58,7 +58,8 @@ public class Warps {
         config.setProperty(WarpNode(warpname, "coord.Z"), z);
         config.setProperty(WarpNode(warpname, "world"), worldname);
         config.setProperty(WarpNode(warpname, "owner"), owner);
-        config.setProperty(WarpNode(warpname, "permission"), "general");
+        String permission = (String)groups.get(0);
+        config.setProperty(WarpNode(warpname, "permission"), (String)permission);
         config.save();
         return;
     }
@@ -74,7 +75,7 @@ public class Warps {
     }
     public boolean CheckGroup (String group)
     {
-        return groups.contains(group);
+        return groups.contains((String)group);
     }
     public boolean SetWarpProp (String warpname, String key, String value)
     {

@@ -690,6 +690,7 @@ public class Parser {
     	        player.sendMessage("Usage: /warp <add|del|set|list|<warp name>> [key] [value]");
                 return true;
     	    };
+            String origc = subc;
             subc = subc.toLowerCase().toString();
             try {
                 arg = args[1];
@@ -776,8 +777,11 @@ public class Parser {
                     player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission modify this warp.");
                     return true;
                 }
-                k = k.toLowerCase().toString();
-                v = v.toLowerCase().toString();
+                // WOW I'M SUCH A FREAKING IDIOT. IT TOOK 5 BUILDS 
+                // TO FIGURE THIS SHIT OUT.
+                //
+                // k = k.toLowerCase().toString();
+                // v = v.toLowerCase().toString();
                 if (config.getProperty(plugin.warpManager.WarpNode(arg, "permission")) == null)
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] This warp does not exist.");
@@ -827,12 +831,12 @@ public class Parser {
                 }
                 return true;
             }
-            else if (config.getProperty(plugin.warpManager.WarpBase(subc)) != null)
+            else if (config.getProperty(plugin.warpManager.WarpBase(origc)) != null)
             {
                 plugin.warpManager.PlayerToWarp(player, (String)subc);
                 return true;
             }
-            else if (config.getProperty(plugin.warpManager.WarpBase(subc)) == null)
+            else if (config.getProperty(plugin.warpManager.WarpBase(origc)) == null)
             {
                 player.sendMessage(ChatColor.LIGHT_PURPLE + "[Waypoint] Warp " + subc + " does not exist.");
                 return true;
