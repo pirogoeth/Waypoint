@@ -6,9 +6,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.World;
 import org.bukkit.ChatColor;
 import java.util.logging.Logger;
+
+import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Waypoint;
 
 public class PListener extends PlayerListener {
+    // core variables
     public static Waypoint plugin;
     Logger log = Logger.getLogger("Minecraft");
     public PListener (Waypoint instance) {
@@ -32,10 +35,10 @@ public class PListener extends PlayerListener {
         double y = player.getLocation().getY();
         double z = player.getLocation().getZ();
         World w = player.getLocation().getWorld();
-        plugin.config.setProperty(HomeNodeChomp(player, w, "coord.X"), x);
-        plugin.config.setProperty(HomeNodeChomp(player, w, "coord.Y"), y);
-        plugin.config.setProperty(HomeNodeChomp(player, w, "coord.Z"), z);
-        plugin.config.save();
+        plugin.config.getUsers().setProperty(HomeNodeChomp(player, w, "coord.X"), x);
+        plugin.config.getUsers().setProperty(HomeNodeChomp(player, w, "coord.Y"), y);
+        plugin.config.getUsers().setProperty(HomeNodeChomp(player, w, "coord.Z"), z);
+        plugin.config.getUsers().save();
         if (player != null)
         {
             player.sendMessage(ChatColor.AQUA + "[Waypoint] " + player.getName().toString() + ", your home for world " + player.getWorld().getName().toString() + " has been set to the bed you just got out of.");

@@ -9,21 +9,25 @@ import org.bukkit.Location;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.util.config.Configuration;
+
+import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Waypoint;
 
 public class Warps {
     public static Waypoint plugin;
+    public static Config c;
     public static Configuration config;
     public static Logger log = Logger.getLogger("Minecraft");
     public List<String> groups;
     public Warps (Waypoint instance)
     {
         plugin = instance;
-        config = plugin.config;
+        c = plugin.config;
+        config = c.getWarp();
     }
     public void LoadGroups ()
     {
-        groups = config.getStringList("warp.groups", null);
+        groups = c.getMain().getStringList("warp.permissions", null);
         Iterator<String> i = groups.iterator();
         StringBuffer s = new StringBuffer(i.next());
         while (i.hasNext()) { s.append(", ").append(i.next()); }

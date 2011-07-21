@@ -1,0 +1,200 @@
+package me.pirogoeth.Waypoint.Util;
+
+import org.bukkit.util.config.Configuration;
+import org.bukkit.util.config.ConfigurationNode;
+import java.io.File;
+import java.util.logging.Logger;
+import java.util.Map;
+import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
+
+import me.pirogoeth.Waypoint.Waypoint;
+
+public class Config {
+    // main vars
+    public static Waypoint plugin;
+    public static Logger log = Logger.getLogger("Minecraft");
+    public static String maindir = "plugins/Waypoint";
+    // Configuration variables
+    public static Configuration main;
+    public static Configuration warps;
+    public static Configuration users;
+    public static Configuration spawn;
+    public static Configuration home;
+    // File variables
+    public static File mainf;
+    public static File spawnf;
+    public static File usersf;
+    public static File homef;
+    public static File warpsf;
+    // constructor
+    public Config (Waypoint instance)
+    {
+        plugin = instance;
+        new File(maindir).mkdir();
+    }
+    // File() creator
+    private static File getFile(String fname)
+    {
+        File f = new File(maindir + File.separator + (String)fname);
+        return f;
+    }
+    // initialise the Configuration setup
+    public static boolean initialise ()
+    {
+        log.info("[Waypoint] Initialising configurations.");
+        // load all of the config files
+        try {
+            mainf = getFile("config.yml");
+            warpsf = getFile("warps.yml");
+            usersf = getFile("users.yml");
+            spawnf = getFile("spawn.yml");
+            homef = getFile("home.yml");
+        }
+        catch (Exception e) {
+            return false;
+        }
+        // instantiate the Configuration objects
+        try {
+            main = new Configuration(mainf);
+            warps = new Configuration(warpsf);
+            users = new Configuration(usersf);
+            spawn = new Configuration(spawnf);
+            home = new Configuration(homef);
+        }
+        catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+    public static void load()
+    {
+        // load all of the configurations
+        log.info("[Waypoint] Reading configurations.");
+        main.load();
+        warps.load();
+        users.load();
+        spawn.load();
+        home.load();
+        // check if we need to convert from config format 1.4 to 1.5
+        if (main.getProperty("warp.groups") != null)
+        {
+            // ok, we're going to convert the config to the new format. easy.
+            ConfigurationNode u;
+            Map<String, Object> a;
+            log.info("[Waypoint] Configuration version 1.4 detected! Converting to new version 1.5");
+            // start with the users.
+            u = main.getNode("users");
+            a = u.getAll();
+            for (Map.Entry<String, Object> entry : a.entrySet())
+            {
+                users.setProperty(String.format("users.%s", entry.getKey()), entry.getValue());
+            }
+            main.removeProperty("users");
+            log.info("[Waypoint] Converted users.");
+            // now invites
+            u = main.getNode("invites");
+            a = u.getAll();
+            for (Map.Entry<String, Object> entry : a.entrySet())
+            {
+                users.setProperty(String.format("invites.%s", entry.getKey()), entry.getValue());
+            }
+            log.info("[Waypoint] Converted invites.");
+            main.removeProperty("invites");
+            // convert warps
+            u = main.getNode("warps");
+            a = u.getAll();
+            for (Map.Entry<String, Object> entry : a.entrySet())
+            {
+                users.setProperty(String.format("warps.%s", entry.getKey()), entry.getValue());
+            }
+            log.info("[Waypoint] Converted warps.");
+            main.removeProperty("warps");
+            // convert homes
+            u = main.getNode("home");
+            a = u.getAll();
+            for (Map.Entry<String, Object> entry : a.entrySet())
+            {
+                users.setProperty(String.format("home.%s", entry.getKey()), entry.getValue());
+            }
+            log.info("[Waypoint] Converted homes.");
+            main.removeProperty("home");
+            // convert warp permissions
+            List<String> p = main.getStringList("warp.groups", null);
+            main.removeProperty("warp");
+            main.setProperty("warp.permissions", p);
+            // convert spawns
+            u = main.getNode("spawn");
+            a = u.getAll();
+            for (Map.Entry<String, Object> entry : a.entrySet())
+            {
+                users.setProperty(String.format("spawn.%s", entry.getKey()), entry.getValue());
+            }
+            log.info("[Waypoint] Converted spawn, saving configurations.");
+            main.removeProperty("spawn");
+            log.info("[Waypoint] Configuration successfully converted to version 1.5, writing main defaults.");
+            // set the new main defaults
+            main.setProperty("version", "1.5");
+            main.setProperty("home.set_home_at_bed", "false");
+            log.info("[Waypoint] Main configuration defaults have been set.");
+        }
+        // check if we need to write the defaults.
+        if ((String)main.getProperty("version") != "1.5" || (String)main.getProperty("version") == null)
+        {
+            log.info("[Waypoint] Writing default config values.");
+            // main
+            main.setProperty("version", "1.5");
+            // home settings
+            main.setProperty("home.set_home_at_bed", "false");
+            // warp permission groups
+            List<String> warpgroups = new ArrayList<String>();
+            warpgroups.add("Default");
+            warpgroups.add("Mod");
+            warpgroups.add("Admin");
+            main.setProperty("warp.permissions", warpgroups);
+            // warp settings
+            main.setProperty("warp.traverse_world_only", "false");
+            main.setProperty("warp.case_sensitive_tp", "true");
+            log.info("[Waypoint] Wrote defaults.");
+            main.save();
+        }
+        log.info("[Waypoint] Configurations succesfully loaded.");
+        return;
+    }
+    public static void save ()
+    {
+        // use the save() method of all of the Configuration instances.
+        main.save();
+        users.save();
+        warps.save();
+        spawn.save();
+        home.save();
+        log.info("[Waypoint] Saved all configurations.");
+    }
+    public static Configuration getMain ()
+    {
+        // returns the Configuration object for the main config file
+        return (Configuration) main;
+    }
+    public static Configuration getWarp ()
+    {
+        // returns the Configuration object for the warps config file
+        return (Configuration) warps;
+    }
+    public static Configuration getUsers ()
+    {
+        // returns the Configuration object for the users config file
+        return (Configuration) users;
+    }
+    public static Configuration getSpawn ()
+    {
+        // returns the Configuration object for the spawn config file
+        return (Configuration) spawn;
+    }
+    public static Configuration getHome ()
+    {
+        // returns the Configuration object for the home config file
+        return (Configuration) home;
+    }
+}

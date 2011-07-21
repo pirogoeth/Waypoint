@@ -8,16 +8,26 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
+
 import me.pirogoeth.Waypoint.Waypoint;
+import me.pirogoeth.Waypoint.Util.Config;
 
 public class Parser {
     public static Waypoint plugin;
-    public static Configuration config;
+    public static Config c;
+    public static Configuration main;
+    public static Configuration users;
+    public static Configuration home;
+    public static Configuration warp;
     public static Logger log = Logger.getLogger("Minecraft");
     public Parser (Waypoint instance)
     {
     	plugin = instance;
-    	config = plugin.config;
+    	c = plugin.config;
+    	users = c.getUsers();
+    	home = c.getHome();
+    	main = c.getMain();
+    	warp = c.getWarp();
     }
     public static String BaseNodeChomp(Player p, String node)
     {
@@ -44,7 +54,7 @@ public class Parser {
         Map<String, Object> a = node.getAll();
         for (Map.Entry<String, Object> entry : a.entrySet())
         {
-            config.setProperty(path + "." + entry.getKey(), entry.getValue());
+            users.setProperty(path + "." + entry.getKey(), entry.getValue());
             // debug
             // log.info("Key: " + entry.getKey() + " Value: " + (String)entry.getValue().toString());
         }
@@ -53,10 +63,10 @@ public class Parser {
     public static boolean CheckPointExists(Player p, String point)
     {
         String a = "users." + p.getName().toString() + "." + point;
-        if (config.getProperty(a + ".coord") == null)
+        if (users.getProperty(a + ".coord") == null)
         {
             return false;
-        } else if (config.getProperty(a + ".coord") != null)
+        } else if (users.getProperty(a + ".coord") != null)
         {
             return true;
         } else
@@ -92,18 +102,18 @@ public class Parser {
 	            return true;
 	        }
             	// code
-            	if (config.getProperty(UserNodeChomp(player, arg, "world")) != null)
+            	if (users.getProperty(UserNodeChomp(player, arg, "world")) != null)
             	{
             		player.sendMessage("[Waypoint] Point '" + arg + "' already exists!");
             		return true;
             	}
-            	config.setProperty(UserNodeChomp(player, arg, "coord.X"), player.getLocation().getX());
-            	config.setProperty(UserNodeChomp(player, arg, "coord.Y"), player.getLocation().getY());
-            	config.setProperty(UserNodeChomp(player, arg, "coord.Z"), player.getLocation().getZ());
+            	users.setProperty(UserNodeChomp(player, arg, "coord.X"), player.getLocation().getX());
+            	users.setProperty(UserNodeChomp(player, arg, "coord.Y"), player.getLocation().getY());
+            	users.setProperty(UserNodeChomp(player, arg, "coord.Z"), player.getLocation().getZ());
             	// config.setProperty(UserNodeChomp(player, arg, "coord.pitch"), player.getLocation().getPitch());
             	// config.setProperty(UserNodeChomp(player, arg, "coord.yaw"), player.getLocation().getYaw());
-            	config.setProperty(UserNodeChomp(player, arg, "world"), player.getLocation().getWorld().getName().toString());
-            	config.save();
+            	users.setProperty(UserNodeChomp(player, arg, "world"), player.getLocation().getWorld().getName().toString());
+            	users.save();
             	player.sendMessage(ChatColor.GREEN + "[Waypoint] Set point '" + arg + "' in world '" + player.getLocation().getWorld().getName().toString() + "'.");
             	return true;
             }
@@ -114,15 +124,14 @@ public class Parser {
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command."); 
 	            return true;
 	        }
-            	// code
-            	if (config.getProperty(UserNodeChomp(player, arg, "world")) == null)
+            	if (users.getProperty(UserNodeChomp(player, arg, "world")) == null)
             	{
-            		player.sendMessage(ChatColor.RED + "[Waypoint] Point '" + arg + "' does not exist!");
-            		return true;
+                    player.sendMessage(ChatColor.RED + "[Waypoint] Point '" + arg + "' does not exist!");
+                    return true;
             	}
-            	config.removeProperty("users." + player.getName().toString() + "." + arg);
+            	users.removeProperty("users." + player.getName().toString() + "." + arg);
             	player.sendMessage("[Waypoint] Point '" + arg + "' has been deleted.");
-            	config.save();
+            	users.save();
             	return true;
             }
             else if (subc.equalsIgnoreCase("tp") || subc.equalsIgnoreCase("teleport"))
@@ -133,15 +142,15 @@ public class Parser {
 	            return true;
 	        }
             	// code
-            	if (config.getProperty(UserNodeChomp(player, arg, "world")) == null)
+            	if (users.getProperty(UserNodeChomp(player, arg, "world")) == null)
             	{
             		player.sendMessage(ChatColor.RED + "[Waypoint] Point '" + arg + "' does not exist!");
             		return true;
             	}
-            	World w = plugin.getServer().getWorld(config.getProperty(UserNodeChomp(player, arg, "world")).toString());
-            	double x = (Double) config.getProperty(UserNodeChomp(player, arg, "coord.X"));
-                double y = (Double) config.getProperty(UserNodeChomp(player, arg, "coord.Y"));
-                double z = (Double) config.getProperty(UserNodeChomp(player, arg, "coord.Z"));
+            	World w = plugin.getServer().getWorld(users.getProperty(UserNodeChomp(player, arg, "world")).toString());
+            	double x = (Double) users.getProperty(UserNodeChomp(player, arg, "coord.X"));
+                double y = (Double) users.getProperty(UserNodeChomp(player, arg, "coord.Y"));
+                double z = (Double) users.getProperty(UserNodeChomp(player, arg, "coord.Z"));
     		// final float pitch = (Float) config.getProperty(UserNodeChomp(player, arg, "coord.pitch"));
     		// final float yaw = (Float) config.getProperty(UserNodeChomp(player, arg, "coord.yaw"));
     		Location l = new Location(w, x, y, z);
@@ -183,13 +192,13 @@ public class Parser {
                     player.sendMessage(ChatColor.RED + "You do not own a point named '" + point + "'.");
                     return true;
                 }
-                ConfigurationNode node = config.getNode(BaseNodeChomp(player, point));
+                ConfigurationNode node = users.getNode(BaseNodeChomp(player, point));
                 TransferNode(InviteNodeChomp(p, point), node);
                 p.sendMessage(ChatColor.AQUA + "[Waypoint] Player " + player.getName().toString() + " has invited you to use their waypoint '" + point + "'.");
                 p.sendMessage(ChatColor.GREEN + "Type /wp accept " + point + " to accept their invite.");
                 p.sendMessage(ChatColor.GREEN + "Or type /wp decline " + point + " to decline the invite.");
                 player.sendMessage(ChatColor.AQUA + "[Waypoint] Sent invite to " + p.getName().toString() + ".");
-                config.save();
+                users.save();
                 return true;
 	    }
 	    else if (subc.equalsIgnoreCase("accept"))
@@ -199,16 +208,16 @@ public class Parser {
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
 	            return true;
 	        }
-	        if (config.getProperty(InviteNodeChomp(player, arg)) == null)
+	        if (users.getProperty(InviteNodeChomp(player, arg)) == null)
 	        {
 	            player.sendMessage(ChatColor.RED + "[Waypoint] You have no point invite by that name.");
 	            return true;
 	        }
-	        ConfigurationNode n = config.getNode(InviteNodeChomp(player, arg));
-	        config.removeProperty(InviteNodeChomp(player, arg));
+	        ConfigurationNode n = users.getNode(InviteNodeChomp(player, arg));
+	        users.removeProperty(InviteNodeChomp(player, arg));
 	        TransferNode(BaseNodeChomp(player, arg), n);
                 player.sendMessage(ChatColor.AQUA + "[Waypoint] The point '" + arg + "' is now available in your collection.");
-	        config.save();
+	        users.save();
 	    }
 	    else if (subc.equalsIgnoreCase("decline"))
 	    {
@@ -217,14 +226,14 @@ public class Parser {
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
 	            return true;
 	        }
-	        if (config.getProperty(InviteNodeChomp(player, arg)) == null)
+	        if (users.getProperty(InviteNodeChomp(player, arg)) == null)
 	        {
 	            player.sendMessage(ChatColor.RED + "[Waypoint] You have no point invite by that name.");
 	            return true;
 	        }
-	        config.removeProperty(InviteNodeChomp(player, arg));
+	        users.removeProperty(InviteNodeChomp(player, arg));
 	        player.sendMessage(ChatColor.AQUA + "[Waypoint] The point invitation '" + arg + "' has been declined.");
-	        config.save();
+	        users.save();
 	    }
             else if (subc.equalsIgnoreCase("list"))
             {
@@ -232,13 +241,13 @@ public class Parser {
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                     return true;
 	        }
-	        if (config.getProperty("users." + player.getName().toString()) == null)
+	        if (users.getProperty("users." + player.getName().toString()) == null)
 	        {
 	            player.sendMessage(ChatColor.RED + "[Waypoint] You do not have any points to list.");
 	            return true;
 	        }
             	player.sendMessage(ChatColor.YELLOW + "====[Waypoint] Point list:====");
-            	Map<String, ConfigurationNode> a = config.getNodes("users." + player.getName());
+            	Map<String, ConfigurationNode> a = users.getNodes("users." + player.getName());
             	if (a.size() == 0)
             	{
             	    player.sendMessage(ChatColor.AQUA + " - No points have been created.");
@@ -260,15 +269,15 @@ public class Parser {
             	double x = player.getLocation().getX();
                 double y = player.getLocation().getY();
                 double z = player.getLocation().getZ();
-                config.setProperty(UserNodeChomp(player, "testnode", "coord.X"), x);
-                config.setProperty(UserNodeChomp(player, "testnode", "coord.Y"), y);
-                config.setProperty(UserNodeChomp(player, "testnode", "coord.Z"), z);
-                config.save();
-                ConfigurationNode n = config.getNode(UserNodeChomp(player, "testnode", "coord"));
+                users.setProperty(UserNodeChomp(player, "testnode", "coord.X"), x);
+                users.setProperty(UserNodeChomp(player, "testnode", "coord.Y"), y);
+                users.setProperty(UserNodeChomp(player, "testnode", "coord.Z"), z);
+                users.save();
+                ConfigurationNode n = users.getNode(UserNodeChomp(player, "testnode", "coord"));
                 TransferNode(UserNodeChomp(player, "testnode", "coord"), n);
-                config.save();
-                config.removeProperty(BaseNodeChomp(player, "testnode"));
-                config.save();
+                users.save();
+                users.removeProperty(BaseNodeChomp(player, "testnode"));
+                users.save();
                 log.info("Configuration node nesting test successful.");
                 return true;
             }
@@ -300,26 +309,26 @@ public class Parser {
     	        subc = args[0];
     	    }
             catch (java.lang.ArrayIndexOutOfBoundsException e) {
-                if (config.getProperty(HomeNodeChomp(player, player.getWorld(), "coord.X")) != null)
+                if (home.getProperty(HomeNodeChomp(player, player.getWorld(), "coord.X")) != null)
                 {
                     World w = player.getWorld();
-                    double x = (Double)config.getProperty(HomeNodeChomp(player, w, "coord.X"));
-                    double y = (Double)config.getProperty(HomeNodeChomp(player, w, "coord.Y"));
-                    double z = (Double)config.getProperty(HomeNodeChomp(player, w, "coord.Z"));
+                    double x = (Double)home.getProperty(HomeNodeChomp(player, w, "coord.X"));
+                    double y = (Double)home.getProperty(HomeNodeChomp(player, w, "coord.Y"));
+                    double z = (Double)home.getProperty(HomeNodeChomp(player, w, "coord.Z"));
                     Location l = new Location(w, x, y, z);
                     player.setCompassTarget(l);
                     player.teleport(l);
                     player.sendMessage(ChatColor.GREEN + "Welcome home, " + player.getName().toString() + ".");
                     return true;
                 }
-                else if (config.getProperty(HomeNodeChomp(player, player.getWorld(), "coord.X")) == null)
+                else if (home.getProperty(HomeNodeChomp(player, player.getWorld(), "coord.X")) == null)
                 {
                     World w = player.getWorld();
-                    config.setProperty(HomeNodeChomp(player, w, "coord.X"), player.getLocation().getX());
-                    config.setProperty(HomeNodeChomp(player, w, "coord.Y"), player.getLocation().getY());
-                    config.setProperty(HomeNodeChomp(player, w, "coord.Z"), player.getLocation().getZ());
+                    home.setProperty(HomeNodeChomp(player, w, "coord.X"), player.getLocation().getX());
+                    home.setProperty(HomeNodeChomp(player, w, "coord.Y"), player.getLocation().getY());
+                    home.setProperty(HomeNodeChomp(player, w, "coord.Z"), player.getLocation().getZ());
                     player.sendMessage(ChatColor.AQUA + "[Waypoint] Your home point for world " + w.getName().toString() + " was not set, so it was automatically set to the point you are currently at now.");
-                    config.save();
+                    home.save();
                     return true;
                 }
             };
@@ -331,12 +340,12 @@ public class Parser {
                     player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                     return true;
                 }
-                config.setProperty(HomeNodeChomp(player, w, "world"), player.getWorld().getName().toString());
-                config.setProperty(HomeNodeChomp(player, w, "coord.X"), player.getLocation().getX());
-                config.setProperty(HomeNodeChomp(player, w, "coord.Y"), player.getLocation().getY());
-                config.setProperty(HomeNodeChomp(player, w, "coord.Z"), player.getLocation().getZ());
+                home.setProperty(HomeNodeChomp(player, w, "world"), player.getWorld().getName().toString());
+                home.setProperty(HomeNodeChomp(player, w, "coord.X"), player.getLocation().getX());
+                home.setProperty(HomeNodeChomp(player, w, "coord.Y"), player.getLocation().getY());
+                home.setProperty(HomeNodeChomp(player, w, "coord.Z"), player.getLocation().getZ());
                 player.sendMessage(ChatColor.AQUA + "[Waypoint] Your home location has been set.");
-                config.save();
+                home.save();
                 return true;
             }
             else if (subc.equalsIgnoreCase("help"))
@@ -346,7 +355,7 @@ public class Parser {
             	player.sendMessage(ChatColor.RED + "   with args, will teleport you to your home.");
             	player.sendMessage(ChatColor.RED + "   set - sets your home to the location you are currently standing at.");
             	player.sendMessage(ChatColor.GREEN + "ways to set your home:");
-            	if (config.getProperty("set_home_at_bed") == "true") { player.sendMessage(ChatColor.RED + "getting into a bed will set your home to the position of that bed."); };
+            	if (main.getProperty("home.set_home_at_bed") == "true") { player.sendMessage(ChatColor.RED + "getting into a bed will set your home to the position of that bed."); };
             	player.sendMessage(ChatColor.RED + "typing /home without having a home already set.");
             	player.sendMessage(ChatColor.RED + "typing /home set.");
             	return true;
@@ -605,7 +614,7 @@ public class Parser {
                     player.sendMessage(ChatColor.RED + "/warpadmin del <warpname>");
                     return true;
                 }
-                if (config.getProperty(plugin.warpManager.WarpBase(arg)) == null)
+                if (warp.getProperty(plugin.warpManager.WarpBase(arg)) == null)
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] There is no warp by that name.");
                     return true;
@@ -646,7 +655,7 @@ public class Parser {
                 //    player.sendMessage(ChatColor.BLUE + " - permission -- who can use this warp.");
                 //    return true;
                 // }
-                String owner = (String) config.getProperty(plugin.warpManager.WarpNode(arg, "owner"));
+                String owner = (String) warp.getProperty(plugin.warpManager.WarpNode(arg, "owner"));
                 if (!owner.equals(player.getName().toString()))
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission modify this warp.");
@@ -654,7 +663,7 @@ public class Parser {
                 }
                 k = k.toLowerCase().toString();
                 v = v.toLowerCase().toString();
-                if (config.getProperty(plugin.warpManager.WarpNode(arg, "permission")) == null)
+                if (warp.getProperty(plugin.warpManager.WarpNode(arg, "permission")) == null)
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] This warp does not exist.");
                     return true;
@@ -729,12 +738,12 @@ public class Parser {
                     player.sendMessage(ChatColor.RED + "/warp del <warpname>");
                     return true;
                 }
-                if (config.getProperty(plugin.warpManager.WarpBase(arg)) == null)
+                if (warp.getProperty(plugin.warpManager.WarpBase(arg)) == null)
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] There is no warp by that name.");
                     return true;
                 }
-                String owner = (String)config.getProperty(plugin.warpManager.WarpNode(arg, "owner"));
+                String owner = (String)warp.getProperty(plugin.warpManager.WarpNode(arg, "owner"));
                 if (!plugin.permissions.has(player, "waypoint.warp.delete") || !owner.equals(player.getName().toString()))
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission to use this command.");
@@ -771,7 +780,7 @@ public class Parser {
                 //    player.sendMessage(ChatColor.BLUE + " - permission -- who can use this warp.");
                 //    return true;
                 // }
-                String owner = (String) config.getProperty(plugin.warpManager.WarpNode(arg, "owner"));
+                String owner = (String) warp.getProperty(plugin.warpManager.WarpNode(arg, "owner"));
                 if (!owner.equals(player.getName().toString()))
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission modify this warp.");
@@ -782,7 +791,7 @@ public class Parser {
                 //
                 // k = k.toLowerCase().toString();
                 // v = v.toLowerCase().toString();
-                if (config.getProperty(plugin.warpManager.WarpNode(arg, "permission")) == null)
+                if (warp.getProperty(plugin.warpManager.WarpNode(arg, "permission")) == null)
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] This warp does not exist.");
                     return true;
@@ -808,7 +817,7 @@ public class Parser {
                     return true;
                 }
                 Map<String, ConfigurationNode> a;
-                a = config.getNodes("warps");
+                a = warp.getNodes("warps");
                 if (a == null || a.size() == 0)
                 {
                    player.sendMessage(ChatColor.YELLOW + "[Waypoint] There are currently no warps to be displayed.");
@@ -831,14 +840,14 @@ public class Parser {
                 }
                 return true;
             }
-            else if (config.getProperty(plugin.warpManager.WarpBase(origc)) != null)
+            else if (warp.getProperty(plugin.warpManager.WarpBase(origc)) != null)
             {
-                plugin.warpManager.PlayerToWarp(player, (String)subc);
+                plugin.warpManager.PlayerToWarp(player, (String)origc);
                 return true;
             }
-            else if (config.getProperty(plugin.warpManager.WarpBase(origc)) == null)
+            else if (warp.getProperty(plugin.warpManager.WarpBase(origc)) == null)
             {
-                player.sendMessage(ChatColor.LIGHT_PURPLE + "[Waypoint] Warp " + subc + " does not exist.");
+                player.sendMessage(ChatColor.LIGHT_PURPLE + "[Waypoint] Warp " + origc + " does not exist.");
                 return true;
             }
         }

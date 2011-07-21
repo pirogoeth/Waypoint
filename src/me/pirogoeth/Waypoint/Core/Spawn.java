@@ -7,16 +7,20 @@ import org.bukkit.Location;
 import java.util.List;
 import java.util.Iterator;
 import java.util.logging.Logger;
+
+import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Waypoint;
 
 public class Spawn {
     public static Waypoint plugin;
+    public static Config c;
     public static Configuration config;
     Logger log = Logger.getLogger("Minecraft");
     public Spawn (Waypoint instance)
     {
         plugin = instance;
-        config = plugin.config;
+        c = plugin.config;
+        config = c.getSpawn();
     }
     public static String SNodeChomp (World world, String subnode)
     {

@@ -20,6 +20,7 @@ import java.io.File;
 // various core utilities
 import me.pirogoeth.Waypoint.Util.Permission;
 import me.pirogoeth.Waypoint.Util.PlayerUtil;
+import me.pirogoeth.Waypoint.Util.Config;
 // basic listeners
 import me.pirogoeth.Waypoint.Events.PListener;
 // core support classes
@@ -31,15 +32,12 @@ import me.pirogoeth.Waypoint.Core.Warps;
 public class Waypoint extends JavaPlugin {
     // permission stuff
     public Permission permissions;
+    // configuration
+    public Config config = new Config(this);
     // unused due to fail : public WaypointOpHandler opHandler = new WaypointOpHandler(this);
     private final PListener playerListener = new PListener(this);
-    // file stuff
-    public static String maindir = "plugins/Waypoint";
-    public static File configfile = new File (maindir + File.separator + "config.yml");
     // logger
     Logger log = Logger.getLogger("Minecraft");
-    // configuration
-    public Configuration config = new Configuration(configfile);
     // command parsing
     private final Parser commandParser = new Parser(this);
     // additional stuff
@@ -47,27 +45,7 @@ public class Waypoint extends JavaPlugin {
     public final Warps warpManager = new Warps(this);
     // plug-in code
     public void onEnable () {
-    	new File(maindir).mkdir();
-    	config.load();
-    	if (config.getProperty("set_home_at_bed") == null)
-    	{
-    		config.setProperty("set_home_at_bed", "false");
-    		config.setProperty("users", "");
-    		config.setProperty("home", "");
-    		config.setProperty("spawn", "");
-    		config.setProperty("warps", "");
-    		// warp access group config
-                List<String> warpgroups = new ArrayList<String>();
-                warpgroups.add("general");
-                warpgroups.add("mod");
-                warpgroups.add("admin");
-                // end warp access group config
-    		config.setProperty("warp.groups", warpgroups);
-    		config.setProperty("invites", "");
-    		config.save();
-    		spawnManager.ConfigWriteSpawnLocations();
-    	}
-     	if ((String)config.getString("set_home_at_bed") == "true");
+     	if ((String)config.getMain().getString("home.set_home_at_bed") == "true");
     	{
     	    getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_LEAVE, playerListener, Event.Priority.Normal, this);
     	    log.info("[Waypoint] Set home to bed is enabled.");
