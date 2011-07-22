@@ -101,17 +101,27 @@ public class Parser {
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command."); 
 	            return true;
 	        }
-            	// code
             	if (users.getProperty(UserNodeChomp(player, arg, "world")) != null)
             	{
             		player.sendMessage("[Waypoint] Point '" + arg + "' already exists!");
             		return true;
             	}
+            	// position
             	users.setProperty(UserNodeChomp(player, arg, "coord.X"), player.getLocation().getX());
             	users.setProperty(UserNodeChomp(player, arg, "coord.Y"), player.getLocation().getY());
             	users.setProperty(UserNodeChomp(player, arg, "coord.Z"), player.getLocation().getZ());
-            	// config.setProperty(UserNodeChomp(player, arg, "coord.pitch"), player.getLocation().getPitch());
-            	// config.setProperty(UserNodeChomp(player, arg, "coord.yaw"), player.getLocation().getYaw());
+            	// eye direction
+            	// not needed anymore: users.setProperty(UserNodeChomp(player, arg, "coord.pitch"), player.getLocation().getPitch());
+            	//  users.setProperty(UserNodeChomp(player, arg, "coord.yaw"), player.getLocation().getYaw());
+            	// number tests
+            	//  log.info("" + String.format("Pitch: %s, Yaw: %s", player.getLocation().getPitch(), player.getLocation().getYaw()));
+            	//  double pa = new Double(player.getLocation().getPitch());
+            	//  double ya = new Double(player.getLocation().getYaw());
+            	//  float pb = new Float(player.getLocation().getPitch());
+            	//  float yb = new Float(player.getLocation().getYaw());
+            	//  log.info("" + String.format("DPitch: %s, DYaw: %s", pa, ya));
+            	//  log.info("" + String.format("FPitch: %s, FYaw: %s", pb, yb));
+            	// current world
             	users.setProperty(UserNodeChomp(player, arg, "world"), player.getLocation().getWorld().getName().toString());
             	users.save();
             	player.sendMessage(ChatColor.GREEN + "[Waypoint] Set point '" + arg + "' in world '" + player.getLocation().getWorld().getName().toString() + "'.");
@@ -141,7 +151,6 @@ public class Parser {
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
 	            return true;
 	        }
-            	// code
             	if (users.getProperty(UserNodeChomp(player, arg, "world")) == null)
             	{
             		player.sendMessage(ChatColor.RED + "[Waypoint] Point '" + arg + "' does not exist!");
@@ -151,17 +160,18 @@ public class Parser {
             	double x = (Double) users.getProperty(UserNodeChomp(player, arg, "coord.X"));
                 double y = (Double) users.getProperty(UserNodeChomp(player, arg, "coord.Y"));
                 double z = (Double) users.getProperty(UserNodeChomp(player, arg, "coord.Z"));
-    		// final float pitch = (Float) config.getProperty(UserNodeChomp(player, arg, "coord.pitch"));
-    		// final float yaw = (Float) config.getProperty(UserNodeChomp(player, arg, "coord.yaw"));
+    		// no longer needed: final float p = new Float(users.getString(UserNodeChomp(player, arg, "coord.pitch")));
+    		//  final float p = new Float("1");
+    		//  float yw = new Float(users.getString(UserNodeChomp(player, arg, "coord.yaw")));
     		Location l = new Location(w, x, y, z);
                 boolean su = player.teleport(l);
                 if (su == true)
                 {
-                	player.sendMessage("[Waypoint] Successfully teleported to '" + arg + "'.");
+                	player.sendMessage(ChatColor.AQUA + "[Waypoint] Successfully teleported to '" + arg + "'.");
                 	return true;
                 } else if (su == false)
                 {
-                	player.sendMessage("[Waypoint] Error while teleporting to '" + arg + "'.");
+                	player.sendMessage(ChatColor.RED + "[Waypoint] Error while teleporting to '" + arg + "'.");
                 	return true;
                 }
                 return true;
@@ -816,6 +826,7 @@ public class Parser {
                     player.sendMessage(ChatColor.RED + "[Waypoint] You do not have the permission to access this command.");
                     return true;
                 }
+                int x = 0;
                 Map<String, ConfigurationNode> a;
                 a = warp.getNodes("warps");
                 if (a == null || a.size() == 0)
@@ -835,11 +846,24 @@ public class Parser {
                     }
                     if (plugin.warpManager.checkperms(player, warppermission))
                     {
-                        player.sendMessage(ChatColor.AQUA + " - " + entry.getKey());
+                        if (!player.getWorld().toString().equals((String)node.getProperty("world")) && ((String) plugin.config.getMain().getProperty("warp.list_world_only")).equals("true"))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            player.sendMessage(ChatColor.AQUA + " - " + entry.getKey());
+                        }
                     }
+                    x++;
+                }
+                if (x == 0)
+                {
+                   player.sendMessage(ChatColor.YELLOW + "[Waypoint] There are currently no warps to be displayed.");
                 }
                 return true;
             }
+            // TODO: case sensitivity check
             else if (warp.getProperty(plugin.warpManager.WarpBase(origc)) != null)
             {
                 plugin.warpManager.PlayerToWarp(player, (String)origc);

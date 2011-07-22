@@ -33,6 +33,8 @@ public class Config {
     {
         plugin = instance;
         new File(maindir).mkdir();
+        // do our configuration initialisation here.
+        initialise();
     }
     // File() creator
     private static File getFile(String fname)
@@ -107,7 +109,7 @@ public class Config {
             a = u.getAll();
             for (Map.Entry<String, Object> entry : a.entrySet())
             {
-                users.setProperty(String.format("warps.%s", entry.getKey()), entry.getValue());
+                warps.setProperty(String.format("warps.%s", entry.getKey()), entry.getValue());
             }
             log.info("[Waypoint] Converted warps.");
             main.removeProperty("warps");
@@ -116,7 +118,7 @@ public class Config {
             a = u.getAll();
             for (Map.Entry<String, Object> entry : a.entrySet())
             {
-                users.setProperty(String.format("home.%s", entry.getKey()), entry.getValue());
+                home.setProperty(String.format("home.%s", entry.getKey()), entry.getValue());
             }
             log.info("[Waypoint] Converted homes.");
             main.removeProperty("home");
@@ -129,18 +131,24 @@ public class Config {
             a = u.getAll();
             for (Map.Entry<String, Object> entry : a.entrySet())
             {
-                users.setProperty(String.format("spawn.%s", entry.getKey()), entry.getValue());
+                spawn.setProperty(String.format("spawn.%s", entry.getKey()), entry.getValue());
             }
             log.info("[Waypoint] Converted spawn, saving configurations.");
             main.removeProperty("spawn");
             log.info("[Waypoint] Configuration successfully converted to version 1.5, writing main defaults.");
+            // remove the old defaults
+            main.removeProperty("enabled");
+            main.removeProperty("set_home_at_bed");
             // set the new main defaults
             main.setProperty("version", "1.5");
             main.setProperty("home.set_home_at_bed", "false");
+            main.setProperty("warp.traverse_world_only", "false");
+            main.setProperty("warp.list_world_only", "false");
+            main.setProperty("warp.case_sensitive_tp", "true");
             log.info("[Waypoint] Main configuration defaults have been set.");
         }
         // check if we need to write the defaults.
-        if ((String)main.getProperty("version") != "1.5" || (String)main.getProperty("version") == null)
+        if ((String)main.getProperty("version") == null)
         {
             log.info("[Waypoint] Writing default config values.");
             // main
@@ -153,13 +161,28 @@ public class Config {
             warpgroups.add("Mod");
             warpgroups.add("Admin");
             main.setProperty("warp.permissions", warpgroups);
+            // write the spawn points to config file
+            plugin.spawnManager.ConfigWriteSpawnLocations();
             // warp settings
             main.setProperty("warp.traverse_world_only", "false");
+            main.setProperty("warp.list_world_only", "false");
+            // TODO: actually implement case insensitive warps
             main.setProperty("warp.case_sensitive_tp", "true");
             log.info("[Waypoint] Wrote defaults.");
             main.save();
         }
-        log.info("[Waypoint] Configurations succesfully loaded.");
+        else if (!((String)main.getProperty("version")).equals("1.5.0"))
+        {
+            // write values not entered in the 1.5 beta update, but were added during
+            // the 1.5.0 alpha testing.
+            log.info("[Waypoint] Finalizing 1.5.0 configuration.");
+            // set version
+            main.setProperty("version", "1.5.0");
+            // add config option added after 1.5-dev
+            main.setProperty("autoupdate", "false");
+            main.save();
+        }
+        log.info("[Waypoint] Configuration succesfully loaded.");
         return;
     }
     public static void save ()

@@ -1,0 +1,16 @@
+package me.pirogoeth.Waypoint.Util;
+
+import java.io.File;
+import java.security.DigestInputStream;
+
+import me.pirogoeth.Waypoint.Waypoint;
+
+public class AutoUpdate {
+    public URL source = new URL("http://maio.me/~pirogoeth/Waypoint.jar");
+    private MessageDigest md;
+    public File jar;
+    public Waypoint plugin;
+    public AutoUpdate (Waypoint instance)
+    {
+        plugin = instance;
+        jar = new File("plugins/Waypoint.jar");

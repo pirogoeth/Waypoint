@@ -21,6 +21,7 @@ import java.io.File;
 import me.pirogoeth.Waypoint.Util.Permission;
 import me.pirogoeth.Waypoint.Util.PlayerUtil;
 import me.pirogoeth.Waypoint.Util.Config;
+import me.pirogoeth.Waypoint.Util.AutoUpdate;
 // basic listeners
 import me.pirogoeth.Waypoint.Events.PListener;
 // core support classes
@@ -32,7 +33,7 @@ import me.pirogoeth.Waypoint.Core.Warps;
 public class Waypoint extends JavaPlugin {
     // permission stuff
     public Permission permissions;
-    // configuration
+    // configuration instantiation
     public Config config = new Config(this);
     // unused due to fail : public WaypointOpHandler opHandler = new WaypointOpHandler(this);
     private final PListener playerListener = new PListener(this);
@@ -43,8 +44,11 @@ public class Waypoint extends JavaPlugin {
     // additional stuff
     public final Spawn spawnManager = new Spawn(this);
     public final Warps warpManager = new Warps(this);
+    // updates
+    private final AutoUpdate updateManager = new AutoUpdate(this);
     // plug-in code
     public void onEnable () {
+     	config.load();
      	if ((String)config.getMain().getString("home.set_home_at_bed") == "true");
     	{
     	    getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_LEAVE, playerListener, Event.Priority.Normal, this);
@@ -56,10 +60,16 @@ public class Waypoint extends JavaPlugin {
     	permissions = new Permission(this);
     	log.info("[Waypoint] Enabled version " + this.getDescription().getVersion());
     	config.save();
+    	// check for updates
+    	updateManager.doUpdate();
     	warpManager.LoadGroups();
     }
     public void onDisable () {
+    	updateManager.finalise();
     	log.info("[Waypoint] Disabled version " + this.getDescription().getVersion());
+    }
+    public File fileGet () {
+        return this.getFile();
     }
     public boolean onCommand(CommandSender sender, Command cmd, String cmdlabel, String args[])
     {
