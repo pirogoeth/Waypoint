@@ -88,37 +88,65 @@ public class Config {
             log.info("[Waypoint] Configuration version 1.4 detected! Converting to new version 1.5");
             // start with the users.
             u = main.getNode("users");
-            a = u.getAll();
-            for (Map.Entry<String, Object> entry : a.entrySet())
+            if (u != null)
             {
-                users.setProperty(String.format("users.%s", entry.getKey()), entry.getValue());
+                a = u.getAll();
+                for (Map.Entry<String, Object> entry : a.entrySet())
+                {
+                    users.setProperty(String.format("users.%s", entry.getKey()), entry.getValue());
+                }
+            }
+            else
+            {
+               users.setProperty("users", "");
             }
             main.removeProperty("users");
             log.info("[Waypoint] Converted users.");
             // now invites
             u = main.getNode("invites");
-            a = u.getAll();
-            for (Map.Entry<String, Object> entry : a.entrySet())
+            if (u != null)
             {
-                users.setProperty(String.format("invites.%s", entry.getKey()), entry.getValue());
+                a = u.getAll();
+                for (Map.Entry<String, Object> entry : a.entrySet())
+                {
+                    users.setProperty(String.format("invites.%s", entry.getKey()), entry.getValue());
+                }
+            }
+            else
+            {
+                users.setProperty("invites", "");
             }
             log.info("[Waypoint] Converted invites.");
             main.removeProperty("invites");
             // convert warps
             u = main.getNode("warps");
-            a = u.getAll();
-            for (Map.Entry<String, Object> entry : a.entrySet())
+            if (u != null)
             {
-                warps.setProperty(String.format("warps.%s", entry.getKey()), entry.getValue());
+                a = u.getAll();
+                for (Map.Entry<String, Object> entry : a.entrySet())
+                {
+                    warps.setProperty(String.format("warps.%s", entry.getKey()), entry.getValue());
+                }
+            }
+            else
+            {
+                warps.setProperty("warps", "");
             }
             log.info("[Waypoint] Converted warps.");
             main.removeProperty("warps");
             // convert homes
             u = main.getNode("home");
-            a = u.getAll();
-            for (Map.Entry<String, Object> entry : a.entrySet())
+            if (u != null)
             {
-                home.setProperty(String.format("home.%s", entry.getKey()), entry.getValue());
+                a = u.getAll();
+                for (Map.Entry<String, Object> entry : a.entrySet())
+                {
+                    home.setProperty(String.format("home.%s", entry.getKey()), entry.getValue());
+                }
+            }
+            else
+            {
+                home.setProperty("home", "");
             }
             log.info("[Waypoint] Converted homes.");
             main.removeProperty("home");
@@ -128,10 +156,17 @@ public class Config {
             main.setProperty("warp.permissions", p);
             // convert spawns
             u = main.getNode("spawn");
-            a = u.getAll();
-            for (Map.Entry<String, Object> entry : a.entrySet())
+            if (u != null)
             {
-                spawn.setProperty(String.format("spawn.%s", entry.getKey()), entry.getValue());
+                a = u.getAll();
+                for (Map.Entry<String, Object> entry : a.entrySet())
+                {
+                    spawn.setProperty(String.format("spawn.%s", entry.getKey()), entry.getValue());
+                }
+            }
+            else
+            {
+                spawn.setProperty("spawn", "");
             }
             log.info("[Waypoint] Converted spawn, saving configurations.");
             main.removeProperty("spawn");
@@ -175,7 +210,7 @@ public class Config {
         {
             // write values not entered in the 1.5 beta update, but were added during
             // the 1.5.0 alpha testing.
-            log.info("[Waypoint] Finalizing 1.5.0 configuration.");
+            log.info("[Waypoint] Finalising 1.5.0 configuration.");
             // set version
             main.setProperty("version", "1.5.0");
             // add config option added after 1.5-dev
