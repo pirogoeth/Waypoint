@@ -499,7 +499,9 @@ public class Parser {
     	        player.sendMessage("Usage: /tp <target> [user]");
                 return true;
     	    };
-            subc = subc.toLowerCase().toString();
+    	    // I don't think thise should be here.
+    	    //
+            //   subc = subc.toLowerCase().toString();
             String arg = null;
             try {
             arg = args[1];
@@ -536,6 +538,38 @@ public class Parser {
                 Location l = target.getLocation();
                 p.teleport(l);
                 p.sendMessage("[Waypoint] You have been teleported by " + player.getName().toString() + ".");
+                return true;
+            }
+        }
+        else if (command.equalsIgnoreCase("tploc") || command.equalsIgnoreCase("wptploc"))
+        {
+            if (!plugin.permissions.has(player, "waypoint.teleport.location")) {
+                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                return true;
+            }
+	    String subc = "";
+            String arg = null;
+            try {
+                arg = args[1];
+            }
+            catch (java.lang.ArrayIndexOutOfBoundsException e) {
+    	        arg = null;
+            };
+            if (arg != null)
+            {
+                try {
+                    String[] d = arg.split("\\,");
+                    World w = player.getLocation().getWorld();
+                    double x = new Double(d[0]);
+                    double y = new Double(d[1]);
+                    double z = new Double(d[2]);
+                }
+                catch (java.lang.ArrayIndexOutOfBoundsException e) {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] Invalid Coordinates.");
+                    return true;
+                };
+                Location l = new Location(w, x, y, z);
+                player.teleport(l);
                 return true;
             }
         }

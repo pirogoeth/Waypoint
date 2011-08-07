@@ -11,6 +11,7 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import org.bukkit.Bukkit;
+import org.bukkit.util.config.Configuration;
 
 import me.pirogoeth.Waypoint.Waypoint;
 
@@ -18,9 +19,11 @@ public class AutoUpdate {
     public File jar;
     public Logger log = Logger.getLogger("Minecraft");
     public Waypoint plugin;
+    public Configuration main;
     public AutoUpdate (Waypoint instance)
     {
         plugin = instance;
+        main = (Configuration) plugin.config.getMain();
     }
     // borrowed from Afforess
     public void finalise () {
@@ -46,13 +49,13 @@ public class AutoUpdate {
         return -1;
     }
     protected boolean checkUpdate () {
-        if (!((String) plugin.config.getMain().getProperty("autoupdate")).equals("true")) {
+        if (!((String) main.getString("autoupdate")).equalsIgnoreCase("true")) {
            log.info("[Waypoint] Auto-update is disabled.");
            return false;
         }
         try {
             URL versionfile = new URL("http://maio.me/~pirogoeth/Waypoint.version.txt");
-            log.info("[Waypoint] Checking for updates.");
+            log.info("[Waypoint] Checking for updates..");
             BufferedReader in = new BufferedReader(new InputStreamReader(versionfile.openStream()));
             String str;
             while ((str = in.readLine()) != null) {
