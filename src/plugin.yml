@@ -1,6 +1,6 @@
 name: Waypoint
 main: me.pirogoeth.Waypoint.Waypoint
-version: 1.5.0
+version: 1.5.1
 author: pirogoeth
 commands:
     wp:
@@ -63,3 +63,9 @@ commands:
         aliases: 
             - wptphere
         permission: waypoint.teleport.here
+    tploc:
+        descript: Allows you to teleport to a set of coordinates.
+        usage: /tploc <x,y,z>
+        aliases:
+            - wptploc
+        permission: waypoint.teleport.location

@@ -432,7 +432,7 @@ public class Parser {
             subc = subc.toLowerCase().toString();
             String arg = null;
             try {
-            arg = args[1];
+                arg = args[1];
             }
             catch (java.lang.ArrayIndexOutOfBoundsException e) {
     	        arg = null;
@@ -493,7 +493,7 @@ public class Parser {
             }
 	    String subc = "";
     	    try {
-    	    subc = args[0];
+    	        subc = args[0];
             }
             catch (java.lang.ArrayIndexOutOfBoundsException e) {
     	        player.sendMessage("Usage: /tp <target> [user]");
@@ -504,7 +504,7 @@ public class Parser {
             //   subc = subc.toLowerCase().toString();
             String arg = null;
             try {
-            arg = args[1];
+                arg = args[1];
             }
             catch (java.lang.ArrayIndexOutOfBoundsException e) {
     	        arg = null;
@@ -550,26 +550,35 @@ public class Parser {
 	    String subc = "";
             String arg = null;
             try {
-                arg = args[1];
+                arg = args[0];
             }
             catch (java.lang.ArrayIndexOutOfBoundsException e) {
     	        arg = null;
             };
             if (arg != null)
             {
+                World w;
+                double x;
+                double y;
+                double z;
                 try {
                     String[] d = arg.split("\\,");
-                    World w = player.getLocation().getWorld();
-                    double x = new Double(d[0]);
-                    double y = new Double(d[1]);
-                    double z = new Double(d[2]);
+                    w = player.getLocation().getWorld();
+                    x = new Double(d[0]);
+                    y = new Double(d[1]);
+                    z = new Double(d[2]);
                 }
                 catch (java.lang.ArrayIndexOutOfBoundsException e) {
                     player.sendMessage(ChatColor.RED + "[Waypoint] Invalid Coordinates.");
                     return true;
                 };
-                Location l = new Location(w, x, y, z);
+                Location l = new Location((World) w, (Double) x, (Double) y, (Double) z);
                 player.teleport(l);
+                return true;
+            }
+            else if (arg == null)
+            {
+                player.sendMessage(ChatColor.RED + "[Waypoint] You need to provide a set of coordinates.");
                 return true;
             }
         }
