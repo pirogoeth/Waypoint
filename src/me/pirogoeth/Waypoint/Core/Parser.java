@@ -302,6 +302,13 @@ public class Parser {
             	player.sendMessage(ChatColor.RED + "   help - this message.");
             	return true;
             }
+            else if (subc.equalsIgnoreCase("eyetest"))
+            {
+                List l = player.getLineOfSight(null, 10);
+                for (Block b : l
+                player.sendMessage(s);
+                return true;
+            }
             else
             {
             	player.sendMessage("Usage: /wp <add|del|tp|list|help> [name]");
@@ -734,6 +741,24 @@ public class Parser {
                 }
                 return true;
             }
+        }
+        else if (command.equalsIgnoreCase("world") || command.equalsIgnoreCase("wpworld"))
+        {
+            if (!plugin.permissions.has(player, "waypoint.world")) {
+                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                return true;
+            }
+            String subc = "";
+            String arg = "";
+            try {
+                subc = args[0];
+            }
+            catch (java.lang.ArrayIndexOutOfBoundsException e) {
+                player.sendMesgae("Usage: /world [worldname]");
+                return true;
+            }
+        // XXX - FINISH THIS ASAP
+        // rWP - TODO!
         }
         else if (command.equalsIgnoreCase("warp") || command.equalsIgnoreCase("wpwarp"))
         {
