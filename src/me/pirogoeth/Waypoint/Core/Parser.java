@@ -1,11 +1,13 @@
 package me.pirogoeth.Waypoint.Core;
 
 import java.util.Map;
+import java.util.List;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
 
@@ -301,13 +303,6 @@ public class Parser {
             	player.sendMessage(ChatColor.RED + "   list - list the waypoints in your list.");
             	player.sendMessage(ChatColor.RED + "   help - this message.");
             	return true;
-            }
-            else if (subc.equalsIgnoreCase("eyetest"))
-            {
-                List l = player.getLineOfSight(null, 10);
-                for (Block b : l
-                player.sendMessage(s);
-                return true;
             }
             else
             {
@@ -754,11 +749,31 @@ public class Parser {
                 subc = args[0];
             }
             catch (java.lang.ArrayIndexOutOfBoundsException e) {
-                player.sendMesgae("Usage: /world [worldname]");
+                subc = null;
+            }
+            if (subc == null)
+            {
+                String worldname = (String) player.getLocation().getWorld().getName().toString();
+                player.sendMessage(ChatColor.BLUE + "You are currently in world: " + worldname);
+                String x = (String) Double.toString(player.getLocation().getX());
+                String y = (String) Double.toString(player.getLocation().getY());
+                String z = (String) Double.toString(player.getLocation().getZ());
+                player.sendMessage(ChatColor.BLUE + "Your current position is: " + x + "," + y + "," + z);
                 return true;
             }
-        // XXX - FINISH THIS ASAP
-        // rWP - TODO!
+            else if (subc != null)
+            {
+               World w = plugin.getServer().getWorld(subc);
+               if (w == null)
+               {
+                   player.sendMessage(ChatColor.RED + "[Waypoint] World " + subc + " does not exist.");
+                   return true;
+               }
+               Location wsl = w.getSpawnLocation();
+               player.teleport(wsl);
+               player.sendMessage(ChatColor.GREEN + "[Waypoint] You have been taken to the spawn of world '" + (String) w.getName().toString() + "'.");
+               return true;
+           }
         }
         else if (command.equalsIgnoreCase("warp") || command.equalsIgnoreCase("wpwarp"))
         {

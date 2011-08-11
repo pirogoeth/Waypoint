@@ -15,6 +15,12 @@ commands:
         aliases: 
             - home
         permission: waypoint.home
+    world:
+        description: Display your current world and position or teleport between worlds.
+        usage: /world [worldname]
+        aliases:
+            - wpworld
+        permissions: waypoint.world
     spawn:
         description: Teleport to world spawn points.
         usage: /spawn <world>
