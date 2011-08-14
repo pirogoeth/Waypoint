@@ -2,6 +2,7 @@ package me.pirogoeth.Waypoint.Core;
 
 import java.util.Map;
 import java.util.List;
+import java.util.Iterator;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
@@ -381,7 +382,7 @@ public class Parser {
             }
 	    String subc = "";
     	    try {
-    	    subc = args[0];
+    	        subc = args[0];
             }
             catch (java.lang.ArrayIndexOutOfBoundsException e) {
     	        player.sendMessage("Usage: /setspawn");
@@ -592,7 +593,7 @@ public class Parser {
             }
 	    String subc = "";
     	    try {
-    	    subc = args[0];
+    	        subc = args[0];
             }
             catch (java.lang.ArrayIndexOutOfBoundsException e) {
     	        player.sendMessage("Usage: /tp <target> [user]");
@@ -607,7 +608,7 @@ public class Parser {
             }
             Location l = player.getLocation();
             target.teleport(l);
-            target.sendMessage(ChatColor.GREEN + "[Waypoint] You Have been teleported to " + player.getName().toString() + ".");
+            target.sendMessage(ChatColor.GREEN + "[Waypoint] You have been teleported to " + player.getName().toString() + ".");
             return true;
         }
         else if (command.equalsIgnoreCase("setwarp") || command.equalsIgnoreCase("wpsetwarp"))
@@ -647,7 +648,8 @@ public class Parser {
     	        player.sendMessage("Usage: /warpadmin <del|set> [key] [value]");
                 return true;
     	    };
-            subc = subc.toLowerCase().toString();
+    	    // SHOULD *NOT* be here in a case sensitive situation
+            // subc = subc.toLowerCase().toString();
             try {
                 arg = args[1];
             }
@@ -683,6 +685,27 @@ public class Parser {
                 player.sendMessage(ChatColor.BLUE + "[Waypoint] Warp " + arg + " has been deleted.");
                 return true;
             }
+            else if (subc.equalsIgnoreCase("read"))
+            {
+                if (arg == null)
+                {
+                    player.sendMessage(ChatColor.RED + "/warp read <warpname>");
+                    return true;
+                }
+                ConfigurationNode a = warp.getNode(plugin.warpManager.WarpBase(arg));
+                if (a == null)
+                {
+                    player.sendMessage("[Waypoint] No warp by that name.");
+                    return true;
+                }
+                player.sendMessage(ChatColor.BLUE + "[Waypoint] Metadata for warp '" + arg + "':");
+                Map<String, Object> b = a.getAll();
+                for (Map.Entry<String, Object> entry : b.entrySet())
+                {
+                    player.sendMessage(String.format("%s  %s -> %s%s", ChatColor.GREEN, (String) entry.getKey(), ChatColor.BLUE, (String) entry.getValue().toString()));
+                }
+                return true;
+            }
             else if (subc.equalsIgnoreCase("set"))
             {
                 if (arg == null)
@@ -711,13 +734,16 @@ public class Parser {
                 //    return true;
                 // }
                 String owner = (String) warp.getProperty(plugin.warpManager.WarpNode(arg, "owner"));
-                if (!owner.equals(player.getName().toString()))
-                {
-                    player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission modify this warp.");
-                    return true;
-                }
+                // Well, this is about to get fixed. (protip, double-slashes work well. ERRYWHERE.
+                //
+                // if (!owner.equals(player.getName().toString()))
+                // {
+                //     player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission modify this warp.");
+                //     return true;
+                // }
                 k = k.toLowerCase().toString();
-                v = v.toLowerCase().toString();
+                // nope, this is stupid.
+                // v = v.toLowerCase().toString();
                 if (warp.getProperty(plugin.warpManager.WarpNode(arg, "permission")) == null)
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] This warp does not exist.");
@@ -761,6 +787,19 @@ public class Parser {
                 player.sendMessage(ChatColor.BLUE + "Your current position is: " + x + "," + y + "," + z);
                 return true;
             }
+            else if (subc.equalsIgnoreCase("list"))
+            {
+               List<World> w = plugin.getServer().getWorlds();
+               player.sendMessage(ChatColor.GREEN + "World List: ");
+               Iterator i = w.iterator();
+               World wx;
+               while (i.hasNext())
+               {
+                   wx = (World) i.next();
+                   player.sendMessage(ChatColor.GREEN + " - " + wx.getName());
+               }
+               return true;
+            }
             else if (subc != null)
             {
                World w = plugin.getServer().getWorld(subc);
@@ -793,7 +832,8 @@ public class Parser {
                 return true;
     	    };
             String origc = subc;
-            subc = subc.toLowerCase().toString();
+            // again, this is a case sensitive situation.
+            // subc = subc.toLowerCase().toString();
             try {
                 arg = args[1];
             }
@@ -924,7 +964,7 @@ public class Parser {
                     String warppermission = (String) node.getProperty("permission");
                     if (warppermission == null)
                     {
-                       player.sendMessage(ChatColor.RED + "[Waypoint] Internal error during iteration! Please report this to the author.");
+                       player.sendMessage(ChatColor.RED + "[Waypoint] You have not set any warp permission groups to your configuration.");
                        return true;
                     }
                     if (plugin.warpManager.checkperms(player, warppermission))

@@ -16,6 +16,8 @@ public class Config {
     public static Waypoint plugin;
     public static Logger log = Logger.getLogger("Minecraft");
     public static String maindir = "plugins/Waypoint";
+    // quizzical vars
+    public static boolean loaded = false;
     // Configuration variables
     public static Configuration main;
     public static Configuration warps;
@@ -175,11 +177,10 @@ public class Config {
             main.removeProperty("enabled");
             main.removeProperty("set_home_at_bed");
             // set the new main defaults
-            main.setProperty("version", "1.5");
+            main.setProperty("version", "1.5.2");
             main.setProperty("home.set_home_at_bed", "false");
             main.setProperty("warp.traverse_world_only", "false");
             main.setProperty("warp.list_world_only", "false");
-            main.setProperty("warp.case_sensitive_tp", "true");
             log.info("[Waypoint] Main configuration defaults have been set.");
         }
         // check if we need to write the defaults.
@@ -187,7 +188,7 @@ public class Config {
         {
             log.info("[Waypoint] Writing default config values.");
             // main
-            main.setProperty("version", "1.5");
+            main.setProperty("version", "1.5.2");
             // home settings
             main.setProperty("home.set_home_at_bed", "false");
             // warp permission groups
@@ -202,22 +203,22 @@ public class Config {
             main.setProperty("warp.traverse_world_only", "false");
             main.setProperty("warp.list_world_only", "false");
             // TODO: actually implement case insensitive warps
-            main.setProperty("warp.case_sensitive_tp", "true");
             log.info("[Waypoint] Wrote defaults.");
             main.save();
         }
-        else if (!((String)main.getProperty("version")).equals("1.5.0"))
+        else if (!((String)main.getProperty("version")).equals("1.5.2"))
         {
             // write values not entered in the 1.5 beta update, but were added during
             // the 1.5.0 alpha testing.
-            log.info("[Waypoint] Finalising 1.5.0 configuration.");
+            log.info("[Waypoint] Finalising 1.5.2 configuration.");
             // set version
-            main.setProperty("version", "1.5.0");
+            main.setProperty("version", "1.5.2");
             // add config option added after 1.5-dev
-            main.setProperty("autoupdate", "false");
+            main.setProperty("autoupdate", "true");
             main.save();
         }
         log.info("[Waypoint] Configuration succesfully loaded.");
+        loaded = true;
         return;
     }
     public static void save ()
@@ -229,6 +230,24 @@ public class Config {
         spawn.save();
         home.save();
         log.info("[Waypoint] Saved all configurations.");
+    }
+    // this is kinda necessary...
+    public static boolean main_check_shab_val ()
+    {
+        // returns +bool+ for correspondence in main config
+        boolean shab = main.getBoolean("home.set_home_at_bed", false);
+        if (shab == true)
+        {
+            return true;
+        }
+        else if (shab == false)
+        {
+            return false;
+        }
+        else
+        {
+            return false;
+        }
     }
     public static Configuration getMain ()
     {
