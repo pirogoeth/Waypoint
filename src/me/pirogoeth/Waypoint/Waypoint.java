@@ -28,6 +28,7 @@ import me.pirogoeth.Waypoint.Events.BedListener;
 import me.pirogoeth.Waypoint.Core.Parser;
 import me.pirogoeth.Waypoint.Core.Spawn;
 import me.pirogoeth.Waypoint.Core.Warps;
+import me.pirogoeth.Waypoint.Core.Worlds;
 
 @SuppressWarnings("unused")
 public class Waypoint extends JavaPlugin {
@@ -44,6 +45,7 @@ public class Waypoint extends JavaPlugin {
     // additional stuff
     public final Spawn spawnManager = new Spawn(this);
     public final Warps warpManager = new Warps(this);
+    public final Worlds worldManager = new Worlds(this);
     // updates
     private final AutoUpdate updateManager = new AutoUpdate(this);
     // plug-in code
@@ -60,6 +62,7 @@ public class Waypoint extends JavaPlugin {
     	// check for updates
     	updateManager.doUpdate();
     	warpManager.LoadGroups();
+    	worldManager.LoadWorlds();
     }
     public void onDisable () {
     	updateManager.finalise();

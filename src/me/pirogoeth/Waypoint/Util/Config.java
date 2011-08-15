@@ -2,6 +2,8 @@ package me.pirogoeth.Waypoint.Util;
 
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
 import java.io.File;
 import java.util.logging.Logger;
 import java.util.Map;
@@ -24,12 +26,14 @@ public class Config {
     public static Configuration users;
     public static Configuration spawn;
     public static Configuration home;
+    public static Configuration world;
     // File variables
     public static File mainf;
     public static File spawnf;
     public static File usersf;
     public static File homef;
     public static File warpsf;
+    public static File worldf;
     // constructor
     public Config (Waypoint instance)
     {
@@ -55,6 +59,7 @@ public class Config {
             usersf = getFile("users.yml");
             spawnf = getFile("spawn.yml");
             homef = getFile("home.yml");
+            worldf = getFile("world.yml");
         }
         catch (Exception e) {
             return false;
@@ -66,6 +71,7 @@ public class Config {
             users = new Configuration(usersf);
             spawn = new Configuration(spawnf);
             home = new Configuration(homef);
+            world = new Configuration(worldf);
         }
         catch (Exception e) {
             return false;
@@ -81,6 +87,13 @@ public class Config {
         users.load();
         spawn.load();
         home.load();
+        world.load();
+        // world variables
+        List<World> world_l;
+        Iterator world_l_i;
+        World world_o;
+        String world_n;
+        Environment world_e;
         // check if we need to convert from config format 1.4 to 1.5
         if (main.getProperty("warp.groups") != null)
         {
@@ -177,10 +190,39 @@ public class Config {
             main.removeProperty("enabled");
             main.removeProperty("set_home_at_bed");
             // set the new main defaults
-            main.setProperty("version", "1.5.2");
+            main.setProperty("version", "1.5.3");
+            main.setProperty("autoupdate", "true");
             main.setProperty("home.set_home_at_bed", "false");
             main.setProperty("warp.traverse_world_only", "false");
             main.setProperty("warp.list_world_only", "false");
+            // world base and currently loaded world settings
+            world_l = plugin.getServer().getWorlds();
+            world_l_i = world_l.iterator();
+            while (world_l_i.hasNext())
+            {
+                world_o = (World) world_l_i.next();
+                world_n = world_o.getName().toString();
+                world_e = world_o.getEnvironment();
+                log.info(String.format("[Waypoint] Processing world: { %s : [ENV:%s] }", world_n, (String) Integer.toString(world_e.getId())));
+                world.setProperty("world." + world_n, "");
+                switch (world_e)
+                {
+                    case NORMAL:
+                        world.setProperty("world." + world_n + ".env", "NORMAL");
+                        break;
+                    case NETHER:
+                        world.setProperty("world." + world_n + ".env", "NETHER");
+                        break;
+                    case SKYLANDS:
+                        world.setProperty("world." + world_n + ".env", "SKYLANDS");
+                        break;
+                    default:
+                        // default shall be NORMAL
+                        world.setProperty("world." + world_n + ".env", "NORMAL");
+                        break;
+                }
+            }
+            world.save();
             log.info("[Waypoint] Main configuration defaults have been set.");
         }
         // check if we need to write the defaults.
@@ -188,7 +230,8 @@ public class Config {
         {
             log.info("[Waypoint] Writing default config values.");
             // main
-            main.setProperty("version", "1.5.2");
+            main.setProperty("version", "1.5.3");
+            main.setProperty("autoupdate", "true");
             // home settings
             main.setProperty("home.set_home_at_bed", "false");
             // warp permission groups
@@ -202,20 +245,76 @@ public class Config {
             // warp settings
             main.setProperty("warp.traverse_world_only", "false");
             main.setProperty("warp.list_world_only", "false");
+            // world base and currently loaded world settings
+            world_l = plugin.getServer().getWorlds();
+            world_l_i = world_l.iterator();
+            while (world_l_i.hasNext())
+            {
+                world_o = (World) world_l_i.next();
+                world_n = world_o.getName().toString();
+                world_e = world_o.getEnvironment();
+                log.info(String.format("[Waypoint] Processing world: { %s : [ENV:%s] }", world_n, (String) Integer.toString(world_e.getId())));
+                world.setProperty("world." + world_n, "");
+                switch (world_e)
+                {
+                    case NORMAL:
+                        world.setProperty("world." + world_n + ".env", "NORMAL");
+                        break;
+                    case NETHER:
+                        world.setProperty("world." + world_n + ".env", "NETHER");
+                        break;
+                    case SKYLANDS:
+                        world.setProperty("world." + world_n + ".env", "SKYLANDS");
+                        break;
+                    default:
+                        // default shall be NORMAL
+                        world.setProperty("world." + world_n + ".env", "NORMAL");
+                        break;
+                }
+            }
+            world.save();
             // TODO: actually implement case insensitive warps
             log.info("[Waypoint] Wrote defaults.");
             main.save();
         }
-        else if (!((String)main.getProperty("version")).equals("1.5.2"))
+        else if (!((String)main.getProperty("version")).equals("1.5.3"))
         {
             // write values not entered in the 1.5 beta update, but were added during
             // the 1.5.0 alpha testing.
-            log.info("[Waypoint] Finalising 1.5.2 configuration.");
+            log.info("[Waypoint] Finalising 1.5.3 configuration.");
             // set version
-            main.setProperty("version", "1.5.2");
+            main.setProperty("version", "1.5.3");
             // add config option added after 1.5-dev
             main.setProperty("autoupdate", "true");
             main.save();
+            // world base and currently loaded world settings
+            world_l = plugin.getServer().getWorlds();
+            world_l_i = world_l.iterator();
+            while (world_l_i.hasNext())
+            {
+                world_o = (World) world_l_i.next();
+                world_n = world_o.getName().toString();
+                world_e = world_o.getEnvironment();
+                log.info(String.format("[Waypoint] Processing world: { %s : [ENV:%s] }", world_n, (String) Integer.toString(world_e.getId())));
+                world.setProperty("world." + world_n, "");
+                switch (world_e)
+                {
+                    case NORMAL:
+                        world.setProperty("world." + world_n + ".env", "NORMAL");
+                        break;
+                    case NETHER:
+                        world.setProperty("world." + world_n + ".env", "NETHER");
+                        break;
+                    case SKYLANDS:
+                        world.setProperty("world." + world_n + ".env", "SKYLANDS");
+                        break;
+                    default:
+                        // default shall be NORMAL
+                        world.setProperty("world." + world_n + ".env", "NORMAL");
+                        break;
+                }
+            }
+            world.save();
         }
         log.info("[Waypoint] Configuration succesfully loaded.");
         loaded = true;
@@ -230,24 +329,6 @@ public class Config {
         spawn.save();
         home.save();
         log.info("[Waypoint] Saved all configurations.");
-    }
-    // this is kinda necessary...
-    public static boolean main_check_shab_val ()
-    {
-        // returns +bool+ for correspondence in main config
-        boolean shab = main.getBoolean("home.set_home_at_bed", false);
-        if (shab == true)
-        {
-            return true;
-        }
-        else if (shab == false)
-        {
-            return false;
-        }
-        else
-        {
-            return false;
-        }
     }
     public static Configuration getMain ()
     {
@@ -273,5 +354,10 @@ public class Config {
     {
         // returns the Configuration object for the home config file
         return (Configuration) home;
+    }
+    public static Configuration getWorld()
+    {
+        // returns the Configuration object for the world config file
+        return (Configuration) world;
     }
 }

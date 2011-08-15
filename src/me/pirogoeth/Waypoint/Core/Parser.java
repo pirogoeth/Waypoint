@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.Location;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
@@ -607,6 +609,8 @@ public class Parser {
                 return true;
             }
             Location l = player.getLocation();
+            Vehicle target_veh = target.getVehicle();
+            target_veh.eject();
             target.teleport(l);
             target.sendMessage(ChatColor.GREEN + "[Waypoint] You have been teleported to " + player.getName().toString() + ".");
             return true;
@@ -789,6 +793,7 @@ public class Parser {
             }
             else if (subc.equalsIgnoreCase("list"))
             {
+               // @accepts [0 args]
                List<World> w = plugin.getServer().getWorlds();
                player.sendMessage(ChatColor.GREEN + "World List: ");
                Iterator i = w.iterator();
@@ -799,6 +804,21 @@ public class Parser {
                    player.sendMessage(ChatColor.GREEN + " - " + wx.getName());
                }
                return true;
+            }
+            else if (subc.equalsIgnoreCase("import"))
+            {
+                // @accepts [2 args]: worldname, environment
+                String worldname = args[1];
+                World wx = plugin.worldManager.Import(worldname, ((String) args[2]).toUpperCase());
+                if (wx == null)
+                {
+                    player.sendMessage(ChatColor.RED + "World import failed.");
+                    return true;
+                }
+                plugin.config.getWorld().setProperty("world." + worldname + ".env", args[2].toUpperCase());
+                plugin.config.save();
+                player.sendMessage(String.format("%s[Waypoint] Loaded world: { %s [ENV:%s] }", ChatColor.GREEN, worldname, args[2].toUpperCase()));
+                return true;
             }
             else if (subc != null)
             {
