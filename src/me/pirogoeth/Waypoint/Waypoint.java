@@ -24,6 +24,7 @@ import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.AutoUpdate;
 // basic listeners
 import me.pirogoeth.Waypoint.Events.BedListener;
+import me.pirogoeth.Waypoint.Events.PlayerEventListener;
 // core support classes
 import me.pirogoeth.Waypoint.Core.Parser;
 import me.pirogoeth.Waypoint.Core.Spawn;
@@ -36,8 +37,6 @@ public class Waypoint extends JavaPlugin {
     public Permission permissions;
     // configuration instantiation
     public Config config = new Config(this);
-    // unused due to fail : public WaypointOpHandler opHandler = new WaypointOpHandler(this);
-    private final BedListener bedListener = new BedListener(this);
     // logger
     Logger log = Logger.getLogger("Minecraft");
     // command parsing
@@ -46,13 +45,18 @@ public class Waypoint extends JavaPlugin {
     public final Spawn spawnManager = new Spawn(this);
     public final Warps warpManager = new Warps(this);
     public final Worlds worldManager = new Worlds(this);
+    // listeners
+    private final BedListener bedListener = new BedListener(this);
+    private final PlayerEventListener playerListener = new PlayerEventListener(this);
     // updates
     private final AutoUpdate updateManager = new AutoUpdate(this);
     // plug-in code
     public void onEnable () {
      	config.load();
         // bedListener
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_ENTER, bedListener, Event.Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_LEAVE, bedListener, Event.Priority.Normal, this);
+        // player listener
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
     	// XXX - replace setupPermissions() with a custom class to
     	//  handle all types of permissions limiting.
     	// setupPermissions();

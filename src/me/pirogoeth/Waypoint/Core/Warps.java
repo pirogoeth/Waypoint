@@ -110,13 +110,13 @@ public class Warps {
         if (checkperms(p, permission) == false)
         {
             p.sendMessage(ChatColor.RED + "[Waypoint] You do not have permissions to access this warp.");
-            return false;
+            return true;
         }
         String worldname = (String) config.getProperty(WarpNode(warpname, "world"));
         if (!p.getWorld().toString().equals(worldname) && ((String) plugin.config.getMain().getProperty("warp.traverse_world_only")).equals("true"))
         {
             p.sendMessage(ChatColor.RED + "[Waypoint] You are not allowed to warp between worlds.");
-            return false;
+            return true;
         }
         double x = (Double) config.getProperty(WarpNode(warpname, "coord.X"));
         double y = (Double) config.getProperty(WarpNode(warpname, "coord.Y"));

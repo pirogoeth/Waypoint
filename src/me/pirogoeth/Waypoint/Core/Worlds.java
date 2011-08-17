@@ -78,4 +78,41 @@ public class Worlds {
             return null;
         }
     }
+    public World Create (String worldname, String env)
+    {
+        Environment environment = Environment.valueOf(env);
+        if (!(new File(worldname).exists()) && environment != null)
+        {
+            World wx = plugin.getServer().createWorld(worldname, environment);
+            log.info(String.format("[Waypoint] Created world: { %s [ENV:%s] }", worldname, env.toUpperCase()));
+            return wx;
+        }
+        else if (environment == null)
+        {
+            return null;
+        }
+        else
+        {
+            return null;
+        }
+    }
+    public World Create (String worldname, String env, String seed_s)
+    {
+        long seed = new Long(seed_s);
+        Environment environment = Environment.valueOf(env);
+        if (!(new File(worldname).exists()) && environment != null)
+        {
+            World wx = plugin.getServer().createWorld(worldname, environment, seed);
+            log.info(String.format("[Waypoint] Created world: { %s [ENV:%s] [SEED:%s] }", worldname, env.toUpperCase(), seed_s));
+            return wx;
+        }
+        else if (environment == null)
+        {
+            return null;
+        }
+        else
+        {
+            return null;
+        }
+    }
 }

@@ -383,14 +383,6 @@ public class Parser {
                 return true;
             }
 	    String subc = "";
-    	    try {
-    	        subc = args[0];
-            }
-            catch (java.lang.ArrayIndexOutOfBoundsException e) {
-    	        player.sendMessage("Usage: /setspawn");
-                return true;
-    	    };
-            subc = subc.toLowerCase().toString();
             World w = player.getWorld();
             plugin.spawnManager.SendPlayerToSpawn(w, player);
             player.sendMessage(ChatColor.AQUA + "[Waypoint] Spawn for world " + player.getWorld().getName() + " has been set.");
@@ -610,7 +602,7 @@ public class Parser {
             }
             Location l = player.getLocation();
             Vehicle target_veh = target.getVehicle();
-            target_veh.eject();
+            if (target_veh != null) { target_veh.eject(); };
             target.teleport(l);
             target.sendMessage(ChatColor.GREEN + "[Waypoint] You have been teleported to " + player.getName().toString() + ".");
             return true;
@@ -818,6 +810,38 @@ public class Parser {
                 plugin.config.getWorld().setProperty("world." + worldname + ".env", args[2].toUpperCase());
                 plugin.config.save();
                 player.sendMessage(String.format("%s[Waypoint] Loaded world: { %s [ENV:%s] }", ChatColor.GREEN, worldname, args[2].toUpperCase()));
+                return true;
+            }
+            else if (subc.equalsIgnoreCase("create"))
+            {
+                // @accepts [2-3 args]: worldname, environment [, seed]
+                String worldname = args[1];
+                String environ = args[2];
+                String seed;
+                World wx = null;
+                try {
+                    seed = args[3];
+                }
+                catch (java.lang.ArrayIndexOutOfBoundsException e)
+                {
+                    seed = null;
+                }
+                if (seed != null)
+                {
+                    wx = plugin.worldManager.Create(worldname, environ.toUpperCase(), seed);
+                }
+                else if (seed == null)
+                {
+                    wx = plugin.worldManager.Create(worldname, environ.toUpperCase());
+                }
+                if (wx == null)
+                {
+                    player.sendMessage(String.format("%s[Waypoint] Could not create world: %s", ChatColor.RED, worldname));
+                    return true;
+                }
+                plugin.config.getWorld().setProperty("world." + worldname + ".env", environ.toUpperCase());
+                plugin.config.save();
+                player.sendMessage(String.format("%s[Waypoint] Successfully created world: { %s [ENV: %s] }", ChatColor.GREEN, worldname, environ.toUpperCase()));
                 return true;
             }
             else if (subc != null)
