@@ -55,7 +55,7 @@ public class Worlds {
             }
             else
             {
-                log.info(String.format("[Waypoint] Loaded world: { %s [ENV: %s] }", worldname, env));
+                log.info(String.format("[Waypoint] Loaded settings for world: { %s [ENV: %s] }", worldname, env));
             }
         }
         return;
@@ -66,7 +66,7 @@ public class Worlds {
         if (new File(worldname).exists() && environment != null)
         {
             World wx = plugin.getServer().createWorld(worldname, environment);
-            log.info(String.format("[Waypoint] Loaded world: { %s [ENV:%s] }", worldname, env.toUpperCase()));
+            log.info(String.format("[Waypoint] Imported world: { %s [ENV:%s] }", worldname, env.toUpperCase()));
             return wx;
         }
         else if (environment == null)

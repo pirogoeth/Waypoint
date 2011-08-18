@@ -25,11 +25,13 @@ import me.pirogoeth.Waypoint.Util.AutoUpdate;
 // basic listeners
 import me.pirogoeth.Waypoint.Events.BedListener;
 import me.pirogoeth.Waypoint.Events.PlayerEventListener;
+import me.pirogoeth.Waypoint.Events.BlockEventListener;
 // core support classes
 import me.pirogoeth.Waypoint.Core.Parser;
 import me.pirogoeth.Waypoint.Core.Spawn;
 import me.pirogoeth.Waypoint.Core.Warps;
 import me.pirogoeth.Waypoint.Core.Worlds;
+import me.pirogoeth.Waypoint.Core.Links;
 
 @SuppressWarnings("unused")
 public class Waypoint extends JavaPlugin {
@@ -45,9 +47,11 @@ public class Waypoint extends JavaPlugin {
     public final Spawn spawnManager = new Spawn(this);
     public final Warps warpManager = new Warps(this);
     public final Worlds worldManager = new Worlds(this);
+    public final Links linkManager = new Links(this);
     // listeners
     private final BedListener bedListener = new BedListener(this);
     private final PlayerEventListener playerListener = new PlayerEventListener(this);
+    private final BlockEventListener blockListener = new BlockEventListener(this);
     // updates
     private final AutoUpdate updateManager = new AutoUpdate(this);
     // plug-in code
@@ -57,6 +61,9 @@ public class Waypoint extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_LEAVE, bedListener, Event.Priority.Normal, this);
         // player listener
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
+        // block listener
+        getServer().getPluginManager().registerEvent(Event.Type.SIGN_CHANGE, blockListener, Event.Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.High, this);
     	// XXX - replace setupPermissions() with a custom class to
     	//  handle all types of permissions limiting.
     	// setupPermissions();

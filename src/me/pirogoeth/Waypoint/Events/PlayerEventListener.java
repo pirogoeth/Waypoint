@@ -3,26 +3,33 @@ package me.pirogoeth.Waypoint.Events;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.World;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.event.block.Action;
 import org.bukkit.block.Sign;
 import org.bukkit.block.BlockState;
 import org.bukkit.ChatColor;
 import java.util.logging.Logger;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import me.pirogoeth.Waypoint.Waypoint;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.Permission;
 import me.pirogoeth.Waypoint.Core.Warps;
+import me.pirogoeth.Waypoint.Core.Links;
 
 public class PlayerEventListener extends PlayerListener {
     public static Waypoint plugin;
     public static Config config;
     public static Warps warpManager;
+    public static Links linkManager;
     public Permission permissions;
     Logger log = Logger.getLogger("Minecraft");
     public PlayerEventListener (Waypoint instance)
@@ -31,6 +38,7 @@ public class PlayerEventListener extends PlayerListener {
         permissions = plugin.permissions;
         config = plugin.config;
         warpManager = plugin.warpManager;
+        linkManager = plugin.linkManager;
     }
     public void onPlayerInteract (PlayerInteractEvent event)
     {
@@ -42,7 +50,7 @@ public class PlayerEventListener extends PlayerListener {
          */
         Block clicked_b = event.getClickedBlock();
         if (clicked_b == null) { return; }; // prevents spewage of NullPointerException everywhere
-        if (clicked_b.getTypeId() == 63 || clicked_b.getTypeId() == 68)
+        if ((clicked_b.getTypeId() == 63 || clicked_b.getTypeId() == 68) && event.getAction() == Action.RIGHT_CLICK_BLOCK)
         {
             Sign clicked_s = (Sign) clicked_b.getState();
             if (!((String) clicked_s.getLine(0)).equalsIgnoreCase("[Waypoint]"))
@@ -53,6 +61,17 @@ public class PlayerEventListener extends PlayerListener {
             String target = null;
             String target_o = null;
             String wrap = null;
+            if (signtype.split("\\:")[0].equalsIgnoreCase("link"))
+            {
+                try {
+                    linkManager.PlayerBetweenNetwork(player, clicked_s, (String[]) ((Sign) clicked_b.getState()).getLines());
+                }
+                catch (NullPointerException e) {
+                    // this block is probably being broken right now.
+                    return;
+                }
+                return;
+            }
             try {
                 target = (String) clicked_s.getLine(2);
             }
@@ -60,30 +79,18 @@ public class PlayerEventListener extends PlayerListener {
             {
                 target = null;
             }
-            try {
-                wrap = (String) clicked_s.getLine(3);
-            }
-            catch (java.lang.IndexOutOfBoundsException e)
-            {
-                wrap = null;
-            }
-            if (wrap != null)
-            {
-                target_o = target;
-                target = target + wrap;
-            }
+            target_o = target;
+            target = ((String) target).replaceAll("\\p{Cntrl}", "");;
             if (signtype.equalsIgnoreCase("warp") && target_o != null)
             {
                 boolean result = warpManager.PlayerToWarp(player, target);
                 if (result == false)
                 {
                     player.sendMessage(ChatColor.BLUE + "[Waypoint] The warp name listed on this sign is invalid.");
-                    clicked_s.setLine(2, ChatColor.RED + target_o);
-                    if (wrap != null)
-                    {
-                        clicked_s.setLine(3, ChatColor.RED + wrap);
-                    }
-                    clicked_s.update();
+                    final int id = new Integer("63");
+                    ItemStack sign_dr = new ItemStack(id);
+                    clicked_b.setTypeId(0);
+                    clicked_b.getLocation().getWorld().dropItemNaturally(clicked_b.getLocation(), sign_dr);
                     return;
                 }
                 return;
@@ -94,13 +101,27 @@ public class PlayerEventListener extends PlayerListener {
                 Location world_l = null;
                 if (world_t == null)
                 {
-                    player.sendMessage(ChatColor.BLUE + "[Waypoint] The world name listed on this sign is invalid.");
-                    clicked_s.setLine(2, ChatColor.RED + target_o);
-                    if (wrap != null)
+                    // try a match in the worlds list.
+                    List<World> wlist = plugin.getServer().getWorlds();
+                    Iterator witer = wlist.iterator();
+                    World w;
+                    while (witer.hasNext())
                     {
-                        clicked_s.setLine(3, ChatColor.RED + wrap);
+                        w = (World) witer.next();
+                        if (w.getName().toString().contains(target))
+                        {
+                            target = w.getName().toString();
+                            world_t = plugin.getServer().getWorld(target);
+                            player.teleport(world_t.getSpawnLocation());
+                            player.sendMessage(ChatColor.GREEN + "[Waypoint] You have been teleported to the spawn of " + target);
+                            return;
+                        }
                     }
-                    clicked_s.update();
+                    player.sendMessage(ChatColor.BLUE + "[Waypoint] The world name listed on this sign is invalid.");
+                    final int id = new Integer("63");
+                    ItemStack sign_dr = new ItemStack(id);
+                    clicked_b.setTypeId(0);
+                    clicked_b.getLocation().getWorld().dropItemNaturally(clicked_b.getLocation(), sign_dr);
                     return;
                 }
                 else if (world_t != null)

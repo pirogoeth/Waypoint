@@ -27,6 +27,7 @@ public class Config {
     public static Configuration spawn;
     public static Configuration home;
     public static Configuration world;
+    public static Configuration links;
     // File variables
     public static File mainf;
     public static File spawnf;
@@ -34,6 +35,7 @@ public class Config {
     public static File homef;
     public static File warpsf;
     public static File worldf;
+    public static File linksf;
     // constructor
     public Config (Waypoint instance)
     {
@@ -60,6 +62,7 @@ public class Config {
             spawnf = getFile("spawn.yml");
             homef = getFile("home.yml");
             worldf = getFile("world.yml");
+            linksf = getFile("links.yml");
         }
         catch (Exception e) {
             return false;
@@ -72,6 +75,7 @@ public class Config {
             spawn = new Configuration(spawnf);
             home = new Configuration(homef);
             world = new Configuration(worldf);
+            links = new Configuration(linksf);
         }
         catch (Exception e) {
             return false;
@@ -88,6 +92,7 @@ public class Config {
         spawn.load();
         home.load();
         world.load();
+        links.load();
         // world variables
         List<World> world_l;
         Iterator world_l_i;
@@ -190,11 +195,13 @@ public class Config {
             main.removeProperty("enabled");
             main.removeProperty("set_home_at_bed");
             // set the new main defaults
-            main.setProperty("version", "1.5.3");
+            main.setProperty("version", "1.5.5");
             main.setProperty("autoupdate", "true");
             main.setProperty("home.set_home_at_bed", "false");
             main.setProperty("warp.traverse_world_only", "false");
             main.setProperty("warp.list_world_only", "false");
+            links.setProperty("links", "");
+            links.save();
             // world base and currently loaded world settings
             world_l = plugin.getServer().getWorlds();
             world_l_i = world_l.iterator();
@@ -230,7 +237,7 @@ public class Config {
         {
             log.info("[Waypoint] Writing default config values.");
             // main
-            main.setProperty("version", "1.5.3");
+            main.setProperty("version", "1.5.5");
             main.setProperty("autoupdate", "true");
             // home settings
             main.setProperty("home.set_home_at_bed", "false");
@@ -245,6 +252,7 @@ public class Config {
             // warp settings
             main.setProperty("warp.traverse_world_only", "false");
             main.setProperty("warp.list_world_only", "false");
+            links.setProperty("links", "");
             // world base and currently loaded world settings
             world_l = plugin.getServer().getWorlds();
             world_l_i = world_l.iterator();
@@ -275,17 +283,20 @@ public class Config {
             world.save();
             // TODO: actually implement case insensitive warps
             log.info("[Waypoint] Wrote defaults.");
+            links.save();
             main.save();
         }
-        else if (!((String)main.getProperty("version")).equals("1.5.3"))
+        else if (!((String)main.getProperty("version")).equals("1.5.5"))
         {
             // write values not entered in the 1.5 beta update, but were added during
             // the 1.5.0 alpha testing.
-            log.info("[Waypoint] Finalising 1.5.3 configuration.");
+            log.info("[Waypoint] Finalising 1.5.5 configuration.");
             // set version
-            main.setProperty("version", "1.5.3");
+            main.setProperty("version", "1.5.5");
             // add config option added after 1.5-dev
             main.setProperty("autoupdate", "true");
+            links.setProperty("links", "");
+            links.save();
             main.save();
             // world base and currently loaded world settings
             world_l = plugin.getServer().getWorlds();
@@ -328,6 +339,7 @@ public class Config {
         warps.save();
         spawn.save();
         home.save();
+        links.save();
         log.info("[Waypoint] Saved all configurations.");
     }
     public static Configuration getMain ()
@@ -359,5 +371,10 @@ public class Config {
     {
         // returns the Configuration object for the world config file
         return (Configuration) world;
+    }
+    public static Configuration getLinks()
+    {
+        // returns the Configuratio object for the links config file
+        return (Configuration) links;
     }
 }
