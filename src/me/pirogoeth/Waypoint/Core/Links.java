@@ -47,7 +47,13 @@ public class Links {
             network = lines[1];
             network = network.split("\\:")[1];
             name = lines[2];
-            target = lines[3];
+            try {
+                target = lines[3];
+            }
+            catch (java.lang.ArrayIndexOutOfBoundsException e)
+            {
+                target = null;
+            }
         }
         catch (java.lang.ArrayIndexOutOfBoundsException e)
         {
@@ -73,9 +79,17 @@ public class Links {
             links.setProperty(String.format("links.%s.%s.coord.Y", network, name), sign_l.getY());
             links.setProperty(String.format("links.%s.%s.coord.Z", network, name), sign_l.getZ());
             links.setProperty(String.format("links.%s.%s.world", network, name), sign_l.getWorld().getName().toString());
-            links.setProperty(String.format("links.%s.%s.target", network, name), target);
+            if (target != null)
+            {
+                links.setProperty(String.format("links.%s.%s.target", network, name), target);
+            }
+            else
+            {
+                // this is an endpoint. bidirection tele is not allowed
+                links.setProperty(String.format("links.%s.%s.target", network, name), null);
+            }
             links.save();
-            player.sendMessage(ChatColor.RED + String.format("[Waypoint] Sign %s has been created in network %s.", name, network));
+            player.sendMessage(ChatColor.GREEN + String.format("[Waypoint] Sign %s has been created in network %s.", name, network));
             return;
         }
     }
@@ -83,10 +97,22 @@ public class Links {
     {
         String network = lines[1].split("\\:")[1];
         String name = lines[2];
-        String target = lines[3];
+        String target;
+        try {
+            target = lines[3];
+        }
+        catch (java.lang.ArrayIndexOutOfBoundsException e)
+        {
+            target = null;
+        }
         if (network == null || name == null || target == null)
         {
             // a PlayerInteractEvent was passed while a block was being broken.
+            return;
+        }
+        else if((network != null && name != null) && target == null)
+        {
+            // teleportation from this sign is not allowed. (see also: endpoint)
             return;
         }
         if (links.getProperty(String.format("links.%s.%s.world", network, target)) == null)
@@ -104,7 +130,7 @@ public class Links {
             World target_w = plugin.getServer().getWorld((String) links.getString(String.format("links.%s.%s.world", network, target)));
             Location target_l = new Location(target_w, target_x, target_y, target_z);
             player.teleport(target_l);
-            player.sendMessage(ChatColor.GREEN + "[Waypoint] You have been teleported through the network " + network + " to sign " + target + ".");
+            player.sendMessage(ChatColor.GREEN + "[Waypoint] You have been teleported through the network " + ChatColor.LIGHT_PURPLE + network + ChatColor.GREEN + " to sign " + ChatColor.LIGHT_PURPLE + target + ChatColor.LIGHT_PURPLE + ".");
             return;
         }
     }
@@ -117,14 +143,11 @@ public class Links {
             // easy enough
             return;
         }
-        else if (sign.getLine(0).equalsIgnoreCase("[Waypoint]"))
+        else if (lines[0].equalsIgnoreCase("[Waypoint]"))
         {
             String network = lines[1].split("\\:")[1];
             String name = lines[2];
-            if (name != null)
-            {
-                links.removeProperty(String.format("links.%s.%s", network, name));
-            }
+            links.removeProperty(String.format("links.%s.%s", network, name));
             sign_l = sign.getBlock().getLocation();
             final int id = new Integer("63");
             ItemStack sign_d = new ItemStack(id);

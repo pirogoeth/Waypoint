@@ -31,7 +31,7 @@ public class Worlds {
     public void LoadWorlds ()
     {
         Configuration world = config.getWorld();
-        Map<String, ConfigurationNode> worlds = world.getNodes("world");
+        Map<String, ConfigurationNode> worlds = world.getNodes("worlds");
         List<World> worldlist = plugin.getServer().getWorlds();
         List<String> worldnames = new ArrayList<String>();
         World wx;
@@ -63,10 +63,13 @@ public class Worlds {
     public World Import (String worldname, String env)
     {
         Environment environment = Environment.valueOf(env);
+        Configuration world = config.getWorld();
         if (new File(worldname).exists() && environment != null)
         {
             World wx = plugin.getServer().createWorld(worldname, environment);
             log.info(String.format("[Waypoint] Imported world: { %s [ENV:%s] }", worldname, env.toUpperCase()));
+            world.setProperty("worlds." + worldname + ".env", env.toUpperCase());
+            world.save();
             return wx;
         }
         else if (environment == null)
@@ -81,10 +84,13 @@ public class Worlds {
     public World Create (String worldname, String env)
     {
         Environment environment = Environment.valueOf(env);
+        Configuration world = config.getWorld();
         if (!(new File(worldname).exists()) && environment != null)
         {
             World wx = plugin.getServer().createWorld(worldname, environment);
             log.info(String.format("[Waypoint] Created world: { %s [ENV:%s] }", worldname, env.toUpperCase()));
+            world.setProperty("worlds." + worldname + ".env", env.toUpperCase());
+            world.save();
             return wx;
         }
         else if (environment == null)
@@ -100,10 +106,13 @@ public class Worlds {
     {
         long seed = new Long(seed_s);
         Environment environment = Environment.valueOf(env);
+        Configuration world = config.getWorld();
         if (!(new File(worldname).exists()) && environment != null)
         {
             World wx = plugin.getServer().createWorld(worldname, environment, seed);
             log.info(String.format("[Waypoint] Created world: { %s [ENV:%s] [SEED:%s] }", worldname, env.toUpperCase(), seed_s));
+            world.setProperty("worlds." + worldname + ".env", env.toUpperCase());
+            world.save();
             return wx;
         }
         else if (environment == null)

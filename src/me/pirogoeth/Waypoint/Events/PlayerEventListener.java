@@ -63,6 +63,11 @@ public class PlayerEventListener extends PlayerListener {
             String wrap = null;
             if (signtype.split("\\:")[0].equalsIgnoreCase("link"))
             {
+                if (!permissions.has(player, "waypoint.sign.link.use"))
+                {
+                    player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have permission to use this sign.");
+                    return true;
+                }
                 try {
                     linkManager.PlayerBetweenNetwork(player, clicked_s, (String[]) ((Sign) clicked_b.getState()).getLines());
                 }
@@ -83,6 +88,11 @@ public class PlayerEventListener extends PlayerListener {
             target = ((String) target).replaceAll("\\p{Cntrl}", "");;
             if (signtype.equalsIgnoreCase("warp") && target_o != null)
             {
+                if (!permissions.has(player, "waypoint.sign.warp"))
+                {
+                   player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have permission to use this sign.");
+                   return true;
+                }
                 boolean result = warpManager.PlayerToWarp(player, target);
                 if (result == false)
                 {
@@ -97,6 +107,11 @@ public class PlayerEventListener extends PlayerListener {
             }
             else if (signtype.equalsIgnoreCase("world") && target_o != null)
             {
+                if (!permissions.has(player, "waypoint.sign.world"))
+                {
+                   player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have permission to use this sign.");
+                   return true;
+                }
                 World world_t = plugin.getServer().getWorld(target);
                 Location world_l = null;
                 if (world_t == null)

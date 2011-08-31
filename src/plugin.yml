@@ -1,6 +1,6 @@
 name: Waypoint
 main: me.pirogoeth.Waypoint.Waypoint
-version: 1.5.6
+version: 1.5.9
 author: pirogoeth
 commands:
     wp:

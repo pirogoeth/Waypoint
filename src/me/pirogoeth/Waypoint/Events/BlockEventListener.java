@@ -47,6 +47,7 @@ public class BlockEventListener extends BlockListener {
          Player player = event.getPlayer();
          Sign sign = (Sign) event.getBlock().getState();
          Location sign_l = sign.getBlock().getLocation();
+         if (!event.getLine(0).equalsIgnoreCase("[Waypoint]")) { return; }
          if (!permission.has(player, "waypoint.sign.link.create"))
          {
              player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission to create a link sign.");
@@ -56,7 +57,6 @@ public class BlockEventListener extends BlockListener {
              sign_l.getWorld().dropItemNaturally(sign_l, sign_st);
              return;
          }
-         if (!event.getLine(0).equalsIgnoreCase("[Waypoint]")) { return; }
          if (!event.getLine(1).split("\\:")[0].equalsIgnoreCase("link")) { return; }
          else if (event.getLine(1).split("\\:")[0].equalsIgnoreCase("link"))
          {
