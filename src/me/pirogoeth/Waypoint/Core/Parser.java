@@ -30,6 +30,7 @@ public class Parser {
     	plugin = instance;
     	c = plugin.config;
     	users = c.getUsers();
+        permissions = permissions;
     	home = c.getHome();
     	main = c.getMain();
     	warp = c.getWarp();
@@ -101,7 +102,7 @@ public class Parser {
         if (subc.equalsIgnoreCase("add"))
         {
          	if (arg == null) { player.sendMessage("Usage: /wp <add|del|tp|list|help> [name]"); }
-            if (!plugin.permission.has(player, "waypoint.basic.add")) {
+            if (!permissions.has(player, "waypoint.basic.add")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command."); 
                 return true;
             }
@@ -134,7 +135,7 @@ public class Parser {
         else if (subc.equalsIgnoreCase("del") || subc.equalsIgnoreCase("delete") || subc.equalsIgnoreCase("remove"))
         {
             if (arg == null) { player.sendMessage("Usage: /wp <add|del|tp|list|help> [name]"); }
-	        if (!plugin.permissions.has(player, "waypoint.basic.delete")) { 
+	        if (!permissions.has(player, "waypoint.basic.delete")) { 
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command."); 
 	            return true;
 	        }
@@ -151,7 +152,7 @@ public class Parser {
         else if (subc.equalsIgnoreCase("tp") || subc.equalsIgnoreCase("teleport"))
         {
           	if (arg == null) { player.sendMessage(ChatColor.AQUA + "Usage: /wp <add|del|tp|list|help> [name]"); }
-	        if (!plugin.permissions.has(player, "waypoint.basic.teleport")) { 
+	        if (!permissions.has(player, "waypoint.basic.teleport")) { 
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
 	            return true;
 	        }
@@ -184,7 +185,7 @@ public class Parser {
         else if (subc.equalsIgnoreCase("invite"))
         {
        	    if (arg == null) { player.sendMessage(ChatColor.AQUA + "Usage: /wp <add|del|tp|list|invite|help> [name]"); }
-	        if (!plugin.permissions.has(player, "waypoint.basic.invite")) { 
+	        if (!permissions.has(player, "waypoint.basic.invite")) { 
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
 	            return true;
 	        }
@@ -219,7 +220,7 @@ public class Parser {
 	    else if (subc.equalsIgnoreCase("accept"))
 	    {
            	if (arg == null) { player.sendMessage(ChatColor.AQUA + "Usage: /wp <add|del|tp|list|invite|help> [name]"); }
-	        if (!plugin.permissions.has(player, "waypoint.basic.invite.accept")) {
+	        if (!permissions.has(player, "waypoint.basic.invite.accept")) {
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
 	            return true;
 	        }
@@ -237,7 +238,7 @@ public class Parser {
 	    else if (subc.equalsIgnoreCase("decline"))
 	    {
            	if (arg == null) { player.sendMessage(ChatColor.AQUA + "Usage: /wp <add|del|tp|list|invite|help> [name]"); }
-            if (!plugin.permissions.has(player, "waypoint.basic.invite.decline")) { 
+            if (!permissions.has(player, "waypoint.basic.invite.decline")) { 
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
 	            return true;
 	        }
@@ -252,7 +253,7 @@ public class Parser {
 	    }
         else if (subc.equalsIgnoreCase("list"))
         {
-	        if (!plugin.permissions.has(player, "waypoint.basic.list")) {
+	        if (!permissions.has(player, "waypoint.basic.list")) {
 	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                 return true;
 	        }
@@ -276,7 +277,7 @@ public class Parser {
         }
         else if (subc.equalsIgnoreCase("test"))
         {
-	        if (!plugin.permissions.has(player, "waypoint.debug.config_node_test")) {
+	        if (!permissions.has(player, "waypoint.debug.config_node_test")) {
                 return true;
 	        }
             // testing node crap
@@ -317,7 +318,7 @@ public class Parser {
    	    // fuck man...i lost the other beginning bracket for the one above....
         else if (command.equalsIgnoreCase("home") || command.equalsIgnoreCase("wphome"))
         {
-            if (!plugin.permissions.has(player, "waypoint.home")) {
+            if (!permissions.has(player, "waypoint.home")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                 return true;
             }
@@ -353,7 +354,7 @@ public class Parser {
             if (subc.equalsIgnoreCase("set"))
             {
                 World w = player.getWorld();
-                if (!plugin.permissions.has(player, "waypoint.home.set")) {
+                if (!permissions.has(player, "waypoint.home.set")) {
                     player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                     return true;
                 }
@@ -380,7 +381,7 @@ public class Parser {
         }
         else if (command.equalsIgnoreCase("setspawn") || command.equalsIgnoreCase("wpsetspawn"))
         {
-            if (!plugin.permissions.has(player, "waypoint.admin.spawn.set")) {
+            if (!permissions.has(player, "waypoint.admin.spawn.set")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                 return true;
             }
@@ -392,7 +393,7 @@ public class Parser {
         }
         else if (command.equalsIgnoreCase("spawn") || command.equalsIgnoreCase("wpspawn"))
         {
-            if (!plugin.permissions.has(player, "waypoint.spawn")) {
+            if (!permissions.has(player, "waypoint.spawn")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                 return true;
             }
@@ -416,7 +417,7 @@ public class Parser {
     	}
     	else if (command.equalsIgnoreCase("spawnadmin") || command.equalsIgnoreCase("wpspawnadmin"))
         {
-            if (!plugin.permissions.has(player, "waypoint.admin.spawn")) {
+            if (!permissions.has(player, "waypoint.admin.spawn")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                 return true;
             }
@@ -438,7 +439,7 @@ public class Parser {
             };
             if (subc.equalsIgnoreCase("save"))
             {
-                if (!plugin.permissions.has(player, "waypoint.admin.spawn.save")) {
+                if (!permissions.has(player, "waypoint.admin.spawn.save")) {
                     player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                     return true;
                 }
@@ -458,7 +459,7 @@ public class Parser {
             }
             else if (subc.equalsIgnoreCase("load"))
             {
-                if (!plugin.permissions.has(player, "waypoint.admin.spawn.load")) {
+                if (!permissions.has(player, "waypoint.admin.spawn.load")) {
                     player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                     return true;
                 }
@@ -474,7 +475,7 @@ public class Parser {
             }
             else if (subc.equalsIgnoreCase("set"))
             {
-                if (!plugin.permissions.has(player, "waypoint.admin.spawn.set")) {
+                if (!permissions.has(player, "waypoint.admin.spawn.set")) {
                     player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                     return true;
                 }
@@ -486,7 +487,7 @@ public class Parser {
         }
         else if (command.equalsIgnoreCase("tp") || command.equalsIgnoreCase("wptp"))
         {
-            if (!plugin.permissions.has(player, "waypoint.teleport.teleport")) {
+            if (!permissions.has(player, "waypoint.teleport.teleport")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                 return true;
             }
@@ -542,7 +543,7 @@ public class Parser {
         }
         else if (command.equalsIgnoreCase("tploc") || command.equalsIgnoreCase("wptploc"))
         {
-            if (!plugin.permissions.has(player, "waypoint.teleport.location")) {
+            if (!permissions.has(player, "waypoint.teleport.location")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                 return true;
             }
@@ -583,7 +584,7 @@ public class Parser {
         }
         else if (command.equalsIgnoreCase("tphere") || command.equalsIgnoreCase("wptphere"))
         {
-            if (!plugin.permissions.has(player, "waypoint.teleport.here")) {
+            if (!permissions.has(player, "waypoint.teleport.here")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                 return true;
             }
@@ -611,7 +612,7 @@ public class Parser {
         }
         else if (command.equalsIgnoreCase("setwarp") || command.equalsIgnoreCase("wpsetwarp"))
         {
-            if (!plugin.permissions.has(player, "waypoint.warp.create")) {
+            if (!permissions.has(player, "waypoint.warp.create")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                 return true;
             }
@@ -630,7 +631,7 @@ public class Parser {
         }
         else if (command.equalsIgnoreCase("warpadmin") || command.equalsIgnoreCase("wpwarpadmin"))
         {
-            if (!plugin.permissions.has(player, "waypoint.admin.warp"))
+            if (!permissions.has(player, "waypoint.admin.warp"))
             {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permission to use this command.");
                 return true;
@@ -674,7 +675,7 @@ public class Parser {
                     player.sendMessage(ChatColor.RED + "[Waypoint] There is no warp by that name.");
                     return true;
                 }
-                if (!plugin.permissions.has(player, "waypoint.admin.warp.delete"))
+                if (!permissions.has(player, "waypoint.admin.warp.delete"))
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission to use this command.");
                     return true;
@@ -763,7 +764,7 @@ public class Parser {
         }
         else if (command.equalsIgnoreCase("world") || command.equalsIgnoreCase("wpworld"))
         {
-            if (!plugin.permissions.has(player, "waypoint.world")) {
+            if (!permissions.has(player, "waypoint.world")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                 return true;
             }
@@ -801,7 +802,7 @@ public class Parser {
             }
             else if (subc.equalsIgnoreCase("import"))
             {
-                if (!plugin.permissions.has(player, "waypoint.admin.world.import")) {
+                if (!permissions.has(player, "waypoint.admin.world.import")) {
                     player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                     return true;
                 }
@@ -828,7 +829,7 @@ public class Parser {
             }
             else if (subc.equalsIgnoreCase("create"))
             {
-                if (!plugin.permissions.has(player, "waypoint.admin.world.create")) {
+                if (!permissions.has(player, "waypoint.admin.world.create")) {
                     player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                     return true;
                 }
@@ -890,7 +891,7 @@ public class Parser {
         }
         else if (command.equalsIgnoreCase("warp") || command.equalsIgnoreCase("wpwarp"))
         {
-            if (!plugin.permissions.has(player, "waypoint.warp")) {
+            if (!permissions.has(player, "waypoint.warp")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                 return true;
             }
@@ -929,7 +930,7 @@ public class Parser {
                     player.sendMessage(ChatColor.RED + "/warp add <warpname>");
                     return true;
                 }
-                if (!plugin.permissions.has(player, "waypoint.warp.create"))
+                if (!permissions.has(player, "waypoint.warp.create"))
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission to use this command.");
                     return true;
@@ -951,7 +952,7 @@ public class Parser {
                     return true;
                 }
                 String owner = (String)warp.getProperty(plugin.warpManager.WarpNode(arg, "owner"));
-                if (!plugin.permissions.has(player, "waypoint.warp.delete") || !owner.equals(player.getName().toString()))
+                if (!permissions.has(player, "waypoint.warp.delete") || !owner.equals(player.getName().toString()))
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission to use this command.");
                     return true;
@@ -1018,7 +1019,7 @@ public class Parser {
             }
             else if (subc.equalsIgnoreCase("list"))
             {
-                if (!plugin.permissions.has(player, "waypoint.warp.list"))
+                if (!permissions.has(player, "waypoint.warp.list"))
                 {
                     player.sendMessage(ChatColor.RED + "[Waypoint] You do not have the permission to access this command.");
                     return true;
