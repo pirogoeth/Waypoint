@@ -79,40 +79,39 @@ public class Parser {
             return false;
         }
     }
-    public static boolean CommandParser(Player player, String command, String[] args)
-    {
-	    if (command.equalsIgnoreCase("wp") || command.equalsIgnoreCase("waypoint"))
-    	{
-            String subc = "";
-            try {
-    	        subc = args[0];
-            }
-            catch (java.lang.ArrayIndexOutOfBoundsException e) {
-                player.sendMessage("Usage: /wp <add|del|tp|list|help> [name]");
+    public static boolean CommandParser(Player player, String command, String[] args) {
+    if (command.equalsIgnoreCase("wp") || command.equalsIgnoreCase("waypoint"))
+   	{
+        String subc = "";
+        try {
+ 	        subc = args[0];
+        }
+        catch (java.lang.ArrayIndexOutOfBoundsException e) {
+            player.sendMessage("Usage: /wp <add|del|tp|list|help> [name]");
+            return true;
+        };
+  	    subc = subc.toLowerCase().toString();
+        String arg = null;
+        try {
+            arg = args[1];
+        }
+        catch (java.lang.ArrayIndexOutOfBoundsException e) {
+            arg = null;
+  	    };
+        if (subc.equalsIgnoreCase("add"))
+        {
+         	if (arg == null) { player.sendMessage("Usage: /wp <add|del|tp|list|help> [name]"); }
+            if (!plugin.permission.has(player, "waypoint.basic.add")) {
+                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command."); 
                 return true;
-            };
-    	    subc = subc.toLowerCase().toString();
-            String arg = null;
-            try {
-                arg = args[1];
             }
-            catch (java.lang.ArrayIndexOutOfBoundsException e) {
-                arg = null;
-    	    };
-            if (subc.equalsIgnoreCase("add"))
-            {
-            	if (arg == null) { player.sendMessage("Usage: /wp <add|del|tp|list|help> [name]"); }
-	        if (!plugin.permissions.has(player, "waypoint.basic.add")) {
-	            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command."); 
-	            return true;
-	        }
-          	if (users.getProperty(UserNodeChomp(player, arg, "world")) != null)
-           	{
-           		player.sendMessage("[Waypoint] Point '" + arg + "' already exists!");
-           		return true;
+           	if (users.getProperty(UserNodeChomp(player, arg, "world")) != null)
+       	    {
+       		    player.sendMessage("[Waypoint] Point '" + arg + "' already exists!");
+       		    return true;
            	}
            	// position
-           	users.setProperty(UserNodeChomp(player, arg, "coord.X"), player.getLocation().getX());
+         	users.setProperty(UserNodeChomp(player, arg, "coord.X"), player.getLocation().getX());
            	users.setProperty(UserNodeChomp(player, arg, "coord.Y"), player.getLocation().getY());
            	users.setProperty(UserNodeChomp(player, arg, "coord.Z"), player.getLocation().getZ());
            	// eye direction
@@ -315,6 +314,7 @@ public class Parser {
    	    // dude i have no fucking idea where this bracket is supposed
    	    // to actually go.
    	    }
+   	    // fuck man...i lost the other beginning bracket for the one above....
         else if (command.equalsIgnoreCase("home") || command.equalsIgnoreCase("wphome"))
         {
             if (!plugin.permissions.has(player, "waypoint.home")) {
