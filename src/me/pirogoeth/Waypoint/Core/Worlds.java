@@ -32,6 +32,11 @@ public class Worlds {
     {
         Configuration world = config.getWorld();
         Map<String, ConfigurationNode> worlds = world.getNodes("worlds");
+        if (worlds == null)
+        {
+            log.info("[Waypoint] No worlds to be loaded.");
+            return;
+        }
         List<World> worldlist = plugin.getServer().getWorlds();
         List<String> worldnames = new ArrayList<String>();
         World wx;
@@ -55,7 +60,7 @@ public class Worlds {
             }
             else
             {
-                log.info(String.format("[Waypoint] Loaded settings for world: { %s [ENV: %s] }", worldname, env));
+                log.info(String.format("[Waypoint] Loaded properties for world: { %s [ENV: %s] }", worldname, env));
             }
         }
         return;
@@ -104,12 +109,13 @@ public class Worlds {
     }
     public World Create (String worldname, String env, String seed_s)
     {
-        long seed = new Long(seed_s);
+        // String seed = new String((String) seed_s);
+        // Long l = new Long((String) seed);
         Environment environment = Environment.valueOf(env);
         Configuration world = config.getWorld();
         if (!(new File(worldname).exists()) && environment != null)
         {
-            World wx = plugin.getServer().createWorld(worldname, environment, seed);
+            World wx = plugin.getServer().createWorld(worldname, environment);
             log.info(String.format("[Waypoint] Created world: { %s [ENV:%s] [SEED:%s] }", worldname, env.toUpperCase(), seed_s));
             world.setProperty("worlds." + worldname + ".env", env.toUpperCase());
             world.save();

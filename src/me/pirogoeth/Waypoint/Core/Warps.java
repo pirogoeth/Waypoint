@@ -17,6 +17,7 @@ public class Warps {
     public static Waypoint plugin;
     public static Config c;
     public static Configuration config;
+    public static Configuration main;
     public static Logger log = Logger.getLogger("Minecraft");
     public List<String> groups;
     public Warps (Waypoint instance)
@@ -24,6 +25,7 @@ public class Warps {
         plugin = instance;
         c = plugin.config;
         config = c.getWarp();
+        main = c.getMain();
     }
     public void LoadGroups ()
     {
@@ -124,7 +126,64 @@ public class Warps {
         World w = plugin.getServer().getWorld(worldname);
         Location l = new Location(w, x, y, z);
         p.teleport(l);
-        p.sendMessage(ChatColor.AQUA + "Welcome to " + warpname + ", " + p.getName().toString());
+        // warpstring stuff :: 1.6
+        if (((String) main.getProperty("warp.warpstring_enabled")).equalsIgnoreCase("true"))
+        {
+            String warpstring = (String) main.getProperty("warp.string");
+            if (warpstring == null)
+            {
+                // if only.
+                log.warning("[Waypoint] Warp string is null! Please set the warp.string value in config.yml");
+                return true;
+            }
+           warpstring = warpstring.replaceAll("%w", "" + warpname);
+           warpstring = warpstring.replaceAll("%p", "" + p.getName().toString());
+           p.sendMessage(String.format("%s%s", ChatColor.BLUE, warpstring));
+           return true;
+        }
+        return true;
+    }
+    public boolean RemoteWarp (Player target, Player sender, String warpname)
+    {
+        if (config.getProperty(WarpNode(warpname, "world")) == null)
+        {
+            sender.sendMessage(ChatColor.RED + "[Waypoint] Warp " + warpname + " does not exist.");
+            return false;
+        }
+        String permission = (String) config.getProperty(WarpNode(warpname, "permission"));
+        if (checkperms(sender, permission) == false)
+        {
+            sender.sendMessage(ChatColor.RED + "[Waypoint] You do not have permissions to access this warp.");
+            return true;
+        }
+        String worldname = (String) config.getProperty(WarpNode(warpname, "world"));
+        if (!target.getWorld().toString().equals(worldname) && ((String) plugin.config.getMain().getProperty("warp.traverse_world_only")).equals("true"))
+        {
+            sender.sendMessage(ChatColor.RED + "[Waypoint] You are not allowed to warp others between worlds.");
+            return true;
+        }
+        double x = (Double) config.getProperty(WarpNode(warpname, "coord.X"));
+        double y = (Double) config.getProperty(WarpNode(warpname, "coord.Y"));
+        double z = (Double) config.getProperty(WarpNode(warpname, "coord.Z"));
+        World w = plugin.getServer().getWorld(worldname);
+        Location l = new Location(w, x, y, z);
+        target.teleport(l);
+        sender.sendMessage(ChatColor.GREEN + String.format("[Waypoint] %s has been warped to %s", target.getName().toString(), warpname));
+        // warpstring stuff :: 1.6
+        if (((String) main.getProperty("warp.warpstring_enabled")).equalsIgnoreCase("true"))
+        {
+            String warpstring = (String) main.getProperty("warp.string");
+            if (warpstring == null)
+            {
+                // if only.
+                log.warning("[Waypoint] Warp string is null! Please set the warp.string value in config.yml");
+                return true;
+            }
+            warpstring = warpstring.replaceAll("%w", "" + warpname);
+            warpstring = warpstring.replaceAll("%p", "" + target.getName().toString());
+            target.sendMessage(String.format("%s%s", ChatColor.BLUE, warpstring));
+            return true;
+        }
         return true;
     }
 }

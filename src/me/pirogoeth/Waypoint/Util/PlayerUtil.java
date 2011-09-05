@@ -10,18 +10,18 @@ public class PlayerUtil {
     public static Logger log = Logger.getLogger("Minecraft");
     public static Player getPlayerFromSender (CommandSender sender)
     {
-        Player p = (Player)sender;
-   	return p;
+        Player p = (Player) sender;
+        return p;
     }
     public static String getPlayerName (CommandSender sender)
     {
-    	Player p = (Player)sender;
+    	Player p = (Player) sender;
     	String n = p.getDisplayName();
     	return n;
     }
     public static Location getPlayerLocation (CommandSender sender)
     {
-    	Player p = (Player)sender;
+    	Player p = (Player) sender;
     	Location l = p.getLocation();
     	return l;
     }

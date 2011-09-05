@@ -15,6 +15,7 @@ import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
 
 import me.pirogoeth.Waypoint.Waypoint;
+import me.pirogoeth.Waypoint.Util.Permission;
 import me.pirogoeth.Waypoint.Util.Config;
 
 public class Parser {
@@ -24,13 +25,14 @@ public class Parser {
     public static Configuration users;
     public static Configuration home;
     public static Configuration warp;
+    public static Permission permissions;
     public static Logger log = Logger.getLogger("Minecraft");
     public Parser (Waypoint instance)
     {
     	plugin = instance;
     	c = plugin.config;
     	users = c.getUsers();
-        permissions = permissions;
+        permissions = plugin.permissions;
     	home = c.getHome();
     	main = c.getMain();
     	warp = c.getWarp();
@@ -550,7 +552,14 @@ public class Parser {
 	        String subc = "";
             String arg = null;
             try {
-                arg = args[0];
+                if (args.length == 1) {
+                    arg = args[0];
+                } else if (args.length == 3) {
+                    arg = String.format("%s,%s,%s", args[0], args[1], args[2]);
+                } else {
+                    player.sendMessage(ChatColor.BLUE + "/tploc <x,y,z|x y z>");
+                    return true;
+                }
             }
             catch (java.lang.ArrayIndexOutOfBoundsException e) {
     	        arg = null;
@@ -840,26 +849,31 @@ public class Parser {
                 catch (java.lang.ArrayIndexOutOfBoundsException e) { environ = null; };
                 String seed;
                 World wx = null;
-                try {
-                    seed = args[3];
-                }
-                catch (java.lang.ArrayIndexOutOfBoundsException e)
-                {
-                    seed = null;
-                }
+                /**
+                  * try {
+                  *     seed = args[3];
+                  * }
+                  * catch (java.lang.ArrayIndexOutOfBoundsException e)
+                  * {
+                  *   seed = null;
+                  * }
+                  */
                 if (environ == null)
                 {
                     player.sendMessage(ChatColor.BLUE + "[Waypoint] Please specify an environment type.");
                     return true;
                 }
-                if (seed != null)
-                {
-                    wx = plugin.worldManager.Create(worldname, environ.toUpperCase(), seed);
-                }
-                else if (seed == null)
-                {
-                    wx = plugin.worldManager.Create(worldname, environ.toUpperCase());
-                }
+                /**
+                  * if (seed != null)
+                  * {
+                  *   wx = plugin.worldManager.Create(worldname, environ.toUpperCase(), seed);
+                  * }
+                  * else if (seed == null)
+                  * {
+                  *   wx = plugin.worldManager.Create(worldname, environ.toUpperCase());
+                  * }
+                  */
+                wx = plugin.worldManager.Create(worldname, environ.toUpperCase());
                 if (wx == null)
                 {
                     player.sendMessage(String.format("%s[Waypoint] Could not create world: %s", ChatColor.RED, worldname));
@@ -959,6 +973,27 @@ public class Parser {
                 }
                 plugin.warpManager.DeleteWarp(arg);
                 player.sendMessage(ChatColor.AQUA + "[Waypoint] Warp " + arg + " has been deleted.");
+                return true;
+            }
+            else if (subc.equalsIgnoreCase("remote"))
+            {
+                if (arg == null || k == null)
+                {
+                    player.sendMessage(ChatColor.RED + "/warp remote <player> <warpname>");
+                    return true;
+                }
+                if (!permissions.has(player, "waypoint.warp.remote"))
+                {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission to use this command.");
+                    return true;
+                }
+                Player target = plugin.getServer().getPlayer((String) arg);
+                if (target == null)
+                {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] Player " + arg + " is not online.");
+                    return true;
+                }
+                boolean remote = plugin.warpManager.RemoteWarp(target, player, (String) k);
                 return true;
             }
             else if (subc.equalsIgnoreCase("set"))

@@ -22,11 +22,17 @@ public class Permission {
         plugin = instance;
         Logger log = Logger.getLogger("Minecraft");
         Plugin permissions = plugin.getServer().getPluginManager().getPlugin("Permissions");
+        Plugin superperms_s = plugin.getServer().getPluginManager().getPlugin("PermissionsBukkit");
         if (permissions != null)
         {
             permissionPlugin = ((Permissions)permissions).getHandler();
             handler = HandlerType.PERMISSIONS;
             log.info("[Waypoint] Permissions plugin detected. Using " + permissions.getDescription().getFullName());
+        }
+        else if (permissions == null && superperms_s != null)
+        {
+            handler = HandlerType.SUPERPERMS;
+            log.info("[Waypoint] Using Bukkit SuperPerms, PermissionsBukkit detected.");
         }
         else
         {
@@ -35,7 +41,8 @@ public class Permission {
     }
     private enum HandlerType {
         PERMISSIONS,
-        OP
+        OP,
+        SUPERPERMS
     }
     public static boolean has (Player p, String node)
     {
@@ -44,6 +51,8 @@ public class Permission {
                 return permissionPlugin.has(p, node);
             case OP:
                 return p.isOp();
+            case SUPERPERMS:
+                return p.hasPermission(node);
         }
         return true;
     }
@@ -54,6 +63,8 @@ public class Permission {
                 return permissionPlugin.has(p, node);
             case OP:
                 return def ? true : p.isOp();
+            case SUPERPERMS:
+                return p.hasPermission(node);
         }
         return def;
     }

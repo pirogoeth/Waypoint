@@ -200,6 +200,8 @@ public class Config {
             main.setProperty("home.set_home_at_bed", "false");
             main.setProperty("warp.traverse_world_only", "false");
             main.setProperty("warp.list_world_only", "false");
+            main.setProperty("warp.warpstring_enabled", "true");
+            main.setProperty("warp.string", "welcome to %w, %p");
             links.setProperty("links", "");
             links.save();
             // world base and currently loaded world settings
@@ -237,7 +239,7 @@ public class Config {
         {
             log.info("[Waypoint] Writing default config values.");
             // main
-            main.setProperty("version", "1.5.5");
+            main.setProperty("version", "1.6");
             main.setProperty("autoupdate", "true");
             // home settings
             main.setProperty("home.set_home_at_bed", "false");
@@ -252,6 +254,8 @@ public class Config {
             // warp settings
             main.setProperty("warp.traverse_world_only", "false");
             main.setProperty("warp.list_world_only", "false");
+            main.setProperty("warp.warpstring_enabled", "true");
+            main.setProperty("warp.string", "welcome to %w, %p");
             links.setProperty("links", "");
             // world base and currently loaded world settings
             world_l = plugin.getServer().getWorlds();
@@ -286,46 +290,17 @@ public class Config {
             links.save();
             main.save();
         }
-        else if (!((String)main.getProperty("version")).equals("1.5.5"))
+        else if (!((String)main.getProperty("version")).equals("1.6"))
         {
-            // write values not entered in the 1.5 beta update, but were added during
-            // the 1.5.0 alpha testing.
-            log.info("[Waypoint] Finalising 1.5.5 configuration.");
+            // write values not entered in the 1.5.9 update, but were added during
+            // the 1.6 alpha testing.
+            log.info("[Waypoint] Finalising 1.6 configuration.");
             // set version
-            main.setProperty("version", "1.5.5");
+            main.setProperty("version", "1.6");
             // add config option added after 1.5-dev
-            main.setProperty("autoupdate", "true");
-            links.setProperty("links", "");
-            links.save();
+            main.setProperty("warp.warpstring_enabled", "true");
+            main.setProperty("warp.string", "welcome to %w, %p");
             main.save();
-            // world base and currently loaded world settings
-            world_l = plugin.getServer().getWorlds();
-            world_l_i = world_l.iterator();
-            while (world_l_i.hasNext())
-            {
-                world_o = (World) world_l_i.next();
-                world_n = world_o.getName().toString();
-                world_e = world_o.getEnvironment();
-                log.info(String.format("[Waypoint] Processing world: { %s : [ENV:%s] }", world_n, (String) Integer.toString(world_e.getId())));
-                world.setProperty("world." + world_n, "");
-                switch (world_e)
-                {
-                    case NORMAL:
-                        world.setProperty("world." + world_n + ".env", "NORMAL");
-                        break;
-                    case NETHER:
-                        world.setProperty("world." + world_n + ".env", "NETHER");
-                        break;
-                    case SKYLANDS:
-                        world.setProperty("world." + world_n + ".env", "SKYLANDS");
-                        break;
-                    default:
-                        // default shall be NORMAL
-                        world.setProperty("world." + world_n + ".env", "NORMAL");
-                        break;
-                }
-            }
-            world.save();
         }
         log.info("[Waypoint] Configuration succesfully loaded.");
         loaded = true;
