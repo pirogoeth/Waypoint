@@ -119,8 +119,8 @@ public class Parser {
          	users.setProperty(UserNodeChomp(player, arg, "coord.X"), player.getLocation().getX());
            	users.setProperty(UserNodeChomp(player, arg, "coord.Y"), player.getLocation().getY());
            	users.setProperty(UserNodeChomp(player, arg, "coord.Z"), player.getLocation().getZ());
-			users.setProperty(UserNodeChomp(player, arg, "coord.yaw"), (double)player.getLocation().getYaw());
-			users.setProperty(UserNodeChomp(player, arg, "coord.pitch"), (double)player.getLocation().getPitch());
+            users.setProperty(UserNodeChomp(player, arg, "coord.yaw"), (double)player.getLocation().getYaw());
+            users.setProperty(UserNodeChomp(player, arg, "coord.pitch"), (double)player.getLocation().getPitch());
            	// eye direction
            	// not needed anymore: users.setProperty(UserNodeChomp(player, arg, "coord.pitch"), player.getLocation().getPitch());
            	//  users.setProperty(UserNodeChomp(player, arg, "coord.yaw"), player.getLocation().getYaw());
@@ -171,8 +171,8 @@ public class Parser {
            	double x = (Double) users.getProperty(UserNodeChomp(player, arg, "coord.X"));
             double y = (Double) users.getProperty(UserNodeChomp(player, arg, "coord.Y"));
             double z = (Double) users.getProperty(UserNodeChomp(player, arg, "coord.Z"));
-			double yaw = (Double) users.getProperty(UserNodeChomp(player, arg, "coord.yaw"));
-			double pitch = (Double) users.getProperty(UserNodeChomp(player, arg, "coord.pitch"));
+            double yaw = (Double) users.getProperty(UserNodeChomp(player, arg, "coord.yaw"));
+            double pitch = (Double) users.getProperty(UserNodeChomp(player, arg, "coord.pitch"));
     	  	// no longer needed: final float p = new Float(users.getString(UserNodeChomp(player, arg, "coord.pitch")));
     	    //  final float p = new Float("1");
     	    //  float yw = new Float(users.getString(UserNodeChomp(player, arg, "coord.yaw")));
