@@ -69,7 +69,10 @@ public class AutoUpdate {
             }
             in.close();
         }
-        catch (Exception e) {}
+        catch (Exception e) {
+            log.info("[Waypoint] Error while checking for updates. (It could be a dev build.)");
+            return false;
+        }
         log.info("[Waypoint] No updates available.");
         return false;
     }

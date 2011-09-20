@@ -120,15 +120,6 @@ public class Parser {
            	// eye direction
            	// not needed anymore: users.setProperty(UserNodeChomp(player, arg, "coord.pitch"), player.getLocation().getPitch());
            	//  users.setProperty(UserNodeChomp(player, arg, "coord.yaw"), player.getLocation().getYaw());
-           	// number tests
-           	//  log.info("" + String.format("Pitch: %s, Yaw: %s", player.getLocation().getPitch(), player.getLocation().getYaw()));
-           	//  double pa = new Double(player.getLocation().getPitch());
-           	//  double ya = new Double(player.getLocation().getYaw());
-           	//  float pb = new Float(player.getLocation().getPitch());
-           	//  float yb = new Float(player.getLocation().getYaw());
-           	//  log.info("" + String.format("DPitch: %s, DYaw: %s", pa, ya));
-           	//  log.info("" + String.format("FPitch: %s, FYaw: %s", pb, yb));
-           	// current world
            	users.setProperty(UserNodeChomp(player, arg, "world"), player.getLocation().getWorld().getName().toString());
            	users.save();
            	player.sendMessage(ChatColor.GREEN + "[Waypoint] Set point '" + arg + "' in world '" + player.getLocation().getWorld().getName().toString() + "'.");

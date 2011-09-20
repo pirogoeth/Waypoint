@@ -1,5 +1,6 @@
 package me.pirogoeth.Waypoint;
 
+// Bukkit imports
 import org.bukkit.plugin.java.JavaPlugin;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
@@ -7,18 +8,17 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.util.config.Configuration;
+// Java imports
 import java.util.logging.Logger;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.File;
-
 // various core utilities
 import me.pirogoeth.Waypoint.Util.Permission;
+import me.pirogoeth.Waypoint.Util.Registry;
 import me.pirogoeth.Waypoint.Util.PlayerUtil;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.AutoUpdate;
@@ -41,8 +41,8 @@ public class Waypoint extends JavaPlugin {
     public Config config = new Config(this);
     // logger
     Logger log = Logger.getLogger("Minecraft");
-    // command parsing
-    private final Parser commandParser = new Parser(this);
+    // registry instantiation
+    private final Registry registry = new Registry(this);
     // additional stuff
     public final Spawn spawnManager = new Spawn(this);
     public final Warps warpManager = new Warps(this);
@@ -64,19 +64,20 @@ public class Waypoint extends JavaPlugin {
         // block listener
         getServer().getPluginManager().registerEvent(Event.Type.SIGN_CHANGE, blockListener, Event.Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.High, this);
-    	// XXX - replace setupPermissions() with a custom class to
-    	//  handle all types of permissions limiting.
-    	// setupPermissions();
+        // run permissions setup
     	permissions = new Permission(this);
     	log.info("[Waypoint] Enabled version " + this.getDescription().getVersion());
     	config.save();
     	// check for updates
     	updateManager.doUpdate();
+    	// load warp permission groups
     	warpManager.LoadGroups();
+    	// run the world manager world import routine
     	worldManager.LoadWorlds();
     }
     public void onDisable () {
     	updateManager.finalise();
+        registry.deregisterAll();
     	log.info("[Waypoint] Disabled version " + this.getDescription().getVersion());
     }
     public File fileGet () {
@@ -90,7 +91,16 @@ public class Waypoint extends JavaPlugin {
     		sender.sendMessage("[Waypoint] You need to be a player to use this plugin.");
     		return true;
         }
-    	Player player = PlayerUtil.getPlayerFromSender(sender);
-    	return Parser.CommandParser(player, cmdlabel, args);
+    	/**
+    	 * Adjustment for 1.6
+    	 *
+    	 * Removes:
+    	 *   Player player = PlayerUtil.getPlayerFromSender(sender);
+    	 *   return Parser.CommandParser(player, cmdlabel, args);
+    	 * Adds:
+    	 *   Proposed interface for registry.
+    	 */
+    	 static Player player = (Player) sender;
+    	 return registry.process(player, cmdlabel, args);
     }
  }
