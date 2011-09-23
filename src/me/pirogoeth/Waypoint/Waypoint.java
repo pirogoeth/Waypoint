@@ -32,6 +32,8 @@ import me.pirogoeth.Waypoint.Core.Spawn;
 import me.pirogoeth.Waypoint.Core.Warps;
 import me.pirogoeth.Waypoint.Core.Worlds;
 import me.pirogoeth.Waypoint.Core.Links;
+// testing imports
+import me.pirogoeth.Waypoint.Util.Test;
 
 @SuppressWarnings("unused")
 public class Waypoint extends JavaPlugin {
@@ -42,7 +44,7 @@ public class Waypoint extends JavaPlugin {
     // logger
     Logger log = Logger.getLogger("Minecraft");
     // registry instantiation
-    private final Registry registry = new Registry(this);
+    public final Registry registry = new Registry(this);
     // additional stuff
     public final Spawn spawnManager = new Spawn(this);
     public final Warps warpManager = new Warps(this);
@@ -54,6 +56,8 @@ public class Waypoint extends JavaPlugin {
     private final BlockEventListener blockListener = new BlockEventListener(this);
     // updates
     private final AutoUpdate updateManager = new AutoUpdate(this);
+    // RUN TESTS. XXX REMOVE (or command) THIS.
+    //   public final Test test = new Test(this);
     // plug-in code
     public void onEnable () {
      	config.load();
@@ -83,7 +87,7 @@ public class Waypoint extends JavaPlugin {
     public File fileGet () {
         return this.getFile();
     }
-    public boolean onCommand(CommandSender sender, Command cmd, String cmdlabel, String args[])
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String cmdlabel, String args[])
     {
         if (sender.getClass().getName().toString() == "org.bukkit.craftbukkit.command.ColouredConsoleSender")
         {
@@ -91,16 +95,22 @@ public class Waypoint extends JavaPlugin {
     		sender.sendMessage("[Waypoint] You need to be a player to use this plugin.");
     		return true;
         }
-    	/**
-    	 * Adjustment for 1.6
-    	 *
-    	 * Removes:
-    	 *   Player player = PlayerUtil.getPlayerFromSender(sender);
-    	 *   return Parser.CommandParser(player, cmdlabel, args);
-    	 * Adds:
-    	 *   Proposed interface for registry.
-    	 */
-    	 static Player player = (Player) sender;
-    	 return registry.process(player, cmdlabel, args);
+        /**
+         * Adjustment for 1.6
+         *
+         * Removes:
+         *   Player player = PlayerUtil.getPlayerFromSender(sender);
+         *   return Parser.CommandParser(player, cmdlabel, args);
+         * Adds:
+         *   Proposed interface for registry.
+         */
+    	 Player player = (Player) sender;
+    	 me.pirogoeth.Waypoint.Util.Command command = (me.pirogoeth.Waypoint.Util.Command) registry.process(cmdlabel);
+    	 try {
+    	     return command.run(player, args);
+    	 } catch (me.pirogoeth.Waypoint.Util.CommandException e) {
+    	     e.printStackTrace();
+    	     return true;
+    	 }
     }
  }

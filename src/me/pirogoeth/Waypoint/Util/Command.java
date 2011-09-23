@@ -5,8 +5,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.Block;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 // Java imports
 import java.util.Map;
@@ -20,39 +18,24 @@ import me.pirogoeth.Waypoint.Util.Permission;
 import me.pirogoeth.Waypoint.Util.Registry;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.PlayerUtil;
+import me.pirogoeth.Waypoint.Util.CommandException;
+import me.pirogoeth.Waypoint.Util.RegistryException;
 
-private class CommandException extends Exception {
-    protected String trace;
-    private CommandException () {
-        super();
-        trace = "Unknown sub-exception handled.";
-    }
-
-    private CommandException (String error) {
-        super(error);
-        trace = error;
-    }
-
-    private static String getError () {
-        return trace;
-    }
-}
-
-private class Command {
-    private Map<String, Object> subcommands;
-    private Logger log = Logger.getLogger("Minecraft");
-    private Config configuration;
-    private Permission permissions;
-    private final Registry registry;
-    private Waypoint plugin;
-    private static boolean provisioned;
+public class Command {
+    public Logger log = Logger.getLogger("Minecraft");
+    public Config configuration;
+    public Permission permissions;
+    public Registry registry;
+    public Waypoint plugin;
 
     // miscellaneous other variables for runtime
-    private boolean registered;
-    private String command;
+    public static boolean registered;
+    public static String command;
+    public static Map<String, Object> subcommands;
+    public static ArrayList<String> aliases = new ArrayList<String>();
 
     // constructor without command specification
-    public Command(Waypoint instance) {
+    public Command (Waypoint instance) {
         plugin = instance;
         permissions = plugin.permissions;
         configuration = plugin.config;
@@ -70,6 +53,44 @@ private class Command {
     }
 
     // methods
+    public void initSubcommands () {
+        /**
+         * Must be overridden!
+         * This will initialise the subcommands and add them to +my+ subcommands map.
+         */
+        return;
+    }
+
+    public boolean addAlias (String alias) {
+        /**
+         * Registers an alias for the command.
+         */
+        try {
+            if (registry.registerCommand(alias, this) == true)
+                return aliases.add((String) alias);
+        } catch (RegistryException e) {
+            log.info("[Waypoint{Registry}] Could not register alias '" + alias + "'.");
+            return false;
+        }
+        return false;
+    }
+
+    public boolean deleteAlias (String alias)
+      throws CommandException {
+        /**
+         * Deregisters an alias for the command.
+         */
+        try {
+            if (registry.deregisterCommand(alias) == true)
+                return aliases.remove((String) alias);
+            else
+                throw new CommandException(String.format("Alias [%s] does not exist.", alias));
+        } catch (RegistryException e) {
+            log.info("[Waypoint{Registry}] Could not deregister alias '" + alias + "'.");
+            return false;
+        }
+    }
+
     public boolean isRegistered () {
         /**
          * Returns whether or not this command is already in the global registry.
@@ -84,7 +105,8 @@ private class Command {
         return (String) command;
     }
 
-    protected static void setRootCommand (String cmd) {
+    public void setRootCommand (String cmd)
+      throws CommandException {
         /**
          * This is only for in situations when the command has yet to be determined.
          * This command instance -MUST NOT- already be registered with the registry.
@@ -95,7 +117,8 @@ private class Command {
         command = cmd;
     }
 
-    protected static boolean register () {
+    public boolean register ()
+      throws CommandException {
         /**
          * Register this command with the core registry and mark this
          * instance registered to prevent re-registration.
@@ -103,8 +126,32 @@ private class Command {
         if (registered == true) {
             throw new CommandException("Command instance cannot be re-registered.");
         }
-        registry.addEntry(command);
+        try {
+            registry.registerCommand(command, this);
+        } catch (RegistryException e) {
+            log.info("[Waypoint{Registry}] Could not register command '" + command + "'.");
+            registered = false;
+            return false;
+        }
         registered = true;
+        return true;
+    }
+
+    public boolean deregister ()
+      throws CommandException {
+        /**
+         * Deregister this command from the core registry/
+         */
+        if (registered == false)
+            throw new CommandException("Command instance is not registered.");
+        try {
+            registry.deregisterCommand(command);
+        } catch (RegistryException e) {
+            registered = true;
+            return false;
+        }
+        registered = false;
+        return true;
     }
 
     public Set<String> getSubcommands () {
@@ -115,7 +162,8 @@ private class Command {
         return subcommands.keySet();
     }
 
-    public boolean run() {
+    public boolean run (Player player, String[] args)
+      throws CommandException {
         /**
          * This is where the code to be run when this command is process will be placed.
          * This must be overridden in another class file containing the command definition.
@@ -127,3 +175,4 @@ private class Command {
         }
         return false;
     }
+}
