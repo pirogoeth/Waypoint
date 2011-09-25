@@ -31,7 +31,6 @@ public class Command {
     // miscellaneous other variables for runtime
     public static boolean registered;
     public static String command;
-    public static Map<String, Object> subcommands;
     public static ArrayList<String> aliases = new ArrayList<String>();
 
     // constructor without command specification
@@ -53,14 +52,6 @@ public class Command {
     }
 
     // methods
-    public void initSubcommands () {
-        /**
-         * Must be overridden!
-         * This will initialise the subcommands and add them to +my+ subcommands map.
-         */
-        return;
-    }
-
     public boolean addAlias (String alias) {
         /**
          * Registers an alias for the command.
@@ -98,21 +89,21 @@ public class Command {
         return (Boolean) registered;
     }
 
-    public String getRootCommand () {
+    public String getCommand () {
         /**
          * Returns the command that this instantiation is created for.
          */
         return (String) command;
     }
 
-    public void setRootCommand (String cmd)
+    public void setCommand (String cmd)
       throws CommandException {
         /**
          * This is only for in situations when the command has yet to be determined.
          * This command instance -MUST NOT- already be registered with the registry.
          */
         if (registered == true) {
-            throw new CommandException("Command root cannot be set with the command already registered.");
+            throw new CommandException("Command cannot be set with the command already registered.");
         }
         command = cmd;
     }
@@ -152,14 +143,6 @@ public class Command {
         }
         registered = false;
         return true;
-    }
-
-    public Set<String> getSubcommands () {
-        /**
-         * Returns a set of subcommands that have been added to this instantiations
-         *    map of subs.
-         */
-        return subcommands.keySet();
     }
 
     public boolean run (Player player, String[] args)
