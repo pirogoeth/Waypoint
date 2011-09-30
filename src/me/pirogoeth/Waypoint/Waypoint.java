@@ -5,7 +5,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -22,16 +21,18 @@ import me.pirogoeth.Waypoint.Util.Registry;
 import me.pirogoeth.Waypoint.Util.PlayerUtil;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.AutoUpdate;
+import me.pirogoeth.Waypoint.Util.Command;
 // basic listeners
 import me.pirogoeth.Waypoint.Events.BedListener;
 import me.pirogoeth.Waypoint.Events.PlayerEventListener;
 import me.pirogoeth.Waypoint.Events.BlockEventListener;
 // core support classes
-import me.pirogoeth.Waypoint.Core.Parser;
 import me.pirogoeth.Waypoint.Core.Spawn;
 import me.pirogoeth.Waypoint.Core.Warps;
 import me.pirogoeth.Waypoint.Core.Worlds;
 import me.pirogoeth.Waypoint.Core.Links;
+// command classes
+import me.pirogoeth.Waypoint.Commands.CommandHandler;
 // testing imports
 import me.pirogoeth.Waypoint.Util.Test;
 
@@ -46,10 +47,12 @@ public class Waypoint extends JavaPlugin {
     // registry instantiation
     public final Registry registry = new Registry(this);
     // additional stuff
-    public final Spawn spawnManager = new Spawn(this);
+    public final me.pirogoeth.Waypoint.Core.Spawn spawnManager = new me.pirogoeth.Waypoint.Core.Spawn(this);
     public final Warps warpManager = new Warps(this);
     public final Worlds worldManager = new Worlds(this);
     public final Links linkManager = new Links(this);
+    // load commands
+    public final CommandHandler commandHandler = new CommandHandler(this);
     // listeners
     private final BedListener bedListener = new BedListener(this);
     private final PlayerEventListener playerListener = new PlayerEventListener(this);
@@ -81,7 +84,6 @@ public class Waypoint extends JavaPlugin {
     }
     public void onDisable () {
     	updateManager.finalise();
-        registry.deregisterAll();
     	log.info("[Waypoint] Disabled version " + this.getDescription().getVersion());
     }
     public File fileGet () {
@@ -106,6 +108,8 @@ public class Waypoint extends JavaPlugin {
          */
     	 Player player = (Player) sender;
     	 me.pirogoeth.Waypoint.Util.Command command = (me.pirogoeth.Waypoint.Util.Command) registry.process(cmdlabel);
+    	 if (command == null)
+    	     return true;
     	 try {
     	     return command.run(player, args);
     	 } catch (me.pirogoeth.Waypoint.Util.CommandException e) {

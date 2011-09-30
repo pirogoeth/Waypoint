@@ -29,9 +29,9 @@ public class Command {
     public Waypoint plugin;
 
     // miscellaneous other variables for runtime
-    public static boolean registered;
-    public static String command;
-    public static ArrayList<String> aliases = new ArrayList<String>();
+    public boolean registered = false;
+    public String command = "";
+    public ArrayList<String> aliases = new ArrayList<String>();
 
     // constructor without command specification
     public Command (Waypoint instance) {
@@ -40,7 +40,7 @@ public class Command {
         configuration = plugin.config;
         registry = plugin.registry;
         command = null;
-    }
+    };
 
     // constructor with command specification
     public Command (Waypoint instance, String command_root) {
@@ -49,7 +49,7 @@ public class Command {
         configuration = plugin.config;
         registry = plugin.registry;
         command = command_root;
-    }
+    };
 
     // methods
     public boolean addAlias (String alias) {
@@ -57,7 +57,7 @@ public class Command {
          * Registers an alias for the command.
          */
         try {
-            if (registry.registerCommand(alias, this) == true)
+            if (registry.registerAlias(alias, this) == true)
                 return aliases.add((String) alias);
         } catch (RegistryException e) {
             log.info("[Waypoint{Registry}] Could not register alias '" + alias + "'.");
@@ -72,7 +72,7 @@ public class Command {
          * Deregisters an alias for the command.
          */
         try {
-            if (registry.deregisterCommand(alias) == true)
+            if (registry.deregisterAlias(alias) == true)
                 return aliases.remove((String) alias);
             else
                 throw new CommandException(String.format("Alias [%s] does not exist.", alias));
@@ -81,6 +81,26 @@ public class Command {
             return false;
         }
     }
+
+    public boolean deleteAllAliases ()
+      throws CommandException {
+        /**
+         * Deregisters all attached aliases.
+         */
+        Iterator alia_i = aliases.iterator();
+        String a;
+        while (alia_i.hasNext()) {
+            a = (String) alia_i.next();
+            try {
+                registry.deregisterAlias((String) a);
+            } catch (RegistryException e) {
+                log.info("[Waypoint{Registry}] Could not deregister alias '" + a + "'.");
+                return false;
+            };
+            return true;
+        };
+        return true;
+    };
 
     public boolean isRegistered () {
         /**
@@ -131,7 +151,7 @@ public class Command {
     public boolean deregister ()
       throws CommandException {
         /**
-         * Deregister this command from the core registry/
+         * Deregister this command from the core registry
          */
         if (registered == false)
             throw new CommandException("Command instance is not registered.");

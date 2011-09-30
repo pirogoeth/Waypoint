@@ -19,6 +19,7 @@ import me.pirogoeth.Waypoint.Util.RegistryException;
 public class Registry {
     // important core registry variables.
     public Map<String, Object> command = new HashMap<String, Object>();
+    public Map<String, Object> aliases = new HashMap<String, Object>();
     public final Logger log = Logger.getLogger("Minecraft");
     public Waypoint plugin;
     // constructor
@@ -149,8 +150,52 @@ public class Registry {
          * [accepts: none; returns: none]
          */
         // well, this is boring.
-        command.clear();
+        try {
+            for (Map.Entry pair : command.entrySet()) {
+                ((Command) pair.getValue()).deregister();
+                ((Command) pair.getValue()).deleteAllAliases();
+            }
+        } catch (CommandException e) {
+            log.warning("[Waypoint{Registry}] Error deregistering all commands.");
+        }
         return;
+    }
+    public boolean registerAlias (String aliasLabel, Command instantiation)
+      throws RegistryException {
+        /**
+         * Allows for the registration of aliases for commands.
+         * Basically sort of an alternative to normal core registration, but
+         *    only should be used by a command instantiation after it has
+         *    registered a main command.
+         *
+         * [accepts: (String) aliasLabel, (Command) instantiation;
+         *     returns: boolean]
+         */
+        if (aliases.containsKey((String) aliasLabel))
+            throw new RegistryException(String.format("Command [%s] is already registered.", aliasLabel));
+        // does the map return null when we place the new value?
+        if (aliases.put((String) aliasLabel, (Object) instantiation) == null)
+            return true;
+        else
+            return false;
+    }
+    public boolean deregisterAlias (String aliasLabel)
+      throws RegistryException {
+        /**
+         * Allows for the deregistration of aliases for commands.
+         * Basically sort of an alternative to normal core registration, but
+         *    only should be used by a command instantiation after it has
+         *    registered a main command.
+         *
+         * [accepts: (String) aliasLabel; returns: boolean]
+         */
+        if (!(aliases.containsKey((String) aliasLabel)))
+            throw new RegistryException(String.format("Command [%s] is not registered.", aliasLabel));
+        // does the map actually return a value for commandLabel, or does it return null?
+        if (aliases.remove((String) aliasLabel) == null || aliases.remove((String) aliasLabel) != null)
+            return true;
+        else
+            return false;
     }
     public Command process (String commandLabel) {
         /**
@@ -160,11 +205,11 @@ public class Registry {
          * [accepts: (String) commandLabel; returns: Command]
          */
         // does this key even exist?
-        if (!(containsKey((String) commandLabel)))
-            return null;
-        else if (containsKey((String) commandLabel))
+        if (containsKey((String) commandLabel))
             return (Command) get((String) commandLabel);
+        else if (aliases.containsKey((String) commandLabel))
+            return (Command) aliases.get((String) commandLabel);
         else
             return null;
     }
-}
+};

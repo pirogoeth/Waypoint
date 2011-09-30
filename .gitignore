@@ -1,2 +1,4 @@
 *.class
 *.sh
+downloads.txt
+iso/*

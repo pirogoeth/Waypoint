@@ -77,11 +77,11 @@ public class Test {
     public void command_modification_Test () {
         TestCommand D = new TestCommand(plugin);
         try {
-            D.setRootCommand("teleport");
+            D.setCommand("teleport");
             D.register();
-            D.setRootCommand("teleport_d");
+            D.setCommand("teleport_d");
         } catch (me.pirogoeth.Waypoint.Util.CommandException e) {
-            log.info("{WPT16} setRootCommand test passed.");
+            log.info("{WPT16} setCommand test passed.");
             try { D.deregister(); }
             catch (me.pirogoeth.Waypoint.Util.CommandException x) {
                 return;
@@ -89,7 +89,7 @@ public class Test {
             i++;
             return;
         }
-        log.info("{WPT16} setRootCommand test failed.");
+        log.info("{WPT16} setCommand test failed.");
         try { D.deregister(); }
         catch (me.pirogoeth.Waypoint.Util.CommandException x) {
             return;
