@@ -160,7 +160,7 @@ public class Warps
       return true;
     }
     String worldname = (String)config.getProperty(WarpNode(warpname, "world"));
-    if ((!target.getWorld().toString().equals(worldname)) && (((String)Config.getMain().getProperty("warp.traverse_world_only")).equals("true")))
+    if ((!target.getLocation().getWorld().toString().equals(worldname)) && (((String)c.getMain().getProperty("warp.traverse_world_only")).equals("true")))
     {
       sender.sendMessage(ChatColor.RED + "[Waypoint] You are not allowed to warp others between worlds.");
       return true;
@@ -171,7 +171,7 @@ public class Warps
     World w = plugin.getServer().getWorld(worldname);
     Location l = new Location(w, x, y, z);
     target.teleport(l);
-    sender.sendMessage(ChatColor.GREEN + String.format("[Waypoint] %s has been warped to %s", new Object[] { target.getName().toString(), warpname }));
+    sender.sendMessage(ChatColor.GREEN + String.format("[Waypoint] %s has been warped to %s", target.getName().toString(), warpname));
 
     if (((String)main.getProperty("warp.warpstring_enabled")).equalsIgnoreCase("true"))
     {
@@ -183,14 +183,9 @@ public class Warps
       }
       warpstring = warpstring.replaceAll("%w", "" + warpname);
       warpstring = warpstring.replaceAll("%p", "" + target.getName().toString());
-      target.sendMessage(String.format("%s%s", new Object[] { ChatColor.BLUE, warpstring }));
+      target.sendMessage(String.format("%s%s", ChatColor.BLUE, warpstring));
       return true;
     }
     return true;
   }
 }
-
-/* Location:           C:\Users\CJ\Desktop\Waypoint.jar
- * Qualified Name:     me.pirogoeth.Waypoint.Core.Warps
- * JD-Core Version:    0.6.0
- */

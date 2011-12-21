@@ -8,29 +8,48 @@ import me.pirogoeth.Waypoint.Waypoint;
 import me.pirogoeth.Waypoint.Util.Limits;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
-public class WarpLimits extends Limits {
+public class WarpLimits {
     // this is the base path where our limiting will work.
     private String base_path;
     private int threshold;
     private Waypoint plugin;
     private Configuration source;
+    private Logger log = Logger.getLogger("Minecraft");
 
     // this constructor represents a limiter with a custom threshold.
     WarpLimits(Waypoint instance, String path, Configuration input, int limit) {
-        super(instance, path, input, limit);
+        this.plugin = instance;
+        this.base_path = path;
+        this.source = input;
+        this.threshold = limit;
     };
     // this constructor represents a limiter with the default threshold (10)
     WarpLimits(Waypoint instance, String path, Configuration input) {
-        super(instance, path, input);
+        this.plugin = instance;
+        this.base_path = path;
+        this.source = input;
+        this.threshold = 10;
     };
     // this constructor represents a disabled limiter.
     WarpLimits(Waypoint instance) {
-        super(instance);
+        this.plugin = instance;
+        this.base_path = ".";
     };
-    @Override
+    public boolean isEnabled () {
+        if (this.base_path.equals("."))
+            return false;
+        else if (!(this.base_path.equals(".")))
+            return true;
+        else
+            return false;
+    };
     public boolean playerReachedLimit (Player player) {
-        Map<String, ConfigurationNode> node_map = source.getNodes(base_path);
+        if (this.isEnabled() == false) {
+            return false;
+        }
+        Map<String, ConfigurationNode> node_map = this.source.getNodes(this.base_path);
         int size = 0;
         for (Map.Entry<String, ConfigurationNode> entry : node_map.entrySet()) {
             if (((entry.getValue()).getString("owner")).equals(player.getName().toString()))
@@ -38,11 +57,11 @@ public class WarpLimits extends Limits {
             else
                 continue;
         }
-        if (size < threshold)
+        if (size < this.threshold)
             return false;
-        else if (size == threshold)
+        else if (size == this.threshold)
             return true;
-        else if (size > threshold)
+        else if (size > this.threshold)
             return true;
         else
             return true;

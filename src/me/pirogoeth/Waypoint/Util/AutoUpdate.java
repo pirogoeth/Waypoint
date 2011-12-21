@@ -54,7 +54,7 @@ public class AutoUpdate {
            return false;
         }
         try {
-            URL versionfile = new URL("http://maio.me/~pirogoeth/Waypoint.version.txt");
+            URL versionfile = new URL("http://maio.me/downloads/Waypoint/version.txt");
             log.info("[Waypoint] Checking for updates..");
             BufferedReader in = new BufferedReader(new InputStreamReader(versionfile.openStream()));
             String str;
@@ -81,7 +81,7 @@ public class AutoUpdate {
             return;
         }
         try {
-            URL source = new URL("http://maio.me/~pirogoeth/Waypoint.jar");
+            URL source = new URL("http://maio.me/downloads/Waypoint/Waypoint.jar");
             File directory = new File(Bukkit.getServer().getUpdateFolder());
             if (!directory.exists()) {
                directory.mkdir();

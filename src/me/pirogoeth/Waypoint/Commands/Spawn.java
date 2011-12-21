@@ -56,6 +56,7 @@ class Spawn extends Command
       return true;
     }
     this.plugin.spawnManager.SendPlayerToSpawn(w, player);
+    player.getLocation().getChunk().load();
     return true;
   }
 }

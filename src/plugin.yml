@@ -1,7 +1,8 @@
 name: Waypoint
 main: me.pirogoeth.Waypoint.Waypoint
-version: 1.6.2
+version: 1.6.3
 author: pirogoeth
+softdepend: [Vault]
 order: postworld
 commands:
     wp:

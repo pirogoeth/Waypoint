@@ -5,6 +5,7 @@ import me.pirogoeth.Waypoint.Util.CommandException;
 import me.pirogoeth.Waypoint.Util.Registry;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.MinorUtils.*;
+import me.pirogoeth.Waypoint.Util.Governor;
 import me.pirogoeth.Waypoint.Waypoint;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -18,11 +19,13 @@ import java.lang.Boolean;
 class Warp extends Command {
     public Configuration main;
     public Configuration warp;
+    public Governor limitProvider;
 
     public Warp (Waypoint instance) {
         super(instance);
         main = configuration.getMain();
         warp = configuration.getWarp();
+        this.limitProvider = instance.limitProvider;
         try {
             setCommand("warp");
             addAlias("wpwarp");
@@ -82,6 +85,10 @@ class Warp extends Command {
                 player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission to use this command.");
                 return true;
             };
+            if (this.limitProvider.getWarp().playerReachedLimit(player) == true) {
+                player.sendMessage(ChatColor.RED + "[Waypoint] You have reached the maximum number of warps one user can have.");
+                return true;
+            }
             plugin.warpManager.CreateWarp(player, arg);
             player.sendMessage(ChatColor.AQUA + "[Waypoint] Warp " + arg + " has been created.");
             return true;
@@ -233,6 +240,7 @@ class Warp extends Command {
         else if (warp.getProperty(plugin.warpManager.WarpBase(origc)) != null)
         {
             plugin.warpManager.PlayerToWarp(player, (String)origc);
+            player.getLocation().getChunk().load();
             return true;
         }
         else if (warp.getProperty(plugin.warpManager.WarpBase(origc)) == null)

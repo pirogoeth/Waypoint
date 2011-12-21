@@ -56,12 +56,11 @@ public class Worlds {
             worldname = entry.getKey();
             e = entry.getValue();
             env = e.getString("env");
-            mode = e.getInt("mode", 404);
+            mode = e.getInt("mode", 0);
             pvp = e.getBoolean("pvp", false);
             if (!worldnames.contains(worldname))
             {
-                if (mode == 404) { this.Import(worldname, env); }
-                else { this.Import(worldname, env, mode); };
+                this.Import(worldname, env, mode);
             }
             else
             {
@@ -95,7 +94,6 @@ public class Worlds {
     }
     public World Import (String worldname, String env, int mode)
     {
-        if (mode == 404) { return this.Import(worldname, env); };
         if (mode != 0 && mode != 1) { mode = 0; };
         Environment environment = Environment.valueOf(env);
         Configuration world = config.getWorld();
@@ -146,7 +144,6 @@ public class Worlds {
     }
     public World Create (String worldname, String env, int mode)
     {
-        if (mode == 404) { return this.Create(worldname, env); };
         if (mode != 0 && mode != 1) { mode = 0; };
         Environment environment = Environment.valueOf(env);
         Configuration world = config.getWorld();

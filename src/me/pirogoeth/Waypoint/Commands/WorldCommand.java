@@ -32,6 +32,19 @@ class WorldCommand extends Command {
         }
     };
 
+    public static boolean delete_r(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = delete_r(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        return dir.delete();
+    };
+
     @Override
     public boolean run (Player player, String[] args)
       throws CommandException {
@@ -85,7 +98,12 @@ class WorldCommand extends Command {
                 return true;
             }
             // @accepts [2 args]: worldname, environment
-            String worldname = args[1];
+            String worldname;
+            try { worldname = args[1]; }
+            catch (java.lang.ArrayIndexOutOfBoundsException e) {
+                player.sendMessage(ChatColor.RED + "[Waypoint] Please specify a world name.");
+                return true;
+            };
             String environ;
             try { environ = args[2]; }
             catch (java.lang.ArrayIndexOutOfBoundsException e) { environ = null; };
@@ -164,22 +182,16 @@ class WorldCommand extends Command {
                 player.sendMessage(ChatColor.RED + "[Waypoint] Error deleting world: " + worldname + " [err: 1]");
                 return true;
             } else if (result == true) {
-                boolean d_result;
-                try {
-                    d_result = new File(worldname).delete();
-                    if (d_result == false) {
-                        player.sendMessage(ChatColor.RED + "[Waypoint] Error deleting world: " + worldname + " [err: 7]");
-                        return true;
-                    };
-                }
-                catch (java.lang.NullPointerException e) {
-                    player.sendMessage(ChatColor.RED + "[Waypoint] World directory for world " + worldname + " does not exist.");
+                boolean d_result = this.delete_r(new File(worldname));
+                if (d_result == false) {
+                    player.sendMessage(ChatColor.BLUE + "[Waypoint] Could not delete world " + worldname);
                     return true;
-                };
-                plugin.config.getWorld().removeProperty("world." + worldname);
-                plugin.config.save();
-                player.sendMessage(ChatColor.BLUE + "[Waypoint] Successfully deleted world " + worldname);
-                return true;
+                } else if (d_result == true) {
+                    plugin.config.getWorld().removeProperty("world." + worldname);
+                    plugin.config.save();
+                    player.sendMessage(ChatColor.BLUE + "[Waypoint] Successfully deleted world " + worldname);
+                    return true;
+                }
             };
             return true;
         }
@@ -246,6 +258,7 @@ class WorldCommand extends Command {
             }
             Location wsl = w.getSpawnLocation();
             player.teleport(wsl);
+            player.getLocation().getChunk().load();
             player.sendMessage(ChatColor.GREEN + "[Waypoint] You have been taken to the spawn of world '" + (String) w.getName().toString() + "'.");
             return true;
         };

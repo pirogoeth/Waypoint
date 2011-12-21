@@ -55,6 +55,7 @@ class Home extends Command {
                 Location l = new Location(w, x, y, z);
                 player.setCompassTarget(l);
                 player.teleport(l);
+                player.getLocation().getChunk().load();
                 player.sendMessage(ChatColor.GREEN + "Welcome home, " + player.getName().toString() + ".");
                 return true;
             }

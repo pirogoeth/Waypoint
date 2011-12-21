@@ -176,8 +176,10 @@ public class Config {
         {
             log.info("[Waypoint] Writing default config values.");
             // main
-            main.setProperty("version", "1.6.2");
+            main.setProperty("version", "1.6.3");
             main.setProperty("autoupdate", "false");
+            // economy
+            main.setProperty("economy", "false");
             // home settings
             main.setProperty("home.set_home_at_bed", "false");
             // warp permission groups
@@ -237,15 +239,15 @@ public class Config {
             links.save();
             main.save();
         }
-        else if (!((String)main.getString("version")).equals("1.6.2"))
+        else if (!((String)main.getString("version")).equals("1.6.3"))
         {
             // write values not entered in the 1.6.1 update, but were added during
             // the 1.6.2 alpha testing.
-            log.info("[Waypoint] Finalising 1.6.2 configuration.");
+            log.info("[Waypoint] Finalising 1.6.3 configuration.");
             // set version
-            main.setProperty("version", "1.6.2");
-            // disable updates until i get the new server running
-            main.setProperty("autoupdate", "false");
+            main.setProperty("version", "1.6.3");
+            // economy
+            main.setProperty("economy", "false");
             // add config option added after 1.5-dev
             main.setProperty("warp.warpstring_enabled", "true");
             // add limits

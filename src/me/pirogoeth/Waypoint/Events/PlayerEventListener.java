@@ -121,21 +121,26 @@ public class PlayerEventListener extends PlayerListener {
          * Target IDs:
          * 63: Sign Post
          * 68: Wall sign
+         *
+         * New sign format as of 1.6.3:
+         *   [WP:(WARP/WORLD)]
+         *   <world/warpname>
+         *   <description>
+         *   <description>
          */
         Block clicked_b = event.getClickedBlock();
         if (clicked_b == null) { return; }; // prevents spewage of NullPointerException everywhere
         if ((clicked_b.getTypeId() == 63 || clicked_b.getTypeId() == 68) && event.getAction() == Action.RIGHT_CLICK_BLOCK)
         {
             Sign clicked_s = (Sign) clicked_b.getState();
-            if (!((String) clicked_s.getLine(0)).equalsIgnoreCase("[Waypoint]"))
+            if (!((String) clicked_s.getLine(0)).split("\\:")[0].equalsIgnoreCase("[WP"))
             {
                 return;
             }
-            String signtype = (String) clicked_s.getLine(1);
+            String signtype = (String) clicked_s.getLine(0).split("\\:")[1].split("]")[0];
             String target = null;
             String target_o = null;
-            String wrap = null;
-            if (signtype.split("\\:")[0].equalsIgnoreCase("link"))
+            if (signtype.equalsIgnoreCase("link"))
             {
                 if (!permissions.has(player, "waypoint.sign.link.use"))
                 {
@@ -152,11 +157,11 @@ public class PlayerEventListener extends PlayerListener {
                 return;
             }
             try {
-                target = (String) clicked_s.getLine(2);
+                target = (String) clicked_s.getLine(1);
             }
             catch (java.lang.IndexOutOfBoundsException e)
             {
-                target = null;
+                return;
             }
             target_o = target;
             target = ((String) target).replaceAll("\\p{Cntrl}", "");;
@@ -185,6 +190,10 @@ public class PlayerEventListener extends PlayerListener {
                 {
                    player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have permission to use this sign.");
                    return;
+                }
+                if (!permissions.has(player, String.format("waypoint.world.access.%s", target))) {
+                    player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have permission to access this world.");
+                    return;
                 }
                 World world_t = plugin.getServer().getWorld(target);
                 Location world_l = null;

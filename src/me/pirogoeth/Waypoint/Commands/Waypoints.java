@@ -5,6 +5,7 @@ import me.pirogoeth.Waypoint.Util.CommandException;
 import me.pirogoeth.Waypoint.Util.Registry;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.MinorUtils;
+import me.pirogoeth.Waypoint.Util.Governor;
 import me.pirogoeth.Waypoint.Waypoint;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -18,11 +19,13 @@ import java.lang.Boolean;
 class Waypoints extends Command {
     public Configuration main;
     public Configuration users;
+    public Governor limitProvider;
 
     public Waypoints (Waypoint instance) {
         super(instance);
         main = configuration.getMain();
         users = configuration.getUsers();
+        this.limitProvider = instance.limitProvider;
         try {
             setCommand("wp");
             addAlias("waypoint");
@@ -64,6 +67,10 @@ class Waypoints extends Command {
             if (users.getProperty(MinorUtils.UserNodeChomp(player, arg, "world")) != null)
             {
                 player.sendMessage("[Waypoint] Point '" + arg + "' already exists!");
+                return true;
+            }
+            if (this.limitProvider.getWaypoint().playerReachedLimit(player) == true) {
+                player.sendMessage(ChatColor.RED + "[Waypoint] You have reached the maximum number of waypoints allowed.");
                 return true;
             }
             // position
@@ -108,6 +115,11 @@ class Waypoints extends Command {
                 return true;
             }
             World w = plugin.getServer().getWorld(users.getProperty(MinorUtils.UserNodeChomp(player, arg, "world")).toString());
+            if (((String) configuration.getMain().getProperty("warp.traverse_world_only")).equals("true") && !(player.getWorld().toString().equals(w.getName().toString())))
+            {
+                player.sendMessage(ChatColor.RED + "[Waypoint] You cannot warp to a point outside this world.");
+                return true;
+            }
             double x = (Double) users.getProperty(MinorUtils.UserNodeChomp(player, arg, "coord.X"));
             double y = (Double) users.getProperty(MinorUtils.UserNodeChomp(player, arg, "coord.Y"));
             double z = (Double) users.getProperty(MinorUtils.UserNodeChomp(player, arg, "coord.Z"));
@@ -217,7 +229,12 @@ class Waypoints extends Command {
             }
             for (Map.Entry<String, ConfigurationNode> entry : a.entrySet())
             {
-                player.sendMessage(ChatColor.GREEN + " - " + entry.getKey());
+                if (((String) configuration.getMain().getProperty("warp.list_world_only")).equals("true") && !(entry.getValue().getString("world").equals(player.getLocation().getWorld().getName().toString())))
+                {
+                    continue;
+                } else {
+                    player.sendMessage(ChatColor.GREEN + " - " + entry.getKey());
+                }
             }
             return true;
         }
