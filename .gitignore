@@ -1,0 +1,7 @@
+*.class
+downloads.txt
+build.sh
+backup/
+.arcconfig
+downloads/
+Waypoint.jar
