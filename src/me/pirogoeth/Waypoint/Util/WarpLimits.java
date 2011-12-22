@@ -58,7 +58,7 @@ public class WarpLimits {
                 else
                     continue;
             }
-        } catch (java.lang.NullPointerException) {
+        } catch (java.lang.NullPointerException e) {
             // this means that there are no entries in the warp config.
             return false;
         }
