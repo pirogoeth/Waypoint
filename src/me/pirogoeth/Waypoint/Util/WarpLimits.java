@@ -51,11 +51,16 @@ public class WarpLimits {
         }
         Map<String, ConfigurationNode> node_map = this.source.getNodes(this.base_path);
         int size = 0;
-        for (Map.Entry<String, ConfigurationNode> entry : node_map.entrySet()) {
-            if (((entry.getValue()).getString("owner")).equals(player.getName().toString()))
-                size++;
-            else
-                continue;
+        try {
+            for (Map.Entry<String, ConfigurationNode> entry : node_map.entrySet()) {
+                if (((entry.getValue()).getString("owner")).equals(player.getName().toString()))
+                    size++;
+                else
+                    continue;
+            }
+        } catch (java.lang.NullPointerException) {
+            // this means that there are no entries in the warp config.
+            return false;
         }
         if (size < this.threshold)
             return false;
