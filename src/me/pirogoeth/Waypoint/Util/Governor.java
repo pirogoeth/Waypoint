@@ -40,6 +40,7 @@ public class Governor {
             this.wpLimits = new Limits(this.plugin, wp_path, this.configuration.getUsers(), wp_threshold);
             this.log.info(String.format("[Waypoint] Limits enabled with threshold %d", wp_threshold));
         } else if (wp_limits_enabled == false) {
+            this.wpLimits = new Limits(this.plugin);
             this.log.info(String.format("[Waypoint] Limits are disabled."));
         }
         if (warp_limits_enabled == true) {
@@ -48,6 +49,7 @@ public class Governor {
             this.warpLimits = new WarpLimits(this.plugin, warp_path, this.configuration.getWarp(), warp_threshold);
             this.log.info(String.format("[Waypoint] WarpLimits enabled with threshold %d", warp_threshold));
         } else if (warp_limits_enabled == false) {
+            this.warpLimits = new WarpLimits(this.plugin);
             this.log.info(String.format("[Waypoint] WarpLimits are disabled."));
         };
     }
