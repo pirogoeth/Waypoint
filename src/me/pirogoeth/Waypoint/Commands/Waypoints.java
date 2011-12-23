@@ -61,7 +61,8 @@ class Waypoints extends Command {
         {
             if (arg == null) { player.sendMessage("Usage: /wp <add|del|tp|list|help> [name]"); }
             if (!permissions.has(player, "waypoint.basic.add")) {
-                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                player.sendMessage(ChatColor.BLUE +
+                    "You do not have the permissions to use this command.");
                 return true;
             }
             if (users.getProperty(MinorUtils.UserNodeChomp(player, arg, "world")) != null)
@@ -89,7 +90,8 @@ class Waypoints extends Command {
         {
             if (arg == null) { player.sendMessage("Usage: /wp <add|del|tp|list|help> [name]"); }
             if (!permissions.has(player, "waypoint.basic.delete")) {
-                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                player.sendMessage(ChatColor.BLUE +
+                    "You do not have the permissions to use this command.");
                 return true;
             }
             if (users.getProperty(MinorUtils.UserNodeChomp(player, arg, "world")) == null)
@@ -114,7 +116,8 @@ class Waypoints extends Command {
                 player.sendMessage(ChatColor.RED + "[Waypoint] Point '" + arg + "' does not exist!");
                 return true;
             }
-            World w = plugin.getServer().getWorld(users.getProperty(MinorUtils.UserNodeChomp(player, arg, "world")).toString());
+            World w = plugin.getServer().getWorld(
+                users.getProperty(MinorUtils.UserNodeChomp(player, arg, "world")).toString());
             if (!(plugin.getServer().getWorlds().contains(w))) {
                 player.sendMessage(ChatColor.RED + "[Waypoint] World " + users.getProperty(MinorUtils.UserNodeChomp(player, arg, "world")) + " is not loaded.");
                 return true;
@@ -132,7 +135,8 @@ class Waypoints extends Command {
             //  float yw = new Float(users.getString(MinorUtils.UserNodeChomp(player, arg, "coord.yaw")));
             Location l = new Location(w, x, y, z);
             player.teleport(l);
-            player.sendMessage(ChatColor.BLUE + "[Waypoint] You have been teleported to '" + arg + "'.");
+            player.sendMessage(ChatColor.BLUE +
+                "[Waypoint] You have been teleported to '" + arg + "'.");
             return true;
         }
         else if (subc.equalsIgnoreCase("invite"))

@@ -75,7 +75,7 @@ public class Waypoint extends JavaPlugin {
     public static Economy economy = null;
     // plug-in code
     public void onEnable () {
-     	config.load();
+        config.load();
         // player listener
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_ENTER, playerListener, Event.Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
