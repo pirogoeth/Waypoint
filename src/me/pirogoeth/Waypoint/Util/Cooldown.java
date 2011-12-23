@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 public class Cooldown {
     public Waypoint plugin;
-    public Logger log = Logger.getLogger("Minecraft");
+    public Logger log;
     private Config configProvider;
     public Configuration configuration;
     private ArrayList<String> cooling = new ArrayList<String>();
@@ -26,6 +26,7 @@ public class Cooldown {
          * @params: instance
          */
         this.plugin = instance;
+        this.log = Logger.getLogger("Minecraft");
         this.configProvider = instance.config;
         this.configuration = this.configProvider.getMain();
     }
@@ -37,7 +38,7 @@ public class Cooldown {
          * @returns (1): long
          */
         this.cooldown = this.configuration.getInt("cooldown.duration", 0); // defaults to 0 -- disabled state
-        return (long)this.cooldown;
+        return (long) (this.cooldown * 20);
     }
 
     public void holdUser (Player player) {
@@ -48,11 +49,10 @@ public class Cooldown {
          * @calls: this.runTimer((Player));
          */
         this.cooling.add(player.getName().toString());
-        this.log(String.format("[Waypoint] User %s has been held", player.getName().toString()));
         this.runTimer(player);
     }
 
-    public void unholdUser (Player player) {
+    protected void releaseUser (Player player) {
         /**
          * unholdUser()
          * @params (1): Player
@@ -70,18 +70,19 @@ public class Cooldown {
         return this.cooling.contains(player.getName().toString());
     }
 
-    public void runTimer (Player player) {
+    protected void runTimer (Player player_arg) {
         /**
          * runTimer()
          * @params (1): Player
          * @returns: none
          * @calls: unholdUser((Player))
          */
+        final Player player = player_arg;
         this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(
             this.plugin,
             new Runnable () {
                 public void run () {
-                    this.unholdUser(player);
+                    releaseUser(player);
                 }
             }, this.getDuration());
     }

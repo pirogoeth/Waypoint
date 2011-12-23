@@ -257,7 +257,10 @@ class WorldCommand extends Command {
                 return true;
             }
             Location wsl = w.getSpawnLocation();
-            player.teleport(wsl);
+            boolean su = player.teleport(wsl);
+            if (su == false) {
+                return true;
+            }
             player.getLocation().getChunk().load();
             player.sendMessage(ChatColor.GREEN + "[Waypoint] You have been taken to the spawn of world '" + (String) w.getName().toString() + "'.");
             return true;

@@ -34,7 +34,7 @@ import me.pirogoeth.Waypoint.Core.Links;
 public class PlayerEventListener extends PlayerListener {
     public static Waypoint plugin;
     public static Config config;
-    public static Cooldown cooldownManager;
+    private Cooldown cooldownManager;
     public static Warps warpManager;
     public static Links linkManager;
     public Permission permissions;
@@ -46,7 +46,7 @@ public class PlayerEventListener extends PlayerListener {
         config = plugin.config;
         warpManager = plugin.warpManager;
         linkManager = plugin.linkManager;
-        cooldownManager = plugin.cooldownManager;
+        cooldownManager = instance.getCooldownManager();
     }
     public static String UserNodeChomp (Player p, String arg, String sub)
     {
@@ -60,11 +60,16 @@ public class PlayerEventListener extends PlayerListener {
     }
     public void onPlayerTeleport(PlayerTeleportEvent event)
     {
+        final Player player = event.getPlayer();
         // cooldown implementation
-        if (cooldownManager.checkUser(event.getPlayer()) == false) {
-            cooldownManager.holdUser(event.getPlayer());
+        if (event.getCause().toString().equals("UNKNOWN")) {
+            // this is the second teleport to get an absolute fix on the correct position. allow it.
             return;
-        } else if (cooldownManager.checkUser(event.getPlayer()) == true) {
+        }
+        if (cooldownManager.checkUser(player) == false) {
+            cooldownManager.holdUser(player);
+            return;
+        } else if (cooldownManager.checkUser(player) == true) {
             player.sendMessage("[Waypoint] Please wait, cooling down...");
             event.setCancelled(true);
             return;

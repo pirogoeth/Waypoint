@@ -57,6 +57,8 @@ public class Waypoint extends JavaPlugin {
     public final Registry registry = new Registry(this);
     // limits
     public final Governor limitProvider = new Governor(this);
+    // cooldown timer
+    public final Cooldown cooldownManager = new Cooldown(this);
     // additional stuff
     public final me.pirogoeth.Waypoint.Core.Spawn spawnManager = new me.pirogoeth.Waypoint.Core.Spawn(this);
     public final Warps warpManager = new Warps(this);
@@ -71,8 +73,6 @@ public class Waypoint extends JavaPlugin {
     private final AutoUpdate updateManager = new AutoUpdate(this);
     // economy
     public static Economy economy = null;
-    // cooldown timer
-    public final Cooldown cooldownManager = new Cooldown(this);
     // plug-in code
     public void onEnable () {
      	config.load();
@@ -99,18 +99,29 @@ public class Waypoint extends JavaPlugin {
     	// run the world manager world import routine
     	worldManager.LoadWorlds();
     }
+
     public void onDisable () {
+        // finish updating
     	updateManager.finalise();
+    	// shutdown all scheduler tasks
+    	getServer().getScheduler().cancelTasks(this);
     	log.info("[Waypoint] Disabled version " + this.getDescription().getVersion());
     }
+
     public File fileGet () {
         return this.getFile();
     }
+
     /**
      * public Configuration getStringsProvider () {
      *    return this.strings;
      * }
      */
+
+    public Cooldown getCooldownManager () {
+        return this.cooldownManager;
+    }
+
     private Boolean setupEconomy() {
         RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
         if (economyProvider != null) {
@@ -118,6 +129,7 @@ public class Waypoint extends JavaPlugin {
         }
         return (economy != null);
     }
+
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String cmdlabel, String args[])
     {
         if (sender.getClass().getName().toString() == "org.bukkit.craftbukkit.command.ColouredConsoleSender")
