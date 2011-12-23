@@ -178,6 +178,8 @@ public class Config {
             // main
             main.setProperty("version", "1.6.3");
             main.setProperty("autoupdate", "false");
+            // cooldown timer
+            main.setProperty("cooldown.duration", 0);
             // economy
             main.setProperty("economy", "false");
             // home settings
@@ -239,13 +241,15 @@ public class Config {
             links.save();
             main.save();
         }
-        else if (!((String)main.getString("version")).equals("1.6.3"))
+        else if (!((String)main.getString("version")).equals("1.6.4"))
         {
             // write values not entered in the 1.6.1 update, but were added during
             // the 1.6.2 alpha testing.
-            log.info("[Waypoint] Finalising 1.6.3 configuration.");
+            log.info("[Waypoint] Finalising 1.6.4 configuration.");
             // set version
-            main.setProperty("version", "1.6.3");
+            main.setProperty("version", "1.6.4");
+            // cooldown timers
+            main.setProperty("cooldown.duration", 0);
             // economy
             main.setProperty("economy", "false");
             // add config option added after 1.5-dev
