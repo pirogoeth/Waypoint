@@ -3,7 +3,7 @@ main: me.pirogoeth.Waypoint.Waypoint
 version: 1.6.4
 author: pirogoeth
 softdepend: [Vault]
-order: postworld
+order: startup
 commands:
     wp:
         description: Manage waypoints for yourself.
