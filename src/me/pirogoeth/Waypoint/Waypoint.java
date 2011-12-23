@@ -30,6 +30,7 @@ import me.pirogoeth.Waypoint.Util.Command;
 import me.pirogoeth.Waypoint.Util.Governor;
 import me.pirogoeth.Waypoint.Util.Limits;
 import me.pirogoeth.Waypoint.Util.WarpLimits;
+import me.pirogoeth.Waypoint.Util.Cooldown;
 // basic listeners
 import me.pirogoeth.Waypoint.Events.PlayerEventListener;
 import me.pirogoeth.Waypoint.Events.BlockEventListener;
@@ -70,6 +71,8 @@ public class Waypoint extends JavaPlugin {
     private final AutoUpdate updateManager = new AutoUpdate(this);
     // economy
     public static Economy economy = null;
+    // cooldown timer
+    public final Cooldown cooldownManager = new Cooldown(this);
     // plug-in code
     public void onEnable () {
      	config.load();
@@ -79,6 +82,7 @@ public class Waypoint extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Event.Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHANGED_WORLD, playerListener, Event.Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN, playerListener, Event.Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Event.Priority.High, this);
         // block listener
         getServer().getPluginManager().registerEvent(Event.Type.SIGN_CHANGE, blockListener, Event.Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.High, this);

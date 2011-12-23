@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.World;
@@ -26,12 +27,14 @@ import java.util.Iterator;
 import me.pirogoeth.Waypoint.Waypoint;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.Permission;
+import me.pirogoeth.Waypoint.Util.Cooldown;
 import me.pirogoeth.Waypoint.Core.Warps;
 import me.pirogoeth.Waypoint.Core.Links;
 
 public class PlayerEventListener extends PlayerListener {
     public static Waypoint plugin;
     public static Config config;
+    public static Cooldown cooldownManager;
     public static Warps warpManager;
     public static Links linkManager;
     public Permission permissions;
@@ -43,6 +46,7 @@ public class PlayerEventListener extends PlayerListener {
         config = plugin.config;
         warpManager = plugin.warpManager;
         linkManager = plugin.linkManager;
+        cooldownManager = plugin.cooldownManager;
     }
     public static String UserNodeChomp (Player p, String arg, String sub)
     {
@@ -53,6 +57,18 @@ public class PlayerEventListener extends PlayerListener {
     {
         String a = "home." + p.getName().toString() + "." + w.getName().toString() + "." + sub;
         return a;
+    }
+    public void onPlayerTeleport(PlayerTeleportEvent event)
+    {
+        // cooldown implementation
+        if (cooldownManager.checkUser(event.getPlayer()) == false) {
+            cooldownManager.holdUser(event.getPlayer());
+            return;
+        } else if (cooldownManager.checkUser(event.getPlayer()) == true) {
+            player.sendMessage("[Waypoint] Please wait, cooling down...");
+            event.setCancelled(true);
+            return;
+        }
     }
     public void onPlayerBedEnter(PlayerBedEnterEvent event)
     {
