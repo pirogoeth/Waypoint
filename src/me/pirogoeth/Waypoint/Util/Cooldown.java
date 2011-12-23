@@ -70,14 +70,13 @@ public class Cooldown {
         return this.cooling.contains(player.getName().toString());
     }
 
-    protected void runTimer (Player player_arg) {
+    protected void runTimer (final Player player) {
         /**
          * runTimer()
          * @params (1): Player
          * @returns: none
          * @calls: unholdUser((Player))
          */
-        final Player player = player_arg;
         this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(
             this.plugin,
             new Runnable () {
