@@ -23,6 +23,8 @@ import java.util.logging.Logger;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
 import me.pirogoeth.Waypoint.Waypoint;
 import me.pirogoeth.Waypoint.Util.Config;
@@ -144,8 +146,8 @@ public class PlayerEventListener extends PlayerListener {
          * 68: Wall sign
          *
          * New sign format as of 1.6.3:
-         *   [WP:(WARP/WORLD)]
-         *   <world/warpname>
+         *   [WP:(WARP/WORLD/GAMEMODE)]
+         *   <world/warpname/gamemode>
          *   <description>
          *   <description>
          */
@@ -249,6 +251,26 @@ public class PlayerEventListener extends PlayerListener {
                 }
                 player.teleport(world_l);
                 player.sendMessage(ChatColor.GREEN + "[Waypoint] You have been teleported to the spawn of " + target);
+                return;
+            } else if (signtype.equalsIgnoreCase("gamemode") {
+                if (!permissions.has(player, "waypoint.sign.gamemode")) {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] You do not have the permission to use this sign.");
+                    return;
+                }
+                int gm;
+                GameMode mode;
+                try { gm = Integer.parseInt((String) clicked_s.getLine(1)); }
+                catch (java.lang.Exception e) { return; };
+                if (gm != 1 || gm != 0) {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] This sign was created with an invalid game mode.");
+                    final int s_id = new Integer("63");
+                    ItemStack sign_dr = new ItemStack(s_id);
+                    clicked_b.setTypeId(0);
+                    clicked_b.getLocation().getWorld().dropItemNaturally(clicked_b.getLocation(), sign_dr);
+                    return;
+                }
+                mode = GameMode.getByValue(gm);
+                player.setGameMode(gm);
                 return;
             }
             return;
