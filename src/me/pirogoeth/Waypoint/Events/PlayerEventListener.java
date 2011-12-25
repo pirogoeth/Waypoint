@@ -254,7 +254,8 @@ public class PlayerEventListener extends PlayerListener {
                 return;
             } else if (signtype.equalsIgnoreCase("gamemode") {
                 if (!permissions.has(player, "waypoint.sign.gamemode")) {
-                    player.sendMessage(ChatColor.RED + "[Waypoint] You do not have the permission to use this sign.");
+                    player.sendMessage(ChatColor.RED +
+                        "[Waypoint] You do not have the permission to use this sign.");
                     return;
                 }
                 int gm;
@@ -262,11 +263,15 @@ public class PlayerEventListener extends PlayerListener {
                 try { gm = Integer.parseInt((String) clicked_s.getLine(1)); }
                 catch (java.lang.Exception e) { return; };
                 if (gm != 1 || gm != 0) {
-                    player.sendMessage(ChatColor.RED + "[Waypoint] This sign was created with an invalid game mode.");
+                    player.sendMessage(ChatColor.RED +
+                        "[Waypoint] This sign was created with an invalid game mode.");
                     final int s_id = new Integer("63");
                     ItemStack sign_dr = new ItemStack(s_id);
                     clicked_b.setTypeId(0);
-                    clicked_b.getLocation().getWorld().dropItemNaturally(clicked_b.getLocation(), sign_dr);
+                    clicked_b.getLocation().getWorld().dropItemNaturally(
+                        clicked_b.getLocation(),
+                        sign_dr
+                    );
                     return;
                 }
                 mode = GameMode.getByValue(gm);
