@@ -262,7 +262,7 @@ public class PlayerEventListener extends PlayerListener {
                 GameMode mode;
                 try { gm = Integer.parseInt((String) clicked_s.getLine(1)); }
                 catch (java.lang.Exception e) { return; };
-                if (gm != 1 || gm != 0) {
+                if (gm != 1 && gm != 0) {
                     player.sendMessage(ChatColor.RED +
                         "[Waypoint] This sign was created with an invalid game mode.");
                     final int s_id = new Integer("63");
