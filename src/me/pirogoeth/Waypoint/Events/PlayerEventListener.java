@@ -252,7 +252,7 @@ public class PlayerEventListener extends PlayerListener {
                 player.teleport(world_l);
                 player.sendMessage(ChatColor.GREEN + "[Waypoint] You have been teleported to the spawn of " + target);
                 return;
-            } else if (signtype.equalsIgnoreCase("gamemode") {
+            } else if (signtype.equalsIgnoreCase("gamemode")) {
                 if (!permissions.has(player, "waypoint.sign.gamemode")) {
                     player.sendMessage(ChatColor.RED +
                         "[Waypoint] You do not have the permission to use this sign.");
@@ -275,7 +275,7 @@ public class PlayerEventListener extends PlayerListener {
                     return;
                 }
                 mode = GameMode.getByValue(gm);
-                player.setGameMode(gm);
+                player.setGameMode(mode);
                 return;
             }
             return;
