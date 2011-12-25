@@ -21,6 +21,7 @@ public class Config {
     public static Logger log = Logger.getLogger("Minecraft");
     public static String maindir = "plugins/Waypoint";
     // quizzical vars
+    public static String extension = ".yml";
     public static boolean loaded = false;
     // Configuration variables
     public static Configuration main;
@@ -46,13 +47,17 @@ public class Config {
         plugin = instance;
         new File(maindir).mkdir();
         new File(maindir + "/data").mkdir();
+        if (new File(maindir + File.separator + ".usetxt").exists() == true) {
+            log.info("[Waypoint] Found .usetxt, changing extensions to .txt");
+            extension = ".txt";
+        }
         // do our configuration initialisation here.
         initialise();
     }
     // File() creator
     private static File getFile(String fname)
     {
-        File f = new File(maindir + File.separator + (String)fname);
+        File f = new File(maindir + File.separator + (String)fname + extension);
         return f;
     }
     // support method to move old data. 1.6 -> 1.6.1
@@ -60,10 +65,10 @@ public class Config {
     public static boolean moveOldData ()
     {
         // old files
-        File old_warps = getFile("warps.yml");
-        File old_users = getFile("users.yml");
-        File old_home = getFile("home.yml");
-        File old_links = getFile("links.yml");
+        File old_warps = getFile("warps");
+        File old_users = getFile("users");
+        File old_home = getFile("home");
+        File old_links = getFile("links");
         // file io stream and transfer variables
         FileInputStream fis;
         FileOutputStream fos;
@@ -125,13 +130,13 @@ public class Config {
         log.info("[Waypoint] Initialising configurations.");
         // load all of the config files
         try {
-            mainf = getFile("config.yml");
-            warpsf = getFile("data/warps.yml");
-            usersf = getFile("data/users.yml");
-            spawnf = getFile("spawn.yml");
-            homef = getFile("data/home.yml");
-            worldf = getFile("world.yml");
-            linksf = getFile("data/links.yml");
+            mainf = getFile("config");
+            warpsf = getFile("data/warps");
+            usersf = getFile("data/users");
+            spawnf = getFile("spawn");
+            homef = getFile("data/home");
+            worldf = getFile("world");
+            linksf = getFile("data/links");
             // stringf = getFile("strings.yml");
         }
         catch (Exception e) {
@@ -176,7 +181,7 @@ public class Config {
         {
             log.info("[Waypoint] Writing default config values.");
             // main
-            main.setProperty("version", "1.6.3");
+            main.setProperty("version", "1.6.4");
             main.setProperty("autoupdate", "false");
             // cooldown timer
             main.setProperty("cooldown.duration", 0);
@@ -251,14 +256,14 @@ public class Config {
             // cooldown timers
             main.setProperty("cooldown.duration", 0);
             // economy
-            main.setProperty("economy", "false");
+            main.setProperty("economy", false);
             // add config option added after 1.5-dev
-            main.setProperty("warp.warpstring_enabled", "true");
-            // add limits
+            main.setProperty("warp.warpstring_enabled", true);
+            main.setProperty("warp.string", "welcome to %w, %p");
             // limits
-            main.setProperty("limits.warp.enabled", true);
+            main.setProperty("limits.warp.enabled", false);
             main.setProperty("limits.warp.threshold", 10);
-            main.setProperty("limits.waypoint.enabled", true);
+            main.setProperty("limits.waypoint.enabled", false);
             main.setProperty("limits.waypoint.threshold", 10);
             main.save();
             moveOldData();
