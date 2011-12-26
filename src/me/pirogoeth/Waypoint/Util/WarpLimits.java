@@ -1,11 +1,14 @@
 package me.pirogoeth.Waypoint.Util;
 
+// bukkit imports
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
+// internal imports
 import me.pirogoeth.Waypoint.Waypoint;
 import me.pirogoeth.Waypoint.Util.Limits;
+// java imports
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.logging.Logger;

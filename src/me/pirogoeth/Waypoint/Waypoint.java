@@ -130,10 +130,8 @@ public class Waypoint extends JavaPlugin {
         return (economy != null);
     }
 
-    public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String cmdlabel, String args[])
-    {
-        if (sender.getClass().getName().toString() == "org.bukkit.craftbukkit.command.ColouredConsoleSender")
-        {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String cmdlabel, String args[]) {
+        if (sender.getClass().getName().toString() == "org.bukkit.craftbukkit.command.ColouredConsoleSender") {
     		// this is a console sender *WTF*!
     		sender.sendMessage("[Waypoint] You need to be a player to use this plugin.");
     		return true;
@@ -158,4 +156,4 @@ public class Waypoint extends JavaPlugin {
     	     return true;
     	 }
     }
- }
+}

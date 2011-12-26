@@ -1,13 +1,12 @@
 package me.pirogoeth.Waypoint.Util;
 
+// bukkit imports
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class PlayerUtil
-{
-  public static Player getPlayerFromSender(CommandSender sender)
-  {
+public class PlayerUtil {
+  public static Player getPlayerFromSender(CommandSender sender) {
     Player p = (Player)sender;
     return p;
   }

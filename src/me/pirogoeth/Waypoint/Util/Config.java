@@ -1,18 +1,21 @@
 package me.pirogoeth.Waypoint.Util;
 
+// bukkit imports
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+// java imports
 import java.io.File;
 import java.util.logging.Logger;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
-
+// internals imports
 import me.pirogoeth.Waypoint.Waypoint;
 
 public class Config {
@@ -41,24 +44,23 @@ public class Config {
     public static File linksf;
     public static File stringf;
     // constructor
-    public Config (Waypoint instance)
-    {
+    public Config (Waypoint instance) {
         plugin = instance;
         new File(maindir).mkdir();
         new File(maindir + "/data").mkdir();
         // do our configuration initialisation here.
         initialise();
     }
-    // File() creator
-    private static File getFile(String fname)
-    {
+
+    // File() instantiator
+    private static File getFile(String fname) {
         File f = new File(maindir + File.separator + (String)fname);
         return f;
     }
+
     // support method to move old data. 1.6 -> 1.6.1
     // I'll use IOStreams.
-    public static boolean moveOldData ()
-    {
+    public static boolean moveOldData () {
         // old files
         File old_warps = getFile("warps.yml");
         File old_users = getFile("users.yml");
@@ -119,9 +121,9 @@ public class Config {
         load();
         return true;
     }
+
     // initialise the Configuration setup
-    public static boolean initialise ()
-    {
+    public static boolean initialise () {
         log.info("[Waypoint] Initialising configurations.");
         // load all of the config files
         try {
@@ -152,8 +154,8 @@ public class Config {
         }
         return true;
     }
-    public static void load()
-    {
+
+    public static void load() {
         // load all of the configurations
         log.info("[Waypoint] Reading configurations.");
         main.load();
@@ -172,8 +174,7 @@ public class Config {
         boolean world_pvp;
         Environment world_e;
         // check if we need to write the defaults.
-        if ((String)main.getString("version") == null)
-        {
+        if ((String)main.getString("version") == null) {
             log.info("[Waypoint] Writing default config values.");
             // main
             main.setProperty("version", "1.6.3");
@@ -207,8 +208,7 @@ public class Config {
             // world base and currently loaded world settings
             world_l = plugin.getServer().getWorlds();
             world_l_i = world_l.iterator();
-            while (world_l_i.hasNext())
-            {
+            while (world_l_i.hasNext()) {
                 world_o = (World) world_l_i.next();
                 world_n = world_o.getName().toString();
                 world_e = world_o.getEnvironment();
@@ -218,8 +218,7 @@ public class Config {
                 world.setProperty("world." + world_n, "");
                 world.setProperty("world." + world_n + ".mode", world_m);
                 world.setProperty("world." + world_n + ".pvp", world_pvp);
-                switch (world_e)
-                {
+                switch (world_e) {
                     case NORMAL:
                         world.setProperty("world." + world_n + ".env", "NORMAL");
                         break;
@@ -241,8 +240,7 @@ public class Config {
             links.save();
             main.save();
         }
-        else if (!((String)main.getString("version")).equals("1.6.4"))
-        {
+        else if (!((String)main.getString("version")).equals("1.6.4")) {
             // write values not entered in the 1.6.1 update, but were added during
             // the 1.6.2 alpha testing.
             log.info("[Waypoint] Finalising 1.6.4 configuration.");
@@ -267,8 +265,8 @@ public class Config {
         loaded = true;
         return;
     }
-    public static void save ()
-    {
+
+    public static void save () {
         // use the save() method of all of the Configuration instances.
         main.save();
         users.save();
@@ -278,48 +276,83 @@ public class Config {
         links.save();
         log.info("[Waypoint] Saved all configurations.");
     }
-    public static Configuration getMain ()
-    {
+
+    @Depreciated
+    public static Configuration getMain () {
         // returns the Configuration object for the main config file
         return (Configuration) main;
     }
-    public static Configuration getWarp ()
-    {
+
+    @Depreciated
+    public static Configuration getWarp () {
         // returns the Configuration object for the warps config file
         return (Configuration) warps;
     }
-    public static Configuration getUsers ()
-    {
+
+    @Depreciated
+    public static Configuration getUsers () {
         // returns the Configuration object for the users config file
         return (Configuration) users;
     }
-    public static Configuration getSpawn ()
-    {
+
+    @Depreciated
+    public static Configuration getSpawn () {
         // returns the Configuration object for the spawn config file
         return (Configuration) spawn;
     }
-    public static Configuration getHome ()
-    {
+
+    @Depreciated
+    public static Configuration getHome () {
         // returns the Configuration object for the home config file
         return (Configuration) home;
     }
-    public static Configuration getWorld()
-    {
+
+    @Depreciated
+    public static Configuration getWorld() {
         // returns the Configuration object for the world config file
         return (Configuration) world;
     }
-    public static Configuration getLinks()
-    {
+
+    @Depreciated
+    public static Configuration getLinks() {
         // returns the Configuration object for the links config file
         return (Configuration) links;
     }
-    /*
-     *   Not yet implemented.
-     *
-     * public static Configuration getStrings()
-     * {
-     *    // returns the Configuration object for the strings config file
-     *    return (Configuration) strings;
-     * }
-     */
+}
+
+public enum ConfigInventory {
+    MAIN(main),
+
+    WARP(warp),
+
+    USERS(users),
+
+    SPAWN(spawn),
+
+    HOME(home),
+
+    WORLD(world),
+
+    LINKS(links);
+
+    public final Configuration config;
+    private final static Map<ConfigInventory, Configuration> store = new HashMap<ConfigInventory, Configuration>();
+
+    public ConfigInventory (final Configuration config) {
+        this.config = config;
+    }
+
+    public Configuration getConfig () {
+        return this.config;
+    }
+
+    public static Configuration getByConstant (final ConfigInventory ci) {
+        return this.store.get(ci);
+    }
+
+    static {
+        for (ConfigInventory ci : ConfigInventory.values()) {
+            this.modes.put(ci, ci.getValue());
+        }
+    }
 }

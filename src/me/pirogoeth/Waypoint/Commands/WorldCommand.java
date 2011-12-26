@@ -59,12 +59,10 @@ class WorldCommand extends Command {
         String arg = "";
         try {
             subc = args[0];
-        }
-        catch (java.lang.ArrayIndexOutOfBoundsException e) {
+        } catch (java.lang.ArrayIndexOutOfBoundsException e) {
             subc = null;
         }
-        if (subc == null)
-        {
+        if (subc == null) {
             String worldname = (String) player.getLocation().getWorld().getName().toString();
             player.sendMessage(ChatColor.BLUE + "You are currently in world: " + worldname);
             String x = (String) Double.toString(player.getLocation().getX());
@@ -73,8 +71,7 @@ class WorldCommand extends Command {
             player.sendMessage(ChatColor.BLUE + "Your current position is: " + x + "," + y + "," + z);
             return true;
         }
-        else if (subc.equalsIgnoreCase("list"))
-        {
+        else if (subc.equalsIgnoreCase("list")) {
             if (!permissions.has(player, "waypoint.world.list")) {
                 player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have permissions to use this command.");
                 return true;
@@ -91,8 +88,7 @@ class WorldCommand extends Command {
             }
             return true;
         }
-        else if (subc.equalsIgnoreCase("import"))
-        {
+        else if (subc.equalsIgnoreCase("import")) {
             if (!permissions.has(player, "waypoint.admin.world.import")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                 return true;
@@ -101,20 +97,19 @@ class WorldCommand extends Command {
             String worldname;
             try { worldname = args[1]; }
             catch (java.lang.ArrayIndexOutOfBoundsException e) {
-                player.sendMessage(ChatColor.RED + "[Waypoint] Please specify a world name.");
+                player.sendMessage(ChatColor.RED +
+                    "[Waypoint] Please specify a world name.");
                 return true;
             };
             String environ;
             try { environ = args[2]; }
             catch (java.lang.ArrayIndexOutOfBoundsException e) { environ = null; };
-            if (environ == null)
-            {
+            if (environ == null) {
                 player.sendMessage(ChatColor.BLUE + "[Waypoint] Please specify an environment type.");
                 return true;
             }
             org.bukkit.World wx = plugin.worldManager.Import(worldname, ((String) environ).toUpperCase());
-            if (wx == null)
-            {
+            if (wx == null) {
                 player.sendMessage(ChatColor.RED + "World import failed.");
                 return true;
             }
@@ -123,8 +118,7 @@ class WorldCommand extends Command {
             player.sendMessage(String.format("%s[Waypoint] Loaded world: { %s [ENV:%s] }", ChatColor.GREEN, worldname, environ.toUpperCase()));
             return true;
         }
-        else if (subc.equalsIgnoreCase("unload"))
-        {
+        else if (subc.equalsIgnoreCase("unload")) {
             if (!permissions.has(player, "waypoint.admin.world.unload")) {
                 player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have the permissions to use this command.");
                 return true;
@@ -159,8 +153,7 @@ class WorldCommand extends Command {
             };
             return true;
         }
-        else if (subc.equalsIgnoreCase("delete"))
-        {
+        else if (subc.equalsIgnoreCase("delete")) {
             if (!permissions.has(player, "waypoint.admin.world.delete")) {
                 player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have the permissions to use this command.");
                 return true;
@@ -195,8 +188,7 @@ class WorldCommand extends Command {
             };
             return true;
         }
-        else if (subc.equalsIgnoreCase("create"))
-        {
+        else if (subc.equalsIgnoreCase("create")) {
             if (!permissions.has(player, "waypoint.admin.world.create")) {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                 return true;
@@ -217,8 +209,7 @@ class WorldCommand extends Command {
               *   seed = null;
               * }
               */
-            if (environ == null)
-            {
+            if (environ == null) {
                 player.sendMessage(ChatColor.BLUE + "[Waypoint] Please specify an environment type.");
                 return true;
             }
@@ -233,8 +224,7 @@ class WorldCommand extends Command {
               * }
               */
             wx = plugin.worldManager.Create(worldname, environ.toUpperCase());
-            if (wx == null)
-            {
+            if (wx == null) {
                 player.sendMessage(String.format("%s[Waypoint] Could not create world: %s", ChatColor.RED, worldname));
                 return true;
             }
@@ -243,16 +233,13 @@ class WorldCommand extends Command {
             player.sendMessage(String.format("%s[Waypoint] Successfully created world: { %s [ENV: %s] }", ChatColor.GREEN, worldname, environ.toUpperCase()));
             return true;
         }
-        else if (subc != null)
-        {
+        else if (subc != null) {
             org.bukkit.World w = plugin.getServer().getWorld(subc);
-            if (w == null)
-            {
+            if (w == null) {
                 player.sendMessage(ChatColor.RED + "[Waypoint] World " + subc + " does not exist.");
                 return true;
             }
-            if (!permissions.has(player, "waypoint.world.teleport"))
-            {
+            if (!permissions.has(player, "waypoint.world.teleport")) {
                 player.sendMessage("[Waypoint] You do not have permission to use this command.");
                 return true;
             }
@@ -262,7 +249,8 @@ class WorldCommand extends Command {
                 return true;
             }
             player.getLocation().getChunk().load();
-            player.sendMessage(ChatColor.GREEN + "[Waypoint] You have been taken to the spawn of world '" + (String) w.getName().toString() + "'.");
+            player.sendMessage(ChatColor.GREEN +
+                "[Waypoint] You have been taken to the spawn of world '" + (String) w.getName().toString() + "'.");
             return true;
         };
         return true;

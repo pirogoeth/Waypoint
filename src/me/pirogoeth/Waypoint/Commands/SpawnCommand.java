@@ -37,7 +37,8 @@ class SpawnCommand extends Command {
             throw new CommandException("Command is not registered.");
         // begin Spawn module code
         if (!permissions.has(player, "waypoint.spawn")) {
-            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+            player.sendMessage(ChatColor.BLUE +
+                "You do not have the permissions to use this command.");
             return true;
         }
         String subc = "";
@@ -50,13 +51,14 @@ class SpawnCommand extends Command {
             return true;
         }
         World w = plugin.getServer().getWorld((String)subc);
-        if (w == null)
-        {
-            player.sendMessage("[Waypoint] World '" + subc + "' does not exist.");
+        if (w == null) {
+            player.sendMessage(
+                "[Waypoint] World '" + subc + "' does not exist.");
             return true;
         }
         if (!permissions.has(player, String.format("waypoint.world.access.%s", w.getName().toString()))) {
-            player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have permission to enter this world.");
+            player.sendMessage(ChatColor.BLUE +
+                "[Waypoint] You do not have permission to enter this world.");
             return true;
         }
         plugin.spawnManager.SendPlayerToSpawn(w, player);
@@ -88,13 +90,15 @@ class SetSpawn extends Command {
             throw new CommandException("Command is not registered.");
         // begin SetSpawn module code
         if (!permissions.has(player, "waypoint.admin.spawn.set")) {
-            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+            player.sendMessage(ChatColor.BLUE +
+                "You do not have the permissions to use this command.");
             return true;
         };
         String subc = "";
         World w = player.getWorld();
         plugin.spawnManager.SendPlayerToSpawn(w, player);
-        player.sendMessage(ChatColor.AQUA + "[Waypoint] Spawn for world " + player.getWorld().getName() + " has been set.");
+        player.sendMessage(ChatColor.AQUA +
+            "[Waypoint] Spawn for world " + player.getWorld().getName() + " has been set.");
         return true;
     };
 };
@@ -123,7 +127,8 @@ class SpawnAdmin extends Command {
             throw new CommandException("Command is not registered.");
         // begin SpawnAdmin module code
         if (!permissions.has(player, "waypoint.admin.spawn")) {
-            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+            player.sendMessage(ChatColor.BLUE +
+                "[Waypoint] You do not have the permissions to use this command.");
             return true;
         };
         String subc = "";
@@ -142,51 +147,58 @@ class SpawnAdmin extends Command {
         catch (java.lang.ArrayIndexOutOfBoundsException e) {
             arg = null;
         }
-        if (subc.equalsIgnoreCase("save"))
-        {
+        if (subc.equalsIgnoreCase("save")) {
             if (!permissions.has(player, "waypoint.admin.spawn.save")) {
-                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                player.sendMessage(ChatColor.BLUE +
+                    "[Waypoint] You do not have the permissions to use this command.");
                 return true;
             };
-            if (arg == null)
-            {
+            if (arg == null) {
                 World w = plugin.getServer().getWorld(player.getWorld().getName().toString());
                 plugin.spawnManager.SaveWorldSpawnLocation((World)w);
-                player.sendMessage(ChatColor.BLUE + "[Waypoint] Forcibly saved spawn point for world: " + w.getName().toString());
+                player.sendMessage(ChatColor.BLUE +
+                    "[Waypoint] Forcibly saved spawn point for world: " + w.getName().toString());
                 return true;
             };
             World w = plugin.getServer().getWorld(arg);
-            if (w == null)
-            { player.sendMessage(ChatColor.RED + "[Waypoint] Invalid world: " + arg); return true; }
+            if (w == null) {
+                player.sendMessage(ChatColor.RED +
+                    "[Waypoint] Invalid world: " + arg);
+                return true;
+            }
             plugin.spawnManager.SaveWorldSpawnLocation(w);
-            player.sendMessage(ChatColor.BLUE + "[Waypoint] Forcibly saved spawn point for world: " + w.getName().toString());
+            player.sendMessage(ChatColor.BLUE +
+                "[Waypoint] Forcibly saved spawn point for world: " + w.getName().toString());
             return true;
         }
-        else if (subc.equalsIgnoreCase("load"))
-        {
+        else if (subc.equalsIgnoreCase("load")) {
             if (!permissions.has(player, "waypoint.admin.spawn.load")) {
-                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                player.sendMessage(ChatColor.BLUE +
+                    "You do not have the permissions to use this command.");
                 return true;
             };
             if (arg == null)
             {
                 plugin.spawnManager.LoadWorldSpawnLocation(player.getWorld());
-                player.sendMessage(ChatColor.BLUE + "[Waypoint] Forcibly reloaded spawn point for world: " + player.getWorld().getName().toString());
+                player.sendMessage(ChatColor.BLUE +
+                    "[Waypoint] Forcibly reloaded spawn point for world: " + player.getWorld().getName().toString());
                 return true;
             };
             plugin.spawnManager.LoadWorldSpawnLocation(player.getWorld());
-            player.sendMessage(ChatColor.BLUE + "[Waypoint] Forcibly reloaded spawn point for world: " + player.getWorld().getName().toString());
+            player.sendMessage(ChatColor.BLUE +
+                "[Waypoint] Forcibly reloaded spawn point for world: " + player.getWorld().getName().toString());
             return true;
         }
-        else if (subc.equalsIgnoreCase("set"))
-        {
+        else if (subc.equalsIgnoreCase("set")) {
             if (!permissions.has(player, "waypoint.admin.spawn.set")) {
-                player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+                player.sendMessage(ChatColor.BLUE +
+                    "You do not have the permissions to use this command.");
                 return true;
             };
             plugin.spawnManager.SetSpawnFromPlayer(player.getWorld(), player);
             player.getWorld().save();
-            player.sendMessage(ChatColor.BLUE + "[Waypoint] Set spawn point for world: " + player.getWorld().getName());
+            player.sendMessage(ChatColor.BLUE +
+                "[Waypoint] Set spawn point for world: " + player.getWorld().getName());
             return true;
         };
         return true;
