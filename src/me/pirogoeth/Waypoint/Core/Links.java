@@ -77,7 +77,7 @@ public class Links {
             return;
         }
     }
-    
+
     public void PlayerBetweenNetwork(Player player, Sign sign, String[] lines) {
         String network = lines[1].split("\\:")[1];
         String name = lines[2];
