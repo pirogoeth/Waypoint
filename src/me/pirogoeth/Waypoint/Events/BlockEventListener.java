@@ -62,11 +62,11 @@ public class BlockEventListener extends BlockListener {
   public void onBlockBreak(BlockBreakEvent event) {
     if (((event.getBlock().getTypeId() == 63) || (event.getBlock().getTypeId() == 68)) && (((Sign)event.getBlock().getState()).getLine(0).equalsIgnoreCase("[Waypoint]"))) {
       Sign sign = (Sign)event.getBlock().getState();
-      if ((sign.getLine(1).split("\\:")[0].equalsIgnoreCase("link")) && (Permission.has(event.getPlayer(), "waypoint.sign.link.delete"))) {
+      if ((sign.getLine (1).split("\\:")[0].equalsIgnoreCase("link")) && (Permission.has(event.getPlayer(), "waypoint.sign.link.delete"))) {
         linkManager.DeleteSign((Sign)event.getBlock().getState(), (String[])((Sign)event.getBlock().getState()).getLines());
         return;
       }
-      if ((sign.getLine(1).split("\\:")[0].equalsIgnoreCase("link")) && (Permission.has(event.getPlayer(), "waypoint.sign.link.delete")) {
+      if ((sign.getLine(1).split("\\:")[0].equalsIgnoreCase("link")) && !(Permission.has(event.getPlayer(), "waypoint.sign.link.delete"))) {
         event.setCancelled(true);
         event.getPlayer().sendMessage(ChatColor.RED + "[Waypoint] You are not allowed to break this sign!");
         return;

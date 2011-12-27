@@ -1,4 +1,4 @@
-ckage me.pirogoeth.Waypoint.Core;
+package me.pirogoeth.Waypoint.Core;
 
 // java imports
 import java.util.logging.Logger;

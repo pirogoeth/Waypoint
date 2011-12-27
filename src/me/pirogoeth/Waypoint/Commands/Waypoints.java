@@ -264,7 +264,7 @@ class Waypoints extends Command {
                 MinorUtils.UserNodeChomp(
                     player,
                     "testnode",
-                    coord"),
+                    "coord"),
                 n);
             users.save();
             users.removeProperty(

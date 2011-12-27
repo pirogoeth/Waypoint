@@ -283,82 +283,45 @@ public class Config {
         log.info("[Waypoint] Saved all configurations.");
     }
 
-    @Depreciated
+    // depreciated
     public static Configuration getMain () {
         // returns the Configuration object for the main config file
         return (Configuration) main;
     }
 
-    @Depreciated
+    // depreciated
     public static Configuration getWarp () {
         // returns the Configuration object for the warps config file
         return (Configuration) warps;
     }
 
-    @Depreciated
+    // depreciated
     public static Configuration getUsers () {
         // returns the Configuration object for the users config file
         return (Configuration) users;
     }
 
-    @Depreciated
+    // depreciated
     public static Configuration getSpawn () {
         // returns the Configuration object for the spawn config file
         return (Configuration) spawn;
     }
 
-    @Depreciated
+    // depreciated
     public static Configuration getHome () {
         // returns the Configuration object for the home config file
         return (Configuration) home;
     }
 
-    @Depreciated
+    // depreciated
     public static Configuration getWorld() {
         // returns the Configuration object for the world config file
         return (Configuration) world;
     }
 
-    @Depreciated
+    // depreciated
     public static Configuration getLinks() {
         // returns the Configuration object for the links config file
         return (Configuration) links;
-    }
-}
-
-public enum ConfigInventory {
-    MAIN(main),
-
-    WARP(warp),
-
-    USERS(users),
-
-    SPAWN(spawn),
-
-    HOME(home),
-
-    WORLD(world),
-
-    LINKS(links);
-
-    public final Configuration config;
-    private final static Map<ConfigInventory, Configuration> store = new HashMap<ConfigInventory, Configuration>();
-
-    public ConfigInventory (final Configuration config) {
-        this.config = config;
-    }
-
-    public Configuration getConfig () {
-        return this.config;
-    }
-
-    public static Configuration getByConstant (final ConfigInventory ci) {
-        return this.store.get(ci);
-    }
-
-    static {
-        for (ConfigInventory ci : ConfigInventory.values()) {
-            this.modes.put(ci, ci.getValue());
-        }
     }
 }
