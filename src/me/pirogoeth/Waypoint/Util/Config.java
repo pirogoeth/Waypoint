@@ -57,7 +57,7 @@ public class Config {
         initialise();
     }
 
-    // File() creator
+    // File() instantiator
     private static File getFile(String fname)
     {
         File f = new File(maindir + File.separator + (String)fname + extension);
