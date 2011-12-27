@@ -1,18 +1,21 @@
 package me.pirogoeth.Waypoint.Util;
 
+// java imports
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+// bukkit imports
 import org.bukkit.util.FileUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.util.config.Configuration;
+// java imports
 import java.net.HttpURLConnection;
 import java.io.BufferedReader;
 import java.util.logging.Logger;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import org.bukkit.Bukkit;
-import org.bukkit.util.config.Configuration;
-
+// internal imports
 import me.pirogoeth.Waypoint.Waypoint;
 
 public class AutoUpdate {
@@ -20,11 +23,11 @@ public class AutoUpdate {
     public Logger log = Logger.getLogger("Minecraft");
     public Waypoint plugin;
     public Configuration main;
-    public AutoUpdate (Waypoint instance)
-    {
+    public AutoUpdate (Waypoint instance) {
         plugin = instance;
         main = (Configuration) plugin.config.getMain();
     }
+
     // borrowed from Afforess
     public void finalise () {
         try {
@@ -40,6 +43,7 @@ public class AutoUpdate {
         }
         catch (Exception e) {}
     }
+
     protected int getVersion () {
         try {
             String[] split = plugin.getDescription().getVersion().split("\\.");
@@ -48,6 +52,7 @@ public class AutoUpdate {
         catch (Exception e) {}
         return -1;
     }
+
     protected boolean checkUpdate () {
         if (!((String) main.getString("autoupdate")).equalsIgnoreCase("true")) {
            log.info("[Waypoint] Auto-update is disabled.");
@@ -68,14 +73,14 @@ public class AutoUpdate {
                 }
             }
             in.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.info("[Waypoint] Error while checking for updates. (It could be a dev build.)");
             return false;
         }
         log.info("[Waypoint] No updates available.");
         return false;
     }
+
     public void doUpdate () {
         if (!checkUpdate()) {
             return;

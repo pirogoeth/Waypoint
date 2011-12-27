@@ -3,8 +3,7 @@ package me.pirogoeth.Waypoint.Commands;
 import me.pirogoeth.Waypoint.Util.Command;
 import me.pirogoeth.Waypoint.Waypoint;
 
-public class CommandHandler
-{
+public class CommandHandler {
   public Waypoint plugin;
   private Command home;
   private Command setSpawn;
@@ -19,8 +18,7 @@ public class CommandHandler
   private Command warpAdmin;
   private Command worldCommand;
 
-  public CommandHandler(Waypoint instance)
-  {
+  public CommandHandler(Waypoint instance) {
     this.plugin = instance;
 
     this.home = new Home(this.plugin);

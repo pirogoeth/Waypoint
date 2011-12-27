@@ -37,7 +37,8 @@ class Teleport extends Command {
             throw new CommandException("Command is not registered.");
         // begin Teleport module code
         if (!permissions.has(player, "waypoint.teleport.teleport")) {
-            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+            player.sendMessage(ChatColor.BLUE +
+                "You do not have the permissions to use this command.");
             return true;
         }
         String subc = "";
@@ -48,9 +49,6 @@ class Teleport extends Command {
             player.sendMessage("Usage: /tp <target> [user]");
             return true;
         };
-        // I don't think thise should be here.
-        //
-        //   subc = subc.toLowerCase().toString();
         String arg = null;
         try {
             arg = args[1];
@@ -58,45 +56,47 @@ class Teleport extends Command {
         catch (java.lang.ArrayIndexOutOfBoundsException e) {
             arg = null;
         };
-        if (arg == null)
-        {
+        if (arg == null) {
             Player target = plugin.getServer().getPlayer((String)subc);
-            if (target == null)
-            {
-                player.sendMessage("[Waypoint] Player " + subc + " is not logged in.");
+            if (target == null) {
+                player.sendMessage(
+                    "[Waypoint] Player " + subc + " is not logged in.");
                 return true;
             }
             Location l = target.getLocation();
-            if (!permissions.has(player, String.format("waypoint.world.access.%s", l.getWorld().getName().toString())) && !(player.getLocation().getWorld().getName().toString().equals(l.getWorld().getName().toString()))) {
-                player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have permission to enter this world.");
-                return true;
+            if (!permissions.has(player,
+                String.format("waypoint.world.access.%s",
+                    l.getWorld().getName().toString())) &&
+                !(player.getLocation().getWorld().getName().toString().equals(l.getWorld().getName().toString()))) {
+                    player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have permission to enter this world.");
+                    return true;
             }
             player.teleport(l);
             player.getLocation().getChunk().load();
             return true;
         }
-        else if (arg != null)
-        {
+        else if (arg != null) {
             Player p = plugin.getServer().getPlayer((String)subc);
             Player target = plugin.getServer().getPlayer((String)arg);
-            if (p == null)
-            {
-                player.sendMessage("[Waypoint] Player " + subc + " is not online.");
+            if (p == null) {
+                player.sendMessage(
+                    "[Waypoint] Player " + subc + " is not online.");
                 return true;
-            }
-            else if (target == null)
-            {
-                player.sendMessage("[Waypoint] Player " + arg + " is not online.");
+            } else if (target == null) {
+                player.sendMessage(
+                    "[Waypoint] Player " + arg + " is not online.");
                 return true;
             }
             Location l = target.getLocation();
             if (!permissions.has(p, String.format("waypoint.world.access.%s", l.getWorld().getName().toString()))) {
-                player.sendMessage(ChatColor.BLUE + "[Waypoint] " + p.getName().toString() + " does not have permission to enter world " + l.getWorld().getName().toString() + ".");
+                player.sendMessage(ChatColor.BLUE +
+                    "[Waypoint] " + p.getName().toString() + " does not have permission to enter world " + l.getWorld().getName().toString() + ".");
                 return true;
             }
             p.teleport(l);
             p.getLocation().getChunk().load();
-            p.sendMessage("[Waypoint] You have been teleported by " + player.getName().toString() + ".");
+            p.sendMessage(
+                "[Waypoint] You have been teleported by " + player.getName().toString() + ".");
             return true;
         };
         return true;
@@ -126,7 +126,8 @@ class TeleLocation extends Command {
             throw new CommandException("Command is not registered.");
         // begin TeleLocation module code
         if (!permissions.has(player, "waypoint.teleport.location")) {
-            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+            player.sendMessage(ChatColor.BLUE +
+                "You do not have the permissions to use this command.");
             return true;
         }
         String subc = "";
@@ -137,15 +138,15 @@ class TeleLocation extends Command {
             } else if (args.length == 3) {
                 arg = String.format("%s,%s,%s", args[0], args[1], args[2]);
             } else {
-                player.sendMessage(ChatColor.BLUE + "/tploc <x,y,z|x y z>");
+                player.sendMessage(ChatColor.BLUE +
+                    "/tploc <x,y,z|x y z>");
                 return true;
             }
         }
         catch (java.lang.ArrayIndexOutOfBoundsException e) {
             arg = null;
         };
-        if (arg != null)
-        {
+        if (arg != null) {
             World w;
             double x;
             double y;
@@ -158,17 +159,24 @@ class TeleLocation extends Command {
                 z = new Double(d[2]);
             }
             catch (java.lang.ArrayIndexOutOfBoundsException e) {
-                player.sendMessage(ChatColor.RED + "[Waypoint] Invalid Coordinates.");
+                player.sendMessage(ChatColor.RED +
+                    "[Waypoint] Invalid Coordinates.");
                 return true;
             };
-            Location l = new Location((World) w, (Double) x, (Double) y, (Double) z);
+            Location l = new Location(
+                (World) w,
+                (Double) x,
+                (Double) y,
+                (Double) z
+            );
             player.teleport(l);
             player.getLocation().getChunk().load();
             return true;
         }
         else if (arg == null)
         {
-            player.sendMessage(ChatColor.RED + "[Waypoint] You need to provide a set of coordinates.");
+            player.sendMessage(ChatColor.RED +
+                "[Waypoint] You need to provide a set of coordinates.");
             return true;
         };
         return true;
@@ -198,7 +206,8 @@ class TeleportHere extends Command {
             throw new CommandException("Command is not registered.");
         // begin TeleportHere module code
         if (!permissions.has(player, "waypoint.teleport.here")) {
-            player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
+            player.sendMessage(ChatColor.BLUE +
+                "You do not have the permissions to use this command.");
             return true;
         }
         String subc = "";
@@ -211,21 +220,23 @@ class TeleportHere extends Command {
         };
         subc = subc.toLowerCase().toString();
         Player target = plugin.getServer().getPlayer((String)subc);
-        if (target == null)
-        {
-            player.sendMessage(ChatColor.AQUA + "[Waypoint] Player " + subc + " is not online.");
+        if (target == null) {
+            player.sendMessage(ChatColor.AQUA +
+                "[Waypoint] Player " + subc + " is not online.");
             return true;
         }
         Location l = player.getLocation();
         if (!permissions.has(target, String.format("waypoint.world.access.%s", l.getWorld().getName().toString()))) {
-            player.sendMessage(ChatColor.BLUE + "[Waypoint] " + target.getName().toString() + " does not have permission to enter this world.");
+            player.sendMessage(ChatColor.BLUE +
+                "[Waypoint] " + target.getName().toString() + " does not have permission to enter this world.");
             return true;
         }
         Vehicle target_veh = target.getVehicle();
         if (target_veh != null) { target_veh.eject(); };
         target.teleport(l);
         target.getLocation().getChunk().load();
-        target.sendMessage(ChatColor.GREEN + "[Waypoint] You have been teleported to " + player.getName().toString() + ".");
+        target.sendMessage(ChatColor.GREEN +
+            "[Waypoint] You have been teleported to " + player.getName().toString() + ".");
         return true;
     };
 };
