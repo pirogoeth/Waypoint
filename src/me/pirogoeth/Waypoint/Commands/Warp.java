@@ -89,7 +89,9 @@ class Warp extends Command {
                     "[Waypoint] You do not have permission to use this command.");
                 return true;
             };
-            if (this.limitProvider.getWarp().playerReachedLimit(player) == true) {
+            if (!permissions.has(player, "waypoint.warp.limit.override")) {
+            }
+            else if (this.limitProvider.getWarp().playerReachedLimit(player) == true) {
                 player.sendMessage(ChatColor.RED +
                     "[Waypoint] You have reached the maximum number of warps one user can have.");
                 return true;

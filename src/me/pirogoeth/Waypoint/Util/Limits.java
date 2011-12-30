@@ -60,10 +60,23 @@ public class Limits {
         if (node_map == null) { this.log.severe("Fuck configuration classes"); return false; };
         if (((int) node_map.size()) < threshold)
             return false;
-        else if (((int) node_map.size()) == threshold)
-            return true;
-        else if (((int) node_map.size()) > threshold)
-            return true;
+        else if (((int) node_map.size()) >= threshold) {
+            if permissions.has(player, "waypoint.basic.limit.override.enable") {
+                while (true) {
+                    int userlimitoverride = 0;
+                    if permissions.has(player, "waypoint.basic.limit.overide." +userlimitoverride)  {
+                        if (userlimitoverride < ((int) node_map.size()))
+                            return false;
+                        else if (userlimitoverride == ((int) node_map.size()))
+                            return true;
+                        else if (userlimitoverride > ((int) node_map.size()))
+                            return true;
+                    }
+                    else
+                        userlimitoverride++;
+                }
+            } 
+        }
         else
             return true;
     };
