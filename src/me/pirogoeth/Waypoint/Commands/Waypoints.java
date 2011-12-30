@@ -69,7 +69,9 @@ class Waypoints extends Command {
                 player.sendMessage("[Waypoint] Point '" + arg + "' already exists!");
                 return true;
             }
-            if (this.limitProvider.getWaypoint().playerReachedLimit(player) == true) {
+            if (!permissions.has(player, "waypoint.basic.limit.override")) {
+            }
+            else if (this.limitProvider.getWaypoint().playerReachedLimit(player) == true) {
                 player.sendMessage(ChatColor.RED + "[Waypoint] You have reached the maximum number of waypoints allowed.");
                 return true;
             }
