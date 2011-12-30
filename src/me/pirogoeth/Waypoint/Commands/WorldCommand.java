@@ -113,7 +113,7 @@ class WorldCommand extends Command {
                 player.sendMessage(ChatColor.RED + "World import failed.");
                 return true;
             }
-            plugin.config.getWorld().setProperty("world." + worldname + ".env", environ.toUpperCase());
+            plugin.config.getWorld().setProperty("worlds." + worldname + ".env", environ.toUpperCase());
             plugin.config.save();
             player.sendMessage(String.format("%s[Waypoint] Loaded world: { %s [ENV:%s] }", ChatColor.GREEN, worldname, environ.toUpperCase()));
             return true;
@@ -146,7 +146,7 @@ class WorldCommand extends Command {
                 player.sendMessage(ChatColor.RED + "[Waypoint] Error unloading world: " + worldname);
                 return true;
             } else if (result == true) {
-                plugin.config.getWorld().removeProperty("world." + worldname);
+                plugin.config.getWorld().removeProperty("worlds." + worldname);
                 plugin.config.save();
                 player.sendMessage(ChatColor.BLUE + "[Waypoint] Successfully unloaded world: " + worldname);
                 return true;
@@ -180,7 +180,7 @@ class WorldCommand extends Command {
                     player.sendMessage(ChatColor.BLUE + "[Waypoint] Could not delete world " + worldname);
                     return true;
                 } else if (d_result == true) {
-                    plugin.config.getWorld().removeProperty("world." + worldname);
+                    plugin.config.getWorld().removeProperty("worlds." + worldname);
                     plugin.config.save();
                     player.sendMessage(ChatColor.BLUE + "[Waypoint] Successfully deleted world " + worldname);
                     return true;
@@ -228,7 +228,7 @@ class WorldCommand extends Command {
                 player.sendMessage(String.format("%s[Waypoint] Could not create world: %s", ChatColor.RED, worldname));
                 return true;
             }
-            plugin.config.getWorld().setProperty("world." + worldname + ".env", environ.toUpperCase());
+            plugin.config.getWorld().setProperty("worlds." + worldname + ".env", environ.toUpperCase());
             plugin.config.save();
             player.sendMessage(String.format("%s[Waypoint] Successfully created world: { %s [ENV: %s] }", ChatColor.GREEN, worldname, environ.toUpperCase()));
             return true;

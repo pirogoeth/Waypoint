@@ -46,6 +46,13 @@ import me.pirogoeth.Waypoint.Util.Test;
 
 @SuppressWarnings("unused")
 public class Waypoint extends JavaPlugin {
+    /** Base class handling all plugin initialisation.
+     * @class Waypoint
+     * @package me.pirogoeth.Waypoint
+     * @file Waypoint.java
+     *
+     * This handles all variables relating to later function of the plugin, as well as the onEnable() and onDisable() methods.
+     */
     // permission stuff
     public Permission permissions;
     // configuration instantiation
@@ -75,6 +82,11 @@ public class Waypoint extends JavaPlugin {
     public static Economy economy = null;
     // plug-in code
     public void onEnable () {
+        /** on plugin enable...
+         * @class Waypoint
+         *
+         * handles setup of plugin events and various services
+         */
         config.load();
         // player listener
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_ENTER, playerListener, Event.Priority.Normal, this);
@@ -101,6 +113,11 @@ public class Waypoint extends JavaPlugin {
     }
 
     public void onDisable () {
+        /** on plugin disable...
+         * @class Waypoint
+         *
+         * handles teardown of plugin
+         */
         // finish updating
     	updateManager.finalise();
     	// shutdown all scheduler tasks
@@ -109,6 +126,11 @@ public class Waypoint extends JavaPlugin {
     }
 
     public File fileGet () {
+        /** returns the file for this plugin
+         * @class Waypoint
+         *
+         * returns the file for this plugin. this is a wrapper for deeper classes for access.
+         */
         return this.getFile();
     }
 
@@ -119,10 +141,20 @@ public class Waypoint extends JavaPlugin {
      */
 
     public Cooldown getCooldownManager () {
+        /** returns the cooldown manager.
+         * @class Waypoint
+         *
+         * returns the global instance of the cooldown manager.
+         */
         return this.cooldownManager;
     }
 
     private Boolean setupEconomy() {
+        /** handles economy setup
+         * @class Waypoint
+         *
+         * sets up internal access to external economy plugins.
+         */
         RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
         if (economyProvider != null) {
             economy = economyProvider.getProvider();
@@ -131,6 +163,11 @@ public class Waypoint extends JavaPlugin {
     }
 
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String cmdlabel, String args[]) {
+        /** processes commands.
+         * @class Waypoint
+         *
+         * processes all commands against the command registry and runs the corresponding command.
+         */
         if (sender.getClass().getName().toString() == "org.bukkit.craftbukkit.command.ColouredConsoleSender") {
     		// this is a console sender *WTF*!
     		sender.sendMessage("[Waypoint] You need to be a player to use this plugin.");
