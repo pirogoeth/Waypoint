@@ -90,16 +90,16 @@ class Warp extends Command {
                 return true;
             };
             if (!permissions.has(player, "waypoint.warp.limit.override")) {
-            }
-            else if (this.limitProvider.getWarp().playerReachedLimit(player) == true) {
-                player.sendMessage(ChatColor.RED +
+                if (this.limitProvider.getWarp().playerReachedLimit(player) == true) {
+                    player.sendMessage(ChatColor.RED +
                     "[Waypoint] You have reached the maximum number of warps one user can have.");
                 return true;
+                }
             }
             plugin.warpManager.CreateWarp(player, arg);
             player.sendMessage(ChatColor.AQUA +
                 "[Waypoint] Warp " + arg + " has been created.");
-            return true;
+            return true
         }
         else if (subc.equalsIgnoreCase("del")) {
             if (arg == null) {

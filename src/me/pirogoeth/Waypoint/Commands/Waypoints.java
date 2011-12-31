@@ -70,10 +70,10 @@ class Waypoints extends Command {
                 return true;
             }
             if (!permissions.has(player, "waypoint.basic.limit.override")) {
-            }
-            else if (this.limitProvider.getWaypoint().playerReachedLimit(player) == true) {
-                player.sendMessage(ChatColor.RED + "[Waypoint] You have reached the maximum number of waypoints allowed.");
-                return true;
+                if (this.limitProvider.getWaypoint().playerReachedLimit(player) == true) {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] You have reached the maximum number of waypoints allowed.");
+                    return true;
+                }
             }
             // position
             users.setProperty(
