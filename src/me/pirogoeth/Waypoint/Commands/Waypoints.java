@@ -64,14 +64,16 @@ class Waypoints extends Command {
                 player.sendMessage(ChatColor.BLUE +
                     "You do not have the permissions to use this command.");
                 return true;
-            }
+            } 
             if (users.getProperty(MinorUtils.UserNodeChomp(player, arg, "world")) != null) {
                 player.sendMessage("[Waypoint] Point '" + arg + "' already exists!");
                 return true;
             }
-            if (this.limitProvider.getWaypoint().playerReachedLimit(player) == true) {
-                player.sendMessage(ChatColor.RED + "[Waypoint] You have reached the maximum number of waypoints allowed.");
-                return true;
+            if (!permissions.has(player, "waypoint.basic.limit.override")) {
+                if (this.limitProvider.getWaypoint().playerReachedLimit(player) == true) {
+                    player.sendMessage(ChatColor.RED + "[Waypoint] You have reached the maximum number of waypoints allowed.");
+                    return true;
+                }
             }
             // position
             users.setProperty(

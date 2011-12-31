@@ -67,10 +67,23 @@ public class WarpLimits {
         }
         if (size < this.threshold)
             return false;
-        else if (size == this.threshold)
-            return true;
-        else if (size > this.threshold)
-            return true;
+        else if (size >= this.threshold){
+            if permissions.has(player, "waypoint.warp.limit.override.enable") {
+                while (true) {
+                    int warplimitoverride = 0;
+                    if permissions.has(player, "waypoint.warp.limit.overide." +warplimitoverride)  {
+                        if (warplimitoverride < size)
+                            return false;
+                        else if (warplimitoverride == size)
+                            return true;
+                        else if (warplimitoverride > size)
+                            return true;
+                    }
+                    else
+                        warplimitoverride++;
+                }
+            } 
+        }
         else
             return true;
     };
