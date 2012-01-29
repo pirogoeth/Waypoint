@@ -99,7 +99,7 @@ public class EconomyHandler {
          * Charges player the certain amount to perform a specific function.
          */
 
-        if (!(this.enabled)) {
+        if (this.enabled == false) {
             // this generally means that the economy support is not enabled in the config or the server is missing Vault.
             // lets go ahead and return true.
             return true;
