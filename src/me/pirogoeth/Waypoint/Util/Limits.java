@@ -57,13 +57,14 @@ public class Limits {
             return false;
         }
         Map<String, ConfigurationNode> node_map = this.source.getNodes(String.format("%s.%s", this.base_path, player.getName().toString()));
-        if (node_map == null) { this.log.severe("Fuck configuration classes"); return false; };
         if (((int) node_map.size()) < threshold)
             return false;
         else if (((int) node_map.size()) == threshold)
             return true;
         else if (((int) node_map.size()) > threshold)
             return true;
+        else if (node_map == null)
+            return false;
         else
             return true;
     };

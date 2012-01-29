@@ -88,7 +88,8 @@ class Teleport extends Command {
                 return true;
             }
             Location l = target.getLocation();
-            if (!permissions.has(p, String.format("waypoint.world.access.%s", l.getWorld().getName().toString()))) {
+            if (!permissions.has(p, String.format("waypoint.world.access.%s", l.getWorld().getName().toString())) &&
+              !(player.getLocation().getWorld().getName().toString().equals(l.getWorld().getName().toString()))) {
                 player.sendMessage(ChatColor.BLUE +
                     "[Waypoint] " + p.getName().toString() + " does not have permission to enter world " + l.getWorld().getName().toString() + ".");
                 return true;
@@ -226,7 +227,8 @@ class TeleportHere extends Command {
             return true;
         }
         Location l = player.getLocation();
-        if (!permissions.has(target, String.format("waypoint.world.access.%s", l.getWorld().getName().toString()))) {
+        if (!permissions.has(target, String.format("waypoint.world.access.%s", l.getWorld().getName().toString())) &&
+            !(player.getLocation().getWorld().getName().toString().equals(l.getWorld().getName().toString()))) {
             player.sendMessage(ChatColor.BLUE +
                 "[Waypoint] " + target.getName().toString() + " does not have permission to enter this world.");
             return true;

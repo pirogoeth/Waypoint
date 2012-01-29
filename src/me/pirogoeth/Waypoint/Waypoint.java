@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.File;
 // vault classes
+import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
@@ -31,6 +32,7 @@ import me.pirogoeth.Waypoint.Util.Governor;
 import me.pirogoeth.Waypoint.Util.Limits;
 import me.pirogoeth.Waypoint.Util.WarpLimits;
 import me.pirogoeth.Waypoint.Util.Cooldown;
+import me.pirogoeth.Waypoint.Util.EconomyHandler;
 // basic listeners
 import me.pirogoeth.Waypoint.Events.PlayerEventListener;
 import me.pirogoeth.Waypoint.Events.BlockEventListener;
@@ -79,7 +81,7 @@ public class Waypoint extends JavaPlugin {
     // updates
     private final AutoUpdate updateManager = new AutoUpdate(this);
     // economy
-    public static Economy economy = null;
+    public EconomyHandler economy = new EconomyHandler(this);
     // plug-in code
     public void onEnable () {
         /** on plugin enable...
@@ -102,6 +104,8 @@ public class Waypoint extends JavaPlugin {
     	permissions = new Permission(this);
     	log.info("[Waypoint] Enabled version " + this.getDescription().getVersion());
     	config.save();
+    	// setup economy
+        economy.setupEconomy();
     	// check for updates
     	updateManager.doUpdate();
         // load limits
@@ -147,19 +151,6 @@ public class Waypoint extends JavaPlugin {
          * returns the global instance of the cooldown manager.
          */
         return this.cooldownManager;
-    }
-
-    private Boolean setupEconomy() {
-        /** handles economy setup
-         * @class Waypoint
-         *
-         * sets up internal access to external economy plugins.
-         */
-        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-        if (economyProvider != null) {
-            economy = economyProvider.getProvider();
-        }
-        return (economy != null);
     }
 
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String cmdlabel, String args[]) {

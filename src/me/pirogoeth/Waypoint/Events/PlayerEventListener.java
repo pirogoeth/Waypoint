@@ -34,6 +34,8 @@ import me.pirogoeth.Waypoint.Util.Permission;
 import me.pirogoeth.Waypoint.Util.Cooldown;
 import me.pirogoeth.Waypoint.Core.Warps;
 import me.pirogoeth.Waypoint.Core.Links;
+import me.pirogoeth.Waypoint.Util.EconomyHandler;
+import me.pirogoeth.Waypoint.Util.EconomyCost;
 
 public class PlayerEventListener extends PlayerListener {
     public static Waypoint plugin;
@@ -42,9 +44,12 @@ public class PlayerEventListener extends PlayerListener {
     public static Warps warpManager;
     public static Links linkManager;
     public Permission permissions;
+    private EconomyHandler economy;
     Logger log = Logger.getLogger("Minecraft");
+
     public PlayerEventListener (Waypoint instance) {
         plugin = instance;
+        economy = instance.economy;
         permissions = plugin.permissions;
         config = plugin.config;
         warpManager = plugin.warpManager;
@@ -71,18 +76,27 @@ public class PlayerEventListener extends PlayerListener {
         }
         if (cooldownManager.checkUser(player) == false) {
             cooldownManager.holdUser(player);
-            return;
         } else if (cooldownManager.checkUser(player) == true) {
             player.sendMessage("[Waypoint] Please wait, cooling down...");
             event.setCancelled(true);
             return;
+        }
+        if (!(permissions.has(player, "waypoint.cost_exempt.teleport"))) {
+            // the player is allowed to teleport for free because of this node.
+            // we have to charge the player since they don't have this node
+            EconomyCost cost = EconomyCost.TELEPORT;
+            if(!(economy.debitPlayer(player.getName().toString(), cost.getValue()))) {
+                event.setCancelled(true);
+            } else {
+                return;
+            }
         }
     }
 
     public void onPlayerBedEnter(PlayerBedEnterEvent event) {
         Player player = event.getPlayer();
         if (plugin.config.getMain().getBoolean("home.set_home_at_bed", false) == false) { return; };
-        if (!plugin.permissions.has(player, "waypoint.home.set_on_bed_leave")) { return; };
+        if (!permissions.has(player, "waypoint.home.set_on_bed_leave")) { return; };
         double x = player.getLocation().getX();
         double y = player.getLocation().getY();
         double z = player.getLocation().getZ();

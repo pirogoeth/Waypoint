@@ -89,10 +89,12 @@ class Warp extends Command {
                     "[Waypoint] You do not have permission to use this command.");
                 return true;
             };
-            if (this.limitProvider.getWarp().playerReachedLimit(player) == true) {
-                player.sendMessage(ChatColor.RED +
-                    "[Waypoint] You have reached the maximum number of warps one user can have.");
-                return true;
+            if (!(permissions.has(player, "waypoint.warp.limit_override"))) {
+                if (this.limitProvider.getWarp().playerReachedLimit(player) == true) {
+                    player.sendMessage(ChatColor.RED +
+                        "[Waypoint] You have reached the maximum number of warps one user can have.");
+                    return true;
+                }
             }
             plugin.warpManager.CreateWarp(player, arg);
             player.sendMessage(ChatColor.AQUA +
@@ -250,10 +252,12 @@ class Warp extends Command {
 
 class SetWarp extends Command {
     public Configuration main;
+    public Governor limitProvider;
 
     public SetWarp (Waypoint instance) {
         super(instance);
         main = configuration.getMain();
+        this.limitProvider = instance.limitProvider;
         try {
             setCommand("setwarp");
             addAlias("wpsetwarp");
@@ -282,6 +286,13 @@ class SetWarp extends Command {
             player.sendMessage("Usage: /setwarp <name>");
             return true;
         };
+        if (!(permissions.has(player, "waypoint.warp.limit_override"))) {
+            if (this.limitProvider.getWarp().playerReachedLimit(player) == true) {
+                player.sendMessage(ChatColor.RED +
+                    "[Waypoint] You have reached the maximum number of warps one user can have.");
+                return true;
+            }
+        }
         plugin.warpManager.CreateWarp(player, subc);
         player.sendMessage(ChatColor.AQUA +
             "[Waypoint] Warp " + subc + " has been created.");

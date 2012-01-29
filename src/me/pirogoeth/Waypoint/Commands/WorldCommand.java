@@ -32,7 +32,7 @@ class WorldCommand extends Command {
         }
     };
 
-    public static boolean delete_r(File dir) {
+    public static boolean delete_r (File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
             for (int i = 0; i < children.length; i++) {
@@ -68,7 +68,9 @@ class WorldCommand extends Command {
             String x = (String) Double.toString(player.getLocation().getX());
             String y = (String) Double.toString(player.getLocation().getY());
             String z = (String) Double.toString(player.getLocation().getZ());
+            String chunk = String.format("%s,%s", player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
             player.sendMessage(ChatColor.BLUE + "Your current position is: " + x + "," + y + "," + z);
+            player.sendMessage(ChatColor.BLUE + "Current chunk: " + chunk);
             return true;
         }
         else if (subc.equalsIgnoreCase("list")) {
