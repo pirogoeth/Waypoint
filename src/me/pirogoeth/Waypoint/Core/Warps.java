@@ -118,7 +118,7 @@ public class Warps {
         }
         Location l = new Location(w, x, y, z);
         p.teleport(l);
-        if (((String)main.getString("warp.warpstring_enabled")).equalsIgnoreCase("true") || main.getBoolean("warp.warpstring_enabled") == true) {
+        if (((String)main.getString("warp.warpstring_enabled")).equalsIgnoreCase("true") || main.getBoolean("warp.warpstring_enabled", false) == true) {
             String warpstring = (String)main.getString("warp.string");
             if (warpstring == null) {
                 log.warning("[Waypoint] Warp string is null! Please set the warp.string value in config.yml");
