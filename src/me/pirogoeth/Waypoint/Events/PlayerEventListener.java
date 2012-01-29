@@ -44,12 +44,12 @@ public class PlayerEventListener extends PlayerListener {
     public static Warps warpManager;
     public static Links linkManager;
     public Permission permissions;
-    private EconomyHandler economy;
+    public final EconomyHandler economy;
     Logger log = Logger.getLogger("Minecraft");
 
     public PlayerEventListener (Waypoint instance) {
         plugin = instance;
-        economy = instance.economy;
+        economy = instance.getEconomy();
         permissions = plugin.permissions;
         config = plugin.config;
         warpManager = plugin.warpManager;

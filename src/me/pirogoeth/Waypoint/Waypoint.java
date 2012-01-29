@@ -43,8 +43,6 @@ import me.pirogoeth.Waypoint.Core.Worlds;
 import me.pirogoeth.Waypoint.Core.Links;
 // command classes
 import me.pirogoeth.Waypoint.Commands.CommandHandler;
-// testing imports
-import me.pirogoeth.Waypoint.Util.Test;
 
 @SuppressWarnings("unused")
 public class Waypoint extends JavaPlugin {
@@ -55,6 +53,7 @@ public class Waypoint extends JavaPlugin {
      *
      * This handles all variables relating to later function of the plugin, as well as the onEnable() and onDisable() methods.
      */
+
     // permission stuff
     public Permission permissions;
     // configuration instantiation
@@ -68,6 +67,8 @@ public class Waypoint extends JavaPlugin {
     public final Governor limitProvider = new Governor(this);
     // cooldown timer
     public final Cooldown cooldownManager = new Cooldown(this);
+    // economy
+    public final EconomyHandler economy = new EconomyHandler(this);
     // additional stuff
     public final me.pirogoeth.Waypoint.Core.Spawn spawnManager = new me.pirogoeth.Waypoint.Core.Spawn(this);
     public final Warps warpManager = new Warps(this);
@@ -80,8 +81,7 @@ public class Waypoint extends JavaPlugin {
     private final BlockEventListener blockListener = new BlockEventListener(this);
     // updates
     private final AutoUpdate updateManager = new AutoUpdate(this);
-    // economy
-    public EconomyHandler economy = new EconomyHandler(this);
+
     // plug-in code
     public void onEnable () {
         /** on plugin enable...
@@ -89,31 +89,32 @@ public class Waypoint extends JavaPlugin {
          *
          * handles setup of plugin events and various services
          */
-        config.load();
+
+        this.config.load();
         // player listener
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_ENTER, playerListener, Event.Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Event.Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHANGED_WORLD, playerListener, Event.Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN, playerListener, Event.Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Event.Priority.High, this);
+        this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_ENTER, playerListener, Event.Priority.Normal, this);
+        this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
+        this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Event.Priority.Normal, this);
+        this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHANGED_WORLD, playerListener, Event.Priority.Normal, this);
+        this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN, playerListener, Event.Priority.Normal, this);
+        this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Event.Priority.High, this);
         // block listener
-        getServer().getPluginManager().registerEvent(Event.Type.SIGN_CHANGE, blockListener, Event.Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.High, this);
+        this.getServer().getPluginManager().registerEvent(Event.Type.SIGN_CHANGE, blockListener, Event.Priority.Normal, this);
+        this.getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.High, this);
         // run permissions setup
-    	permissions = new Permission(this);
-    	log.info("[Waypoint] Enabled version " + this.getDescription().getVersion());
-    	config.save();
+    	this.permissions = new Permission(this);
+    	this.log.info("[Waypoint] Enabled version " + this.getDescription().getVersion());
+    	this.config.save();
     	// setup economy
-        economy.setupEconomy();
+        this.economy.setupEconomy();
     	// check for updates
-    	updateManager.doUpdate();
+    	this.updateManager.doUpdate();
         // load limits
-        limitProvider.initialiseLimits();
+        this.limitProvider.initialiseLimits();
     	// load warp permission groups
-    	warpManager.LoadGroups();
+    	this.warpManager.LoadGroups();
     	// run the world manager world import routine
-    	worldManager.LoadWorlds();
+    	this.worldManager.LoadWorlds();
     }
 
     public void onDisable () {
@@ -122,11 +123,12 @@ public class Waypoint extends JavaPlugin {
          *
          * handles teardown of plugin
          */
+
         // finish updating
-    	updateManager.finalise();
+    	this.updateManager.finalise();
     	// shutdown all scheduler tasks
-    	getServer().getScheduler().cancelTasks(this);
-    	log.info("[Waypoint] Disabled version " + this.getDescription().getVersion());
+    	this.getServer().getScheduler().cancelTasks(this);
+    	this.log.info("[Waypoint] Disabled version " + this.getDescription().getVersion());
     }
 
     public File fileGet () {
@@ -135,14 +137,9 @@ public class Waypoint extends JavaPlugin {
          *
          * returns the file for this plugin. this is a wrapper for deeper classes for access.
          */
+
         return this.getFile();
     }
-
-    /**
-     * public Configuration getStringsProvider () {
-     *    return this.strings;
-     * }
-     */
 
     public Cooldown getCooldownManager () {
         /** returns the cooldown manager.
@@ -150,7 +147,18 @@ public class Waypoint extends JavaPlugin {
          *
          * returns the global instance of the cooldown manager.
          */
+
         return this.cooldownManager;
+    }
+
+    public EconomyHandler getEconomy () {
+        /** returns the economy handler.
+         * @class Waypoint
+         *
+         * returns the global instance of the economy handler.
+         */
+
+        return this.economy;
     }
 
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String cmdlabel, String args[]) {
@@ -159,11 +167,13 @@ public class Waypoint extends JavaPlugin {
          *
          * processes all commands against the command registry and runs the corresponding command.
          */
+
         if (sender.getClass().getName().toString() == "org.bukkit.craftbukkit.command.ColouredConsoleSender") {
     		// this is a console sender *WTF*!
     		sender.sendMessage("[Waypoint] You need to be a player to use this plugin.");
     		return true;
         }
+
         /**
          * Adjustment for 1.6
          *
@@ -173,6 +183,7 @@ public class Waypoint extends JavaPlugin {
          * Adds:
          *   Proposed interface for registry.
          */
+
     	 Player player = (Player) sender;
     	 me.pirogoeth.Waypoint.Util.Command command = (me.pirogoeth.Waypoint.Util.Command) registry.process(cmdlabel);
     	 if (command == null)

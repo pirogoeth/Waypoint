@@ -5,7 +5,6 @@ import me.pirogoeth.Waypoint.Waypoint;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.EconomyCost;
 // bukkit imports
-import org.bukkit.Server;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
@@ -27,7 +26,6 @@ public class EconomyHandler {
 
     public Waypoint plugin;
     public static Config config;
-    private Server server;
     private Economy economy;
     private boolean enableable;
     private boolean enabled;
@@ -39,7 +37,6 @@ public class EconomyHandler {
          */
 
         this.plugin = instance;
-        this.server = instance.getServer();
         this.config = instance.config;
         this.log = Logger.getLogger("Minecraft");
         this.enableable = this.configured();
@@ -54,9 +51,9 @@ public class EconomyHandler {
         return e;
     }
 
-    private Economy getEconomy () {
+    public Economy getEconomy () {
         /**
-         * Returns the economy instance.
+         * Returns this economy (vault) instance.
          */
 
         return (Economy) this.economy;
@@ -71,18 +68,13 @@ public class EconomyHandler {
             this.log.info("[Waypoint] Economy support disabled.");
             return false;
         }
-        try {
-            if (this.server.getPluginManager().getPlugin("Vault") == null) {
-                this.log.info("[Waypoint] Economy support disabled due to lack of the Vault plugin.");
-                return false;
-            }
-            RegisteredServiceProvider<Economy> economyProvider = this.server.getServicesManager().getRegistration(Economy.class);
-            this.economy = economyProvider.getProvider();
-            this.enabled = true;
-        } catch (java.lang.NullPointerException e) {
-            this.log.info("[Waypoint] Economy support disbled due to lack of the Vault plugin.");
+        if (this.plugin.getServer().getPluginManager().getPlugin("Vault") == null) {
+            this.log.info("[Waypoint] Economy support disabled due to lack of the Vault plugin.");
             return false;
         }
+        RegisteredServiceProvider<Economy> economyProvider = this.plugin.getServer().getServicesManager().getRegistration(Economy.class);
+        this.economy = economyProvider.getProvider();
+        this.enabled = true;
         return economy != null;
     }
 
@@ -102,29 +94,35 @@ public class EconomyHandler {
         if (this.enabled == false) {
             // this generally means that the economy support is not enabled in the config or the server is missing Vault.
             // lets go ahead and return true.
+            this.log.info(String.format(
+                "[Waypoint] Economy services are not enabled at this time.")); // debug
             return true;
         }
         if (this.economy.has(player, amount)) {
             // the player has the money, take it
             EconomyResponse response = this.economy.withdrawPlayer(player, amount);
             if (response.type == ResponseType.SUCCESS) {
-                this.server.getPlayer(player).sendMessage(String.format(
+                this.plugin.getServer().getPlayer(player).sendMessage(String.format(
                     "%s[Waypoint] Your balance has been debited %s.", ChatColor.GREEN, this.economy.format(response.amount)));
                 return true;
             } else if (response.type == ResponseType.FAILURE) {
-                this.server.getPlayer(player).sendMessage(String.format(
-                    "%s[Waypoint] Transaction of %s has failed.", ChatColor.RED, this.economy.format(response.amount)));
+                this.plugin.getServer().getPlayer(player).sendMessage(String.format(
+                    "%s[Waypoint] Transaction of %s has failed: %s", ChatColor.RED, this.economy.format(response.amount), response.errorMessage));
                 return false;
             } else {
                 // what else could've happened? O_O
+                this.log.info(String.format(
+                    "[Waypoint] Something went wrong during the transaction [%f from %s]; received %s.", response.amount, player, response.type.toString()));
                 return false;
             }
         } else if (!(this.economy.has(player, amount))) {
             // the player's balance is too low.
-            this.server.getPlayer(player).sendMessage(String.format(
+            this.plugin.getServer().getPlayer(player).sendMessage(String.format(
                 "%s[Waypoint] Your balance is too low to make this transaction. [%s required]", ChatColor.RED, this.economy.format(amount)));
             return false;
         }
+        this.log.info(String.format(
+            "[Waypoint] EconomyHander.debitPlayer() returned at end of method."));
         return true;
     }
 }
