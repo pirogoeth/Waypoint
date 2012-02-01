@@ -47,6 +47,7 @@ public class Warps {
     }
 
     public boolean checkperms(Player p, String pnode) {
+        if (Permission.has(p, "waypoint.warp.access.*")) return true;
         String permission = String.format("waypoint.warp.access.%s", new Object[] { pnode });
         return Permission.has(p, permission);
     }
