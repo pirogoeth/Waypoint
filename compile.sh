@@ -9,4 +9,4 @@ javac -g -cp inc/craftbukkit.jar:inc/permissions.jar:inc/bukkit.jar:inc/vault.ja
     src/me/pirogoeth/Waypoint/Commands/*.java src/me/pirogoeth/Waypoint/Events/*.java \
     src/me/pirogoeth/Waypoint/Util/*.java
 
-jar cf Waypoint-${version}.jar -C src/ .
+jar cvf "Waypoint-${version}.jar" -C src/ .
