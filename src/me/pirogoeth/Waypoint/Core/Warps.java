@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.Permission;
+import me.pirogoeth.Waypoint.Util.Cooldown;
 import me.pirogoeth.Waypoint.Waypoint;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -18,12 +19,14 @@ public class Warps {
     public static Config c;
     public static Configuration config;
     public static Configuration main;
+    public static Cooldown cooldownManager;
     public static Logger log = Logger.getLogger("Minecraft");
     public List<String> groups;
 
     public Warps(Waypoint instance) {
         plugin = instance;
         c = plugin.config;
+        cooldownManager = instance.getCooldownManager();
         config = Config.getWarp();
         main = Config.getMain();
     }
@@ -113,7 +116,11 @@ public class Warps {
         double z = ((Double)config.getProperty(WarpNode(warpname, "coord.Z"))).doubleValue();
         World w = plugin.getServer().getWorld(worldname);
         if (!plugin.getServer().getWorlds().contains(w)) {
-            p.sendMessage(String.format("[Waypoint] World %s (referenced from warp %s) does not exist.", worldname, warpname));
+            p.sendMessage(String.format("%s[Waypoint] World %s (referenced from warp %s) does not exist.", ChatColor.RED, worldname, warpname));
+            return true;
+        }
+        if (cooldownManager.checkUser(p)) {
+            p.sendMessage(String.format("%s[Waypoint] Cooling down, please wait...", ChatColor.BLUE));
             return true;
         }
         Location l = new Location(w, x, y, z);

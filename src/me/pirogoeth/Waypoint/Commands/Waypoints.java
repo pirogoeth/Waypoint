@@ -7,6 +7,7 @@ import me.pirogoeth.Waypoint.Util.Registry;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.MinorUtils;
 import me.pirogoeth.Waypoint.Util.Governor;
+import me.pirogoeth.Waypoint.Util.Cooldown;
 import me.pirogoeth.Waypoint.Waypoint;
 // bukkit imports
 import org.bukkit.Location;
@@ -23,12 +24,14 @@ class Waypoints extends Command {
     public Configuration main;
     public Configuration users;
     public Governor limitProvider;
+    public Cooldown cooldownManager;
 
     public Waypoints (Waypoint instance) {
         super(instance);
         main = configuration.getMain();
         users = configuration.getUsers();
         this.limitProvider = instance.limitProvider;
+        this.cooldownManager = instance.getCooldownManager();
         try {
             setCommand("wp");
             addAlias("waypoint");
@@ -140,6 +143,10 @@ class Waypoints extends Command {
                 MinorUtils.UserNodeChomp(player, arg, "coord.Y"));
             double z = (Double) users.getProperty(
                 MinorUtils.UserNodeChomp(player, arg, "coord.Z"));
+            if (this.cooldownManager.checkUser(player)) {
+                player.sendMessage(String.format("%s[Waypoint] Cooling down, please wait...", ChatColor.BLUE));
+                return true;
+            }
             // no longer needed: final float p = new Float(users.getString(MinorUtils.UserNodeChomp(player, arg, "coord.pitch")));
             //  final float p = new Float("1");
             //  float yw = new Float(users.getString(MinorUtils.UserNodeChomp(player, arg, "coord.yaw")));
