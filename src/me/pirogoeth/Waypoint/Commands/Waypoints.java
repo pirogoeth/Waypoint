@@ -19,6 +19,10 @@ import org.bukkit.util.config.ConfigurationNode;
 // java imports
 import java.util.Map;
 import java.lang.Boolean;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
+import java.util.logging.Logger;
 
 class Waypoints extends Command {
     public Configuration main;
@@ -40,6 +44,24 @@ class Waypoints extends Command {
             e.printStackTrace();
         }
     };
+
+    private void delete_waypoint (String player, String point) {
+        List<String> lp = users.getStringList(String.format("users.%s.%s.invites", player, point), null);
+        users.removeProperty(String.format("users.%s.%s", player, point));
+        users.save();
+        if (lp == null) { return; }
+        if (lp.size() == 0) {
+            users.removeProperty(String.format("users.%s.%s", player, point));
+            users.save();
+            return;
+        } else {
+            Iterator lp_i = lp.iterator();
+            while (lp_i.hasNext()) {
+                delete_waypoint((String) lp_i.next(), point);
+            }
+            return;
+        }
+    }
 
     @Override
     public boolean run (Player player, String[] args)
@@ -108,7 +130,7 @@ class Waypoints extends Command {
                     "[Waypoint] Point '" + arg + "' does not exist!");
                 return true;
             }
-            users.removeProperty("users." + player.getName().toString() + "." + arg);
+            delete_waypoint(player.getName().toString(), arg);
             player.sendMessage("[Waypoint] Point '" + arg + "' has been deleted.");
             users.save();
             return true;
@@ -179,9 +201,19 @@ class Waypoints extends Command {
             }
             if (MinorUtils.CheckPointExists(users, player, point) == false) {
                 player.sendMessage(ChatColor.RED +
-                    "You do not own a point named '" + point + "'.");
+                    "[Waypoint] You do not own a point named '" + point + "'.");
                 return true;
             }
+            List<String> pl;
+            try {
+                pl = users.getStringList(String.format("users.%s.%s.invites", player.getName().toString(), point), new ArrayList<String>());
+            } catch (java.lang.Exception e) {
+                pl = new ArrayList<String>();
+            }
+            pl.add(p.getName().toString());
+            users.setProperty(String.format(
+                "users.%s.%s.invites", player.getName().toString(), point),
+            pl);
             ConfigurationNode node = users.getNode(MinorUtils.BaseNodeChomp(player, point));
             MinorUtils.TransferNode(users, MinorUtils.InviteNodeChomp(p, point), node);
             p.sendMessage(ChatColor.AQUA + "[Waypoint] Player " + player.getName().toString() + " has invited you to use their waypoint '" + point + "'.");
