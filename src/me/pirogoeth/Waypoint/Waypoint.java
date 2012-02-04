@@ -126,8 +126,11 @@ public class Waypoint extends JavaPlugin {
 
         // finish updating
     	this.updateManager.finalise();
+
     	// shutdown all scheduler tasks
     	this.getServer().getScheduler().cancelTasks(this);
+
+    	// alert about being disabled.
     	this.log.info("[Waypoint] Disabled version " + this.getDescription().getVersion());
     }
 
@@ -169,7 +172,6 @@ public class Waypoint extends JavaPlugin {
          */
 
         if (sender.getClass().getName().toString() == "org.bukkit.craftbukkit.command.ColouredConsoleSender") {
-    		// this is a console sender *WTF*!
     		sender.sendMessage("[Waypoint] You need to be a player to use this plugin.");
     		return true;
         }
