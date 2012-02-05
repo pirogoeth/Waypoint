@@ -10,9 +10,9 @@ javac -Xstdout compile_log.txt -g:none -cp inc/craftbukkit.jar:inc/permissions.j
     src/me/pirogoeth/Waypoint/Util/*.java src/net/eisental/common/page/*.java
     # src/net/eisental/common/parsing/*.java
 
-errors=$(cat "./compile_log.txt" | grep "errors")
+errors=`cat "./compile_log.txt" | grep "errors"`
 
-if ! test -z ${errors} && ! $(echo ${errors} | tr -d "[[:space:]]") == ""; then
+if ! test -z "${errors}" && ! `echo ${errors} | tr -d "[[:space:]]"` == ""; then
     echo "$(cat compile_log.txt)"
     exit 1
 fi
