@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.ChatColor;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
+import org.bukkit.command.CommandSender;
 // java imports
 import java.util.Map;
 import java.lang.Boolean;
@@ -23,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 import java.util.logging.Logger;
+// etCommon imports
+import net.eisental.common.page.Pager;
 
 class Waypoints extends Command {
     public Configuration main;
@@ -267,21 +270,30 @@ class Waypoints extends Command {
                 player.sendMessage(ChatColor.RED + "[Waypoint] You do not have any points to list.");
                 return true;
             }
-            player.sendMessage(ChatColor.YELLOW + "====[Waypoint] Point list:====");
+            // replaced by pager implementation
+            // player.sendMessage(ChatColor.YELLOW + "====[Waypoint] Point list:====");
             Map<String, ConfigurationNode> a = users.getNodes("users." + player.getName());
             if (a.size() == 0) {
                 player.sendMessage(ChatColor.AQUA + " - No points have been created.");
                 return true;
             }
+            String list_str = "";
             for (Map.Entry<String, ConfigurationNode> entry : a.entrySet()) {
                 if (((String) configuration.getMain().getProperty("warp.list_world_only")).equals("true")
                     &&
                 !(entry.getValue().getString("world").equals(player.getLocation().getWorld().getName().toString()))) {
                     continue;
                 } else {
-                    player.sendMessage(ChatColor.GREEN + " - " + entry.getKey());
+                    list_str += String.format(" - %s", entry.getKey());
                 }
             }
+            Pager.beginPaging(
+                (CommandSender) player, // player
+                "===Waypoint List:===", // title
+                list_str, // line source
+                ChatColor.GREEN, //info colour
+                ChatColor.RED // error colour
+            );
             return true;
         }
         else if (subc.equalsIgnoreCase("test")) {
