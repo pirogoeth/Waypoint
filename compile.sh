@@ -7,7 +7,7 @@ echo "[Waypoint(${version})] building.]"
 javac -Xstdout compile_log.txt -g:none -cp inc/craftbukkit.jar:inc/permissions.jar:inc/bukkit.jar:inc/vault.jar \
     src/me/pirogoeth/Waypoint/*.java src/me/pirogoeth/Waypoint/Core/*.java \
     src/me/pirogoeth/Waypoint/Commands/*.java src/me/pirogoeth/Waypoint/Events/*.java \
-    src/me/pirogoeth/Waypoint/Util/*.java src/net/eisental/common/page/*.java
+    src/me/pirogoeth/Waypoint/Util/*.java src/net/eisental/common/page/*.java \
     src/net/eisental/common/parsing/*.java
 
 errors=`cat "./compile_log.txt" | grep "errors"`
