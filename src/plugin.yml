@@ -10,6 +10,11 @@ commands:
         usage: /wp <add|del|tp;list> [name]
         aliases: 
             - waypoint
+    wpage:
+        description: View paged lists from commands.
+        usage: /wpage <page no.|prev|next|last>
+        aliases:
+            - wppage
     home:
         description: Save your home location.
         usage: /home [add]

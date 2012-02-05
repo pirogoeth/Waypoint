@@ -17,6 +17,7 @@ public class CommandHandler {
   private Command waypoints;
   private Command warpAdmin;
   private Command worldCommand;
+  private Command pager;
 
   public CommandHandler(Waypoint instance) {
     this.plugin = instance;
@@ -33,5 +34,6 @@ public class CommandHandler {
     this.waypoints = new Waypoints(this.plugin);
     this.warpAdmin = new WarpAdmin(this.plugin);
     this.worldCommand = new WorldCommand(this.plugin);
+    this.pager = new WPager(this.plugin);
   }
 }

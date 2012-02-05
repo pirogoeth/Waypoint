@@ -284,12 +284,12 @@ class Waypoints extends Command {
                 !(entry.getValue().getString("world").equals(player.getLocation().getWorld().getName().toString()))) {
                     continue;
                 } else {
-                    list_str += String.format(" - %s", entry.getKey());
+                    list_str += String.format(" - %s\n", entry.getKey());
                 }
             }
             Pager.beginPaging(
                 (CommandSender) player, // player
-                "===Waypoint List:===", // title
+                "===Waypoint List===", // title
                 list_str, // line source
                 ChatColor.GREEN, //info colour
                 ChatColor.RED // error colour
