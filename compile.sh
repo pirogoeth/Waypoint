@@ -11,8 +11,9 @@ javac -Xstdout compile_log.txt -g:none -cp inc/craftbukkit.jar:inc/permissions.j
     # src/net/eisental/common/parsing/*.java
 
 errors=`cat "./compile_log.txt" | grep "errors"`
+errors_t=`echo ${errors} | tr -d "[[:space:]]"`
 
-if ! test -z "${errors}" && ! `echo ${errors} | tr -d "[[:space:]]"` == ""; then
+if ! test -z "${errors}" && ! test -z "${errors_t}"; then
     echo "$(cat compile_log.txt)"
     exit 1
 fi
