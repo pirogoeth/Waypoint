@@ -71,7 +71,7 @@ public class PlayerEventListener extends PlayerListener {
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         final Player player = event.getPlayer();
         // this is for people who don't want to use Waypoint's world/teleportation services.
-        if (config.getConfigInventory().MAIN.getBoolean("external.teleport", true) == true) {
+        if (ConfigInventory.MAIN.getConfig().getBoolean("external.teleport", true) == true) {
             return;
         }
         // cooldown implementation
@@ -142,7 +142,7 @@ public class PlayerEventListener extends PlayerListener {
     public void onPlayerChangedWorld (PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
         // this is for people who don't want to use Waypoint's world/teleportation services.
-        if (config.getConfigInventory().MAIN.getBoolean("external.worldmg", true) == true) {
+        if (ConfigInventory.MAIN.getConfig().getBoolean("external.worldmg", true) == true) {
             return;
         }
         /**

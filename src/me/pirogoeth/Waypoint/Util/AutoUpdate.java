@@ -23,8 +23,7 @@ public class AutoUpdate {
     public Logger log = Logger.getLogger("Minecraft");
     public Waypoint plugin;
     public Configuration main;
-    public String n_v;
-    public String n_t;
+
     public AutoUpdate (Waypoint instance) {
         plugin = instance;
         main = (Configuration) plugin.config.getMain();
@@ -48,7 +47,7 @@ public class AutoUpdate {
 
     protected int getVersion () {
         try {
-            String[] split = plugin.getDescription().getVersion().split("\\.").split("-");
+            String[] split = plugin.getDescription().getVersion().split("\\.");
             return Integer.parseInt(split[0]) * 100 + Integer.parseInt(split[1]) * 10 + Integer.parseInt(split[2]);
         }
         catch (Exception e) {}

@@ -122,7 +122,7 @@ public class Worlds {
         }
     }
 
-    public World Create (String worldname, String env, int mode) {
+    public World Create (String worldname, String env, int mode, boolean pvp) {
         if (mode != 0 && mode != 1) { mode = 0; };
         Environment environment = Environment.valueOf(env);
         Configuration world = config.getWorld();
@@ -131,7 +131,7 @@ public class Worlds {
             log.info(String.format("[Waypoint] Created world: { %s [ENV:%s(MODE:%s)] } -- PVP: %s", worldname, env.toUpperCase(), Integer.toString(mode), Boolean.toString(wx.getPVP())));
             world.setProperty("worlds." + worldname + ".env", env.toUpperCase());
             world.setProperty("worlds." + worldname + ".mode", mode);
-            world.setProperty("worlds." + worldname + ".mode", false);
+            world.setProperty("worlds." + worldname + ".pvp", pvp);
             world.save();
             return wx;
         } else if (environment == null) {

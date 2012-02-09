@@ -58,11 +58,6 @@ public class Config {
         initialise();
     }
 
-    // ConfigInventory
-    public static ConfigInventory getConfigInventory () {
-        return ConfigInventory.ConfigInventory;
-    }
-
     // File() instantiator
     private static File getFile (String fname) {
         File f = new File(maindir + File.separator + (String)fname + extension);
