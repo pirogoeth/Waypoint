@@ -101,6 +101,8 @@ class WorldCommand extends Command {
             catch (java.lang.ArrayIndexOutOfBoundsException e) {
                 player.sendMessage(ChatColor.RED +
                     "[Waypoint] Please specify a world name.");
+                player.sendMessage(ChatColor.BLUE +
+                    "Usage: /world <worldname> <environment>");
                 return true;
             };
             String environ;
@@ -195,37 +197,32 @@ class WorldCommand extends Command {
                 player.sendMessage(ChatColor.BLUE + "You do not have the permissions to use this command.");
                 return true;
             }
-            // @accepts [2-3 args]: worldname, environment [, seed]
+            // @accepts [2-4 args]: worldname, environment [, gamemode, pvp]
             String worldname = args[1];
             String environ;
             try { environ = args[2]; }
             catch (java.lang.ArrayIndexOutOfBoundsException e) { environ = null; };
-            String seed;
+            int gm;
+            boolean pvp;
             org.bukkit.World wx = null;
-            /**
-              * try {
-              *     seed = args[3];
-              * }
-              * catch (java.lang.ArrayIndexOutOfBoundsException e)
-              * {
-              *   seed = null;
-              * }
-              */
+            // try to get gamemode
+            try {
+                gm = Integer.parseInt(args[3]);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                gm = 0;
+            }
+            // try to get pvp value
+            try {
+                pvp = Boolean.getBoolean(args[4].toLowerCase());
+            } catch (ArrayIndexOutOfBoundsException e) {
+                pvp = false;
+            }
+            // check environment value
             if (environ == null) {
                 player.sendMessage(ChatColor.BLUE + "[Waypoint] Please specify an environment type.");
                 return true;
             }
-            /**
-              * if (seed != null)
-              * {
-              *   wx = plugin.worldManager.Create(worldname, environ.toUpperCase(), seed);
-              * }
-              * else if (seed == null)
-              * {
-              *   wx = plugin.worldManager.Create(worldname, environ.toUpperCase());
-              * }
-              */
-            wx = plugin.worldManager.Create(worldname, environ.toUpperCase());
+            wx = plugin.worldManager.Create(worldname, environ.toUpperCase()), gm, pvp;
             if (wx == null) {
                 player.sendMessage(String.format("%s[Waypoint] Could not create world: %s", ChatColor.RED, worldname));
                 return true;

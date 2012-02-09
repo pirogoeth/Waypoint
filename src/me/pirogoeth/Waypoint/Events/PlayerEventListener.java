@@ -36,6 +36,7 @@ import me.pirogoeth.Waypoint.Core.Warps;
 import me.pirogoeth.Waypoint.Core.Links;
 import me.pirogoeth.Waypoint.Util.EconomyHandler;
 import me.pirogoeth.Waypoint.Util.EconomyCost;
+import me.pirogoeth.Waypoint.Util.ConfigInventory;
 
 public class PlayerEventListener extends PlayerListener {
     public static Waypoint plugin;
@@ -69,6 +70,10 @@ public class PlayerEventListener extends PlayerListener {
 
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         final Player player = event.getPlayer();
+        // this is for people who don't want to use Waypoint's world/teleportation services.
+        if (config.getConfigInventory().MAIN.getBoolean("external.teleport", true) == true) {
+            return;
+        }
         // cooldown implementation
         if (event.getCause().toString().equals("UNKNOWN")) {
             // this is the second teleport to get an absolute fix on the correct position. allow it.
@@ -136,6 +141,10 @@ public class PlayerEventListener extends PlayerListener {
 
     public void onPlayerChangedWorld (PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
+        // this is for people who don't want to use Waypoint's world/teleportation services.
+        if (config.getConfigInventory().MAIN.getBoolean("external.worldmg", true) == true) {
+            return;
+        }
         /**
          * Watching for players, we should be able to cancel their world change if they do not have the permissions to change.
          */

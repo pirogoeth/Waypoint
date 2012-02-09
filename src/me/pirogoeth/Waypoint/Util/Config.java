@@ -58,9 +58,13 @@ public class Config {
         initialise();
     }
 
+    // ConfigInventory
+    public static getConfigInventory () {
+        return ConfigInventory.ConfigInventory;
+    }
+
     // File() instantiator
-    private static File getFile(String fname)
-    {
+    private static File getFile (String fname) {
         File f = new File(maindir + File.separator + (String)fname + extension);
         return f;
     }
@@ -185,14 +189,17 @@ public class Config {
             log.info("[Waypoint] Writing default config values.");
             // main
             main.setProperty("version", "1.6.5");
-            main.setProperty("autoupdate", "false");
+            main.setProperty("autoupdate", false);
             // cooldown timer
             main.setProperty("cooldown.duration", 0);
             // economy
             main.setProperty("economy", false);
             main.setProperty("economy.cost.teleport", 5);
             // home settings
-            main.setProperty("home.set_home_at_bed", "false");
+            main.setProperty("home.set_home_at_bed", false);
+            // external uses
+            main.setProperty("external.teleport", false); // use something else for teleportation management
+            main.setProperty("external.worldmg", false); // use something else for world management
             // warp permission groups
             List<String> warpgroups = new ArrayList<String>();
             warpgroups.add("Default");
@@ -202,9 +209,9 @@ public class Config {
             // write the spawn points to config file
             plugin.spawnManager.ConfigWriteSpawnLocations();
             // warp settings
-            main.setProperty("warp.traverse_world_only", "false");
-            main.setProperty("warp.list_world_only", "false");
-            main.setProperty("warp.warpstring_enabled", "true");
+            main.setProperty("warp.traverse_world_only", false);
+            main.setProperty("warp.list_world_only", false);
+            main.setProperty("warp.warpstring_enabled", true);
             main.setProperty("warp.string", "welcome to %w, %p");
             // limits
             main.setProperty("limits.warp.enabled", true);
@@ -262,6 +269,9 @@ public class Config {
             // add config option added after 1.5-dev
             main.setProperty("warp.warpstring_enabled", true);
             main.setProperty("warp.string", "welcome to %w, %p");
+            // external uses
+            main.setProperty("external.teleport", false); // use something else for teleportation management
+            main.setProperty("external.worldmg", false); // use something else for world management
             // limits
             main.setProperty("limits.warp.enabled", false);
             main.setProperty("limits.warp.threshold", 10);

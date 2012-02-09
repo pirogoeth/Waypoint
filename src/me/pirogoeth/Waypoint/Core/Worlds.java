@@ -111,7 +111,7 @@ public class Worlds {
             World wx = plugin.getServer().createWorld(worldname, environment);
             log.info(String.format("[Waypoint] Created world: { %s [ENV:%s(MODE:%s)] } -- PVP: %s", worldname, env.toUpperCase(), "0", Boolean.toString(wx.getPVP())));
             world.setProperty("worlds." + worldname + ".env", env.toUpperCase());
-            world.setProperty("worlds." + worldname + ".mode", "0");
+            world.setProperty("worlds." + worldname + ".mode", 0);
             world.setProperty("worlds." + worldname + ".pvp", false);
             world.save();
             return wx;
