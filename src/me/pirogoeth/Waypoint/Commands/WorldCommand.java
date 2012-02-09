@@ -222,7 +222,7 @@ class WorldCommand extends Command {
                 player.sendMessage(ChatColor.BLUE + "[Waypoint] Please specify an environment type.");
                 return true;
             }
-            wx = plugin.worldManager.Create(worldname, environ.toUpperCase()), gm, pvp;
+            wx = plugin.worldManager.Create(worldname, environ.toUpperCase(), gm, pvp);
             if (wx == null) {
                 player.sendMessage(String.format("%s[Waypoint] Could not create world: %s", ChatColor.RED, worldname));
                 return true;

@@ -59,7 +59,7 @@ public class Config {
     }
 
     // ConfigInventory
-    public static getConfigInventory () {
+    public static ConfigInventory getConfigInventory () {
         return ConfigInventory.ConfigInventory;
     }
 
