@@ -11,43 +11,62 @@ import org.bukkit.util.config.Configuration;
 // permissions imports
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import ru.tehkode.permissions.PermissionManager;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 // internal imports
 import me.pirogoeth.Waypoint.Waypoint;
 
 public class Permission {
 
     private Waypoint plugin;
-    // public static Permissions permissions;
-    private static HandlerType handler = HandlerType.OP;
-    private static PermissionHandler permissionPlugin;
+    private static HandlerType handler = HandlerType.NONE;
+    private static PermissionHandler permissions_h;
+    private static PermissionManager pex_manager; // permissionsex manager
 
     public Permission (Waypoint instance) {
         plugin = instance;
         Logger log = Logger.getLogger("Minecraft");
-        Plugin permissions = plugin.getServer().getPluginManager().getPlugin("Permissions");
-        Plugin superperms_s = plugin.getServer().getPluginManager().getPlugin("PermissionsBukkit");
-        if (permissions != null) {
-            permissionPlugin = ((Permissions)permissions).getHandler();
-            handler = HandlerType.PERMISSIONS;
-            log.info("[Waypoint] Permissions plugin detected. Using " + permissions.getDescription().getFullName());
-        } else if (permissions == null && superperms_s != null) {
+        log.info("[Waypoint] Searching for a suitable permissions plugin..");
+        Plugin permissions = null;
+        if (plugin.getServer().getPluginManager().isPluginEnabled("PermissionsEx")) {
+            handler = HandlerType.PERMISSIONS_EX;
+            permissions = plugin.getServer().getPluginManager().getPlugin("PermissionsEx");
+            pex_manager = PermissionsEx.getPermissionManager();
+        } else if (plugin.getServer().getPluginManager().isPluginEnabled("PermissionsBukkit")) {
             handler = HandlerType.SUPERPERMS;
-            log.info("[Waypoint] Using Bukkit SuperPerms, PermissionsBukkit detected.");
+        } else if (plugin.getServer().getPluginManager().isPluginEnabled("Permissions")) {
+            handler = HandlerType.PERMISSIONS;
+            permissions = plugin.getServer().getPluginManager().getPlugin("Permissions");
+            permissions_h = ((Permissions) permissions).getHandler();
         } else {
+            handler = HandlerType.OP;
+        }
+        // process the handler type
+        if (handler == HandlerType.PERMISSIONS) {
+            log.info("[Waypoint] Permissions detected. Using [" + permissions.getDescription().getFullName() + "].");
+        } else if (handler == HandlerType.PERMISSIONS_EX) {
+            log.info("[Waypoint] Using PermissionsEx [" + permissions.getDescription().getVersion() + "].");
+        } else if (handler == HandlerType.SUPERPERMS) {
+            log.info("[Waypoint] Using Bukkit SuperPerms, PermissionsBukkit detected.");
+        } else if (handler == HandlerType.OP) {
             log.info("[Waypoint] No Permissions plugin detected. Using OP");
         }
     }
 
     private enum HandlerType {
         PERMISSIONS,
+        PERMISSIONS_EX,
+        SUPERPERMS,
         OP,
-        SUPERPERMS
+        NONE
     }
 
     public static boolean has (Player p, String node) {
         switch (handler) {
             case PERMISSIONS:
-                return permissionPlugin.has(p, node);
+                return permissions_h.has(p, node);
+            case PERMISSIONS_EX:
+                return pex_manager.has(p, node);
             case OP:
                 return p.isOp();
             case SUPERPERMS:
@@ -56,10 +75,12 @@ public class Permission {
         return true;
     }
 
-    private static boolean hasPermission (Player p, String node, boolean def) {
+    private static boolean has (Player p, String node, boolean def) {
         switch (handler) {
             case PERMISSIONS:
-                return permissionPlugin.has(p, node);
+                return permissions_h.has(p, node);
+            case PERMISSIONS_EX:
+                return pex_manager.has(p, node);
             case OP:
                 return def ? true : p.isOp();
             case SUPERPERMS:
