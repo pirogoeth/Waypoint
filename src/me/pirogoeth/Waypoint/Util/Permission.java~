@@ -79,7 +79,7 @@ public class Permission {
             case PERMISSIONS:
                 return permissions_h.has(p, node);
             case PERMISSIONS_EX:
-                return PermissionsEx.getPermissionManager().has(p, node);
+                return PermissionsEx.getPermissionsManager().has(p, node);
             case OP:
                 return def ? true : p.isOp();
             case SUPERPERMS:
