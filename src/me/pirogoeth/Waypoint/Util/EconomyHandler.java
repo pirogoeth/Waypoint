@@ -64,7 +64,7 @@ public class EconomyHandler {
          * Handles the setup of Vault for Economy access.
          */
 
-        if (this.enableable = false) {
+        if (!enableable) {
             this.log.info("[Waypoint] Economy support disabled.");
             return false;
         }
