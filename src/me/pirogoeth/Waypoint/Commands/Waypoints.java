@@ -9,6 +9,8 @@ import me.pirogoeth.Waypoint.Util.MinorUtils;
 import me.pirogoeth.Waypoint.Util.Governor;
 import me.pirogoeth.Waypoint.Util.Cooldown;
 import me.pirogoeth.Waypoint.Waypoint;
+import me.pirogoeth.Waypoint.Util.Permission;
+
 // bukkit imports
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -17,6 +19,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
 import org.bukkit.command.CommandSender;
+
 // java imports
 import java.util.Map;
 import java.lang.Boolean;
@@ -24,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 import java.util.logging.Logger;
+
 // etCommon imports
 import net.eisental.common.page.Pager;
 
@@ -295,8 +299,14 @@ class Waypoints extends Command {
                 ChatColor.RED // error colour
             );
             return true;
-        }
-        else if (subc.equalsIgnoreCase("test")) {
+        } else if (subc.equalsIgnoreCase("reloadperms")) {
+            if (!Permission.has(player, "waypoint.admin.reload_permissions")) {
+                return true;
+            }
+            plugin.reloadPermissions();
+            player.sendMessage(ChatColor.BLUE + "[Waypoint] Reloaded permission handler.");
+            return true;
+        } else if (subc.equalsIgnoreCase("test")) {
             if (!permissions.has(player, "waypoint.debug.config_node_test")) {
                 return true;
             }
@@ -325,8 +335,7 @@ class Waypoints extends Command {
             users.save();
             log.info("Configuration node nesting test successful.");
             return true;
-        }
-        else if (subc.equalsIgnoreCase("help")) {
+        } else if (subc.equalsIgnoreCase("help")) {
             player.sendMessage(ChatColor.BLUE + "Waypoint, version " + plugin.getDescription().getVersion());
             player.sendMessage(ChatColor.GREEN + "/wp:");
             player.sendMessage(ChatColor.RED + "   add - add a waypoint to your list.");

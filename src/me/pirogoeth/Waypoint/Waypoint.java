@@ -8,19 +8,23 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.Listener;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.plugin.RegisteredServiceProvider;
+
 // Java imports
 import java.util.logging.Logger;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.File;
+
 // vault classes
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
+
 // various core utilities
 import me.pirogoeth.Waypoint.Util.Permission;
 import me.pirogoeth.Waypoint.Util.Registry;
@@ -33,14 +37,17 @@ import me.pirogoeth.Waypoint.Util.Limits;
 import me.pirogoeth.Waypoint.Util.WarpLimits;
 import me.pirogoeth.Waypoint.Util.Cooldown;
 import me.pirogoeth.Waypoint.Util.EconomyHandler;
+
 // basic listeners
 import me.pirogoeth.Waypoint.Events.PlayerEventListener;
 import me.pirogoeth.Waypoint.Events.BlockEventListener;
+
 // core support classes
 import me.pirogoeth.Waypoint.Core.Spawn;
 import me.pirogoeth.Waypoint.Core.Warps;
 import me.pirogoeth.Waypoint.Core.Worlds;
 import me.pirogoeth.Waypoint.Core.Links;
+
 // command classes
 import me.pirogoeth.Waypoint.Commands.CommandHandler;
 
@@ -76,9 +83,6 @@ public class Waypoint extends JavaPlugin {
     public final Links linkManager = new Links(this);
     // load commands
     public final CommandHandler commandHandler = new CommandHandler(this);
-    // listeners
-    private final PlayerEventListener playerListener = new PlayerEventListener(this);
-    private final BlockEventListener blockListener = new BlockEventListener(this);
     // updates
     private final AutoUpdate updateManager = new AutoUpdate(this);
 
@@ -92,15 +96,9 @@ public class Waypoint extends JavaPlugin {
 
         this.config.load();
         // player listener
-        this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BED_ENTER, playerListener, Event.Priority.Normal, this);
-        this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
-        this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Event.Priority.Normal, this);
-        this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHANGED_WORLD, playerListener, Event.Priority.Normal, this);
-        this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN, playerListener, Event.Priority.Normal, this);
-        this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Event.Priority.High, this);
+        this.registerEvents(new PlayerEventListener(this));
         // block listener
-        this.getServer().getPluginManager().registerEvent(Event.Type.SIGN_CHANGE, blockListener, Event.Priority.Normal, this);
-        this.getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.High, this);
+        this.registerEvents(new BlockEventListener(this));
         // run permissions setup
     	this.permissions = new Permission(this);
     	this.log.info("[Waypoint] Enabled version " + this.getDescription().getVersion());
@@ -162,6 +160,22 @@ public class Waypoint extends JavaPlugin {
          */
 
         return this.economy;
+    }
+
+    public void reloadPermissions () {
+        /**
+         * This reloads the permission handler, most likely when a command is
+         * run to call it.
+         */
+
+        this.permissions = new Permission(this);
+    }
+
+    private void registerEvents(Listener listener) {
+        this.getServer().getPluginManager().registerEvents(
+            listener,
+            (Plugin) this);
+        return;
     }
 
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String cmdlabel, String args[]) {

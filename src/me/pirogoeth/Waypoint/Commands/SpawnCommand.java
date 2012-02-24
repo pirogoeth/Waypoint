@@ -96,7 +96,8 @@ class SetSpawn extends Command {
         };
         String subc = "";
         World w = player.getWorld();
-        plugin.spawnManager.SendPlayerToSpawn(w, player);
+        Location l = player.getLocation();
+        w.setSpawnLocation((int) l.getX(), (int) l.getY(), (int) l.getZ());
         player.sendMessage(ChatColor.AQUA +
             "[Waypoint] Spawn for world " + player.getWorld().getName() + " has been set.");
         return true;

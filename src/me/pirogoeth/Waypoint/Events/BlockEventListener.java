@@ -5,12 +5,14 @@ import java.util.logging.Logger;
 import java.lang.Integer;
 import java.util.List;
 import java.util.Iterator;
+
 // internal imports
 import me.pirogoeth.Waypoint.Core.Links;
 import me.pirogoeth.Waypoint.Core.Warps;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.Permission;
 import me.pirogoeth.Waypoint.Waypoint;
+
 // bukkit imports
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -19,12 +21,16 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+import org.bukkit.event.Event.Result;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class BlockEventListener extends BlockListener {
+public class BlockEventListener implements Listener {
   public static Waypoint plugin;
   public static Config config;
   public static Warps warpManager;
@@ -40,6 +46,7 @@ public class BlockEventListener extends BlockListener {
     linkManager = plugin.linkManager;
   }
 
+  @EventHandler(priority = EventPriority.LOW)
   public void onSignChange(SignChangeEvent event) {
     Player player = event.getPlayer();
     Sign sign = (Sign)event.getBlock().getState();
@@ -59,6 +66,7 @@ public class BlockEventListener extends BlockListener {
     }
   }
 
+  @EventHandler(priority = EventPriority.LOW)
   public void onBlockBreak(BlockBreakEvent event) {
     if (((event.getBlock().getTypeId() == 63) || (event.getBlock().getTypeId() == 68)) && (((Sign)event.getBlock().getState()).getLine(0).equalsIgnoreCase("[Waypoint]"))) {
       Sign sign = (Sign)event.getBlock().getState();

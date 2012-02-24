@@ -8,16 +8,22 @@ import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.MinorUtils.*;
 import me.pirogoeth.Waypoint.Util.Governor;
 import me.pirogoeth.Waypoint.Waypoint;
+
 // bukkit imports
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.bukkit.util.config.ConfigurationNode;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.ChatColor;
+
 // java imports
 import java.util.Map;
 import java.lang.Boolean;
+
+// etCommon imports
+import net.eisental.common.page.Pager;
 
 class Warp extends Command {
     public Configuration main;
@@ -212,8 +218,7 @@ class Warp extends Command {
                     "[Waypoint] There are currently no warps to be displayed.");
                 return true;
             };
-            player.sendMessage(ChatColor.GREEN +
-                "====[Waypoint] Warps available to you:====");
+            String list_str = "";
             for (Map.Entry<String, ConfigurationNode> entry : a.entrySet()) {
                 ConfigurationNode node = entry.getValue();
                 String warppermission = (String) node.getProperty("permission");
@@ -225,11 +230,18 @@ class Warp extends Command {
                     if (!player.getWorld().toString().equals((String)node.getProperty("world")) && ((String) plugin.config.getMain().getProperty("warp.list_world_only")).equals("true")) {
                         continue;
                     } else {
-                        player.sendMessage(ChatColor.AQUA + " - " + entry.getKey());
+                        list_str += " - " + entry.getKey() + "\n";
                     };
                 };
                 x++;
             };
+            Pager.beginPaging(
+                (CommandSender) player,
+                "====[Waypoint] Warps available to you====",
+                list_str,
+                ChatColor.GREEN,
+                ChatColor.RED
+            );
             if (x == 0) {
                 player.sendMessage(ChatColor.YELLOW +
                     "[Waypoint] There are currently no warps to be displayed.");

@@ -2,6 +2,10 @@ package me.pirogoeth.Waypoint.Events;
 
 // bukkit imports
 import org.bukkit.event.Event;
+import org.bukkit.event.Event.Result;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -20,6 +24,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.block.Sign;
 import org.bukkit.block.BlockState;
 import org.bukkit.ChatColor;
+
 // java imports
 import java.util.logging.Logger;
 import java.util.List;
@@ -27,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
+
 // internal imports
 import me.pirogoeth.Waypoint.Waypoint;
 import me.pirogoeth.Waypoint.Util.Config;
@@ -38,7 +44,7 @@ import me.pirogoeth.Waypoint.Util.EconomyHandler;
 import me.pirogoeth.Waypoint.Util.EconomyCost;
 import me.pirogoeth.Waypoint.Util.ConfigInventory;
 
-public class PlayerEventListener extends PlayerListener {
+public class PlayerEventListener implements Listener {
     public static Waypoint plugin;
     public static Config config;
     private Cooldown cooldownManager;
@@ -68,6 +74,7 @@ public class PlayerEventListener extends PlayerListener {
         return a;
     }
 
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         final Player player = event.getPlayer();
         // this is for people who don't want to use Waypoint's world/teleportation services.
@@ -98,6 +105,7 @@ public class PlayerEventListener extends PlayerListener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerBedEnter(PlayerBedEnterEvent event) {
         Player player = event.getPlayer();
         if (plugin.config.getMain().getBoolean("home.set_home_at_bed", false) == false) { return; };
@@ -115,6 +123,7 @@ public class PlayerEventListener extends PlayerListener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerJoin (PlayerJoinEvent event) {
         Player player = event.getPlayer();
         String worldname = player.getLocation().getWorld().getName().toString();
@@ -127,6 +136,7 @@ public class PlayerEventListener extends PlayerListener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerRespawn (PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         String worldname = event.getRespawnLocation().getWorld().getName().toString();
@@ -139,6 +149,7 @@ public class PlayerEventListener extends PlayerListener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerChangedWorld (PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
         // this is for people who don't want to use Waypoint's world/teleportation services.
@@ -160,6 +171,7 @@ public class PlayerEventListener extends PlayerListener {
         return;
     }
 
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerInteract (PlayerInteractEvent event) {
         Player player = event.getPlayer();
         /**

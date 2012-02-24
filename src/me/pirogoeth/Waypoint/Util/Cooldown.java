@@ -18,6 +18,7 @@ public class Cooldown {
     private Config configProvider;
     public Configuration configuration;
     private ArrayList<String> cooling = new ArrayList<String>();
+    private boolean enabled;
     public long cooldown;
 
     public Cooldown (Waypoint instance) {
@@ -29,6 +30,7 @@ public class Cooldown {
         this.log = Logger.getLogger("Minecraft");
         this.configProvider = instance.config;
         this.configuration = this.configProvider.getMain();
+        this.enabled = this.configuration.getBoolean("cooldown.enabled", false);
     }
 
     public long getDuration () {
@@ -48,6 +50,7 @@ public class Cooldown {
          * @returns: none
          * @calls: this.runTimer((Player));
          */
+        if (!(this.enabled)) return;
         this.cooling.add(player.getName().toString());
         this.runTimer(player);
     }
@@ -67,6 +70,7 @@ public class Cooldown {
          * @params (1): Player
          * @returns (1): boolean (true if in this.cooling, false if not in this.cooling)
          */
+        if (!(this.enabled)) return false;
         return this.cooling.contains(player.getName().toString());
     }
 
