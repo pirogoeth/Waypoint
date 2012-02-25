@@ -8,7 +8,8 @@ javac -Xstdout compile_log.txt -g:none -cp inc/craftbukkit.jar:inc/permissions.j
     src/me/pirogoeth/Waypoint/*.java src/me/pirogoeth/Waypoint/Core/*.java \
     src/me/pirogoeth/Waypoint/Commands/*.java src/me/pirogoeth/Waypoint/Events/*.java \
     src/me/pirogoeth/Waypoint/Util/*.java src/net/eisental/common/page/*.java \
-    src/net/eisental/common/parsing/*.java
+    src/net/eisental/common/parsing/*.java src/com/sk89q/util/*.java src/com/sk89q/minecraft/util/commands/*.java \
+    src/com/sk89q/bukkit/util/*.java
 
 errors=`cat "./compile_log.txt" | grep "errors"`
 errors_t=`echo ${errors} | tr -d "[[:space:]]"`
