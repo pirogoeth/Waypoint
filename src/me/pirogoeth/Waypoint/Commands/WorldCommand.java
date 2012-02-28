@@ -1,21 +1,30 @@
 package me.pirogoeth.Waypoint.Commands;
 
+// internal imports
 import me.pirogoeth.Waypoint.Util.Command;
 import me.pirogoeth.Waypoint.Util.CommandException;
 import me.pirogoeth.Waypoint.Util.Registry;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.MinorUtils.*;
 import me.pirogoeth.Waypoint.Waypoint;
+
+// bukkit imports
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.bukkit.ChatColor;
 import org.bukkit.util.config.Configuration;
+
+// java imports
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.lang.Boolean;
 import java.io.File;
+
+// etCommon imports
+import net.eisental.common.page.Pager;
 
 class WorldCommand extends Command {
     public Configuration main;
@@ -83,11 +92,19 @@ class WorldCommand extends Command {
             player.sendMessage(ChatColor.GREEN + "World List: ");
             Iterator i = w.iterator();
             org.bukkit.World wx;
+            String list_str = "";
             while (i.hasNext())
             {
                 wx = (org.bukkit.World) i.next();
-                player.sendMessage(ChatColor.GREEN + " - " + wx.getName());
+                list_str += ChatColor.GREEN + " - " + wx.getName() + "\n";
             }
+            Pager.beginPaging(
+                (CommandSender) player,
+                "====World List===",
+                list_str,
+                ChatColor.GREEN,
+                ChatColor.RED
+            );
             return true;
         }
         else if (subc.equalsIgnoreCase("import")) {

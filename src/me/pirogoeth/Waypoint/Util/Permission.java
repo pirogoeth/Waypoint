@@ -23,6 +23,7 @@ public class Permission {
     private Waypoint plugin;
     private static HandlerType handler = HandlerType.NONE;
     private static Plugin permissions;
+    public static boolean loaded = false;
 
     public Permission (Waypoint instance) {
         plugin = instance;
@@ -32,13 +33,17 @@ public class Permission {
         if (plugin.getServer().getPluginManager().isPluginEnabled("PermissionsEx")) {
             handler = HandlerType.PERMISSIONS_EX;
             permissions = plugin.getServer().getPluginManager().getPlugin("PermissionsEx");
+            loaded = true;
         } else if (plugin.getServer().getPluginManager().isPluginEnabled("PermissionsBukkit")) {
             handler = HandlerType.SUPERPERMS;
+            loaded = true;
         } else if (plugin.getServer().getPluginManager().isPluginEnabled("bPermissions")) {
             handler = HandlerType.SUPERPERMS;
+            loaded = true;
         } else if (plugin.getServer().getPluginManager().isPluginEnabled("Permissions")) {
             handler = HandlerType.PERMISSIONS;
             permissions = plugin.getServer().getPluginManager().getPlugin("Permissions");
+            loaded = true;
         } else {
             handler = HandlerType.OP;
         }

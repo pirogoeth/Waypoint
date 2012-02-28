@@ -300,7 +300,7 @@ class Waypoints extends Command {
             );
             return true;
         } else if (subc.equalsIgnoreCase("reloadperms")) {
-            if (!Permission.has(player, "waypoint.admin.reload_permissions")) {
+            if (!(player.isOp())) {
                 return true;
             }
             plugin.reloadPermissions();

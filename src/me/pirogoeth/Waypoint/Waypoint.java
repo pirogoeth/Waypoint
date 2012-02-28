@@ -39,8 +39,7 @@ import me.pirogoeth.Waypoint.Util.Cooldown;
 import me.pirogoeth.Waypoint.Util.EconomyHandler;
 
 // basic listeners
-import me.pirogoeth.Waypoint.Events.PlayerEventListener;
-import me.pirogoeth.Waypoint.Events.BlockEventListener;
+import me.pirogoeth.Waypoint.Events.EventListener;
 
 // core support classes
 import me.pirogoeth.Waypoint.Core.Spawn;
@@ -95,10 +94,8 @@ public class Waypoint extends JavaPlugin {
          */
 
         this.config.load();
-        // player listener
-        this.registerEvents(new PlayerEventListener(this));
-        // block listener
-        this.registerEvents(new BlockEventListener(this));
+        // event listener
+        this.registerEvents(new EventListener(this));
         // run permissions setup
     	this.permissions = new Permission(this);
     	this.log.info("[Waypoint] Enabled version " + this.getDescription().getVersion());
@@ -167,8 +164,9 @@ public class Waypoint extends JavaPlugin {
          * This reloads the permission handler, most likely when a command is
          * run to call it.
          */
-
-        this.permissions = new Permission(this);
+        if (!(Permission.loaded)) {
+            this.permissions = new Permission(this);
+        }
     }
 
     private void registerEvents(Listener listener) {
