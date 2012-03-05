@@ -16,8 +16,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.ChatColor;
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.command.CommandSender;
 
 // java imports
@@ -221,7 +221,7 @@ class Waypoints extends Command {
             users.setProperty(String.format(
                 "users.%s.%s.invites", player.getName().toString(), point),
             pl);
-            ConfigurationNode node = users.getNode(MinorUtils.BaseNodeChomp(player, point));
+            ConfigurationSection node = users.getNode(MinorUtils.BaseNodeChomp(player, point));
             MinorUtils.TransferNode(users, MinorUtils.InviteNodeChomp(p, point), node);
             p.sendMessage(ChatColor.AQUA + "[Waypoint] Player " + player.getName().toString() + " has invited you to use their waypoint '" + point + "'.");
             p.sendMessage(ChatColor.GREEN + "Type /wp accept " + point + " to accept their invite.");
@@ -242,7 +242,7 @@ class Waypoints extends Command {
                     "[Waypoint] You have no point invite by that name.");
                 return true;
             }
-            ConfigurationNode n = users.getNode(MinorUtils.InviteNodeChomp(player, arg));
+            ConfigurationSection n = users.getNode(MinorUtils.InviteNodeChomp(player, arg));
             users.removeProperty(MinorUtils.InviteNodeChomp(player, arg));
             MinorUtils.TransferNode(users, MinorUtils.BaseNodeChomp(player, arg), n);
             player.sendMessage(ChatColor.AQUA +
@@ -276,13 +276,13 @@ class Waypoints extends Command {
             }
             // replaced by pager implementation
             // player.sendMessage(ChatColor.YELLOW + "====[Waypoint] Point list:====");
-            Map<String, ConfigurationNode> a = users.getNodes("users." + player.getName());
+            Map<String, ConfigurationSection> a = users.getNodes("users." + player.getName());
             if (a.size() == 0) {
                 player.sendMessage(ChatColor.AQUA + " - No points have been created.");
                 return true;
             }
             String list_str = "";
-            for (Map.Entry<String, ConfigurationNode> entry : a.entrySet()) {
+            for (Map.Entry<String, ConfigurationSection> entry : a.entrySet()) {
                 if (((String) configuration.getMain().getProperty("warp.list_world_only")).equals("true")
                     &&
                 !(entry.getValue().getString("world").equals(player.getLocation().getWorld().getName().toString()))) {
@@ -321,7 +321,7 @@ class Waypoints extends Command {
             users.setProperty(
                 MinorUtils.UserNodeChomp(player, "testnode", "coord.Z"), z);
             users.save();
-            ConfigurationNode n = users.getNode(MinorUtils.UserNodeChomp(player, "testnode", "coord"));
+            ConfigurationSection n = users.getNode(MinorUtils.UserNodeChomp(player, "testnode", "coord"));
             MinorUtils.TransferNode(
                 users,
                 MinorUtils.UserNodeChomp(

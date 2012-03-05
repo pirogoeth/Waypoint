@@ -4,7 +4,7 @@ package me.pirogoeth.Waypoint.Util;
 import me.pirogoeth.Waypoint.Waypoint;
 import me.pirogoeth.Waypoint.Util.Config;
 // bukkit imports
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
 // java utility imports

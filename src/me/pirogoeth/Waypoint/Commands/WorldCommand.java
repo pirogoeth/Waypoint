@@ -14,7 +14,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.command.CommandSender;
 import org.bukkit.ChatColor;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.Configuration;
 
 // java imports
 import java.util.List;

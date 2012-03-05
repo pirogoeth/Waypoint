@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 // bukkit imports
 import org.bukkit.util.FileUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.Configuration;
 // java imports
 import java.net.HttpURLConnection;
 import java.io.BufferedReader;

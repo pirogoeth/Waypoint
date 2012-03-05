@@ -2,10 +2,11 @@ package me.pirogoeth.Waypoint.Util;
 
 // java imports
 import java.util.Map;
+
 // bukkit imports
 import org.bukkit.entity.Player;
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.World;
 
 public class MinorUtils {

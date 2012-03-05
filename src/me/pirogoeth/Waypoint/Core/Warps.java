@@ -1,18 +1,23 @@
 package me.pirogoeth.Waypoint.Core;
 
+// java imports
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
+
+// internal imports
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.Permission;
 import me.pirogoeth.Waypoint.Util.Cooldown;
 import me.pirogoeth.Waypoint.Waypoint;
+
+// bukkit imports
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.Configuration;
 
 public class Warps {
     public static Waypoint plugin;

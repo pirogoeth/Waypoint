@@ -14,8 +14,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.command.CommandSender;
-import org.bukkit.util.config.ConfigurationNode;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.ChatColor;
 
 // java imports
@@ -211,7 +211,7 @@ class Warp extends Command {
                 return true;
             };
             int x = 0;
-            Map<String, ConfigurationNode> a;
+            Map<String, ConfigurationSection> a;
             a = warp.getNodes("warps");
             if (a == null || a.size() == 0) {
                 player.sendMessage(ChatColor.YELLOW +
@@ -219,8 +219,8 @@ class Warp extends Command {
                 return true;
             };
             String list_str = "";
-            for (Map.Entry<String, ConfigurationNode> entry : a.entrySet()) {
-                ConfigurationNode node = entry.getValue();
+            for (Map.Entry<String, ConfigurationSection> entry : a.entrySet()) {
+                ConfigurationSection node = entry.getValue();
                 String warppermission = (String) node.getProperty("permission");
                 if (warppermission == null) {
                     player.sendMessage(ChatColor.RED + "[Waypoint] You have not set any warp permission groups to your configuration.");
@@ -391,7 +391,7 @@ class WarpAdmin extends Command {
                 player.sendMessage(ChatColor.RED + "/warpadmin read <warpname>");
                 return true;
             }
-            ConfigurationNode a = warp.getNode(plugin.warpManager.WarpBase(arg));
+            ConfigurationSection a = warp.getNode(plugin.warpManager.WarpBase(arg));
             if (a == null) {
                 player.sendMessage("[Waypoint] No warp by that name.");
                 return true;

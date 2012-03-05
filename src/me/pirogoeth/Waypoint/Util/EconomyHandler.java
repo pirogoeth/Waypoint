@@ -4,14 +4,17 @@ package me.pirogoeth.Waypoint.Util;
 import me.pirogoeth.Waypoint.Waypoint;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.EconomyCost;
+
 // bukkit imports
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.RegisteredServiceProvider;
+
 // java imports
 import java.util.logging.Logger;
 import java.lang.Double;
+
 // vault imports
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;

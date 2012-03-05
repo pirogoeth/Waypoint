@@ -1,13 +1,17 @@
 package me.pirogoeth.Waypoint.Core;
 
+// bukkit imports
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.Location;
+
+// java imports
 import java.util.List;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
+// internal imports
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Waypoint;
 

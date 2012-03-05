@@ -2,10 +2,12 @@ package me.pirogoeth.Waypoint.Core;
 
 // java imports
 import java.util.logging.Logger;
+
 // internal imports
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.Permission;
 import me.pirogoeth.Waypoint.Waypoint;
+
 // bukkit imports
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -16,7 +18,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.Configuration;
 
 public class Links {
     public Waypoint plugin;

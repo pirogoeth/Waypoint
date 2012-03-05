@@ -1,17 +1,23 @@
 package me.pirogoeth.Waypoint.Commands;
 
+// internal imports
 import me.pirogoeth.Waypoint.Util.Command;
 import me.pirogoeth.Waypoint.Util.CommandException;
 import me.pirogoeth.Waypoint.Util.Registry;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.MinorUtils.*;
 import me.pirogoeth.Waypoint.Waypoint;
+
+// bukkit imports
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.Entity;
 import org.bukkit.ChatColor;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.Configuration;
+
+// java imports
 import java.lang.Boolean;
 
 class Teleport extends Command {
@@ -233,7 +239,7 @@ class TeleportHere extends Command {
                 "[Waypoint] " + target.getName().toString() + " does not have permission to enter this world.");
             return true;
         }
-        Vehicle target_veh = target.getVehicle();
+        Entity target_veh = target.getVehicle();
         if (target_veh != null) { target_veh.eject(); };
         target.teleport(l);
         target.getLocation().getChunk().load();

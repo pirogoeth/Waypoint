@@ -5,8 +5,8 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
 // java imports
 import java.util.Map;
 import java.util.List;
@@ -31,7 +31,7 @@ public class Worlds {
     }
     public void LoadWorlds () {
         Configuration world = config.getWorld();
-        Map<String, ConfigurationNode> worlds = world.getNodes("worlds");
+        Map<String, ConfigurationSection> worlds = world.getNodes("worlds");
         if (worlds == null) {
             log.info("[Waypoint] No worlds to be loaded.");
             return;
@@ -48,8 +48,8 @@ public class Worlds {
         String env;
         boolean pvp;
         int mode;
-        ConfigurationNode e;
-        for (Map.Entry<String, ConfigurationNode> entry : worlds.entrySet()) {
+        ConfigurationSection e;
+        for (Map.Entry<String, ConfigurationSection> entry : worlds.entrySet()) {
             worldname = entry.getKey();
             e = entry.getValue();
             env = e.getString("env");

@@ -1,8 +1,9 @@
 package me.pirogoeth.Waypoint.Util;
 
 // bukkit imports
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 // java imports
 import java.util.Map;
 import java.util.HashMap;
@@ -25,18 +26,18 @@ public enum ConfigInventory {
 
     LINKS(Config.links);
 
-    public final Configuration config;
-    private final static Map<ConfigInventory, Configuration> store = new HashMap<ConfigInventory, Configuration>();
+    public final YamlConfiguration config;
+    private final static Map<ConfigInventory, YamlConfiguration> store = new HashMap<ConfigInventory, YamlConfiguration>();
 
-    ConfigInventory (final Configuration config) {
+    ConfigInventory (final YamlConfiguration config) {
         this.config = config;
     }
 
-    public Configuration getConfig () {
+    public YamlConfiguration getConfig () {
         return this.config;
     }
 
-    public static Configuration getByConstant (final ConfigInventory ci) {
+    public static YamlConfiguration getByConstant (final ConfigInventory ci) {
         return store.get(ci);
     }
 

@@ -3,8 +3,8 @@ package me.pirogoeth.Waypoint.Util;
 // bukkit imports
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
 // internal imports
 import me.pirogoeth.Waypoint.Waypoint;
 import me.pirogoeth.Waypoint.Util.Limits;
@@ -52,10 +52,10 @@ public class WarpLimits {
         if (this.isEnabled() == false) {
             return false;
         }
-        Map<String, ConfigurationNode> node_map = this.source.getNodes(this.base_path);
+        Map<String, ConfigurationSection> node_map = this.source.getNodes(this.base_path);
         int size = 0;
         try {
-            for (Map.Entry<String, ConfigurationNode> entry : node_map.entrySet()) {
+            for (Map.Entry<String, ConfigurationSection> entry : node_map.entrySet()) {
                 if (((entry.getValue()).getString("owner")).equals(player.getName().toString()))
                     size++;
                 else

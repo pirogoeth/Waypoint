@@ -1,8 +1,9 @@
 package me.pirogoeth.Waypoint.Util;
 
 // bukkit imports
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 // java imports
@@ -28,14 +29,14 @@ public class Config {
     public static String extension = ".yml";
     public static boolean loaded = false;
     // Configuration variables
-    public static Configuration main;
-    public static Configuration warps;
-    public static Configuration users;
-    public static Configuration spawn;
-    public static Configuration home;
-    public static Configuration world;
-    public static Configuration links;
-    public static Configuration strings;
+    public static YamlConfiguration main;
+    public static YamlConfiguration warps;
+    public static YamlConfiguration users;
+    public static YamlConfiguration spawn;
+    public static YamlConfiguration home;
+    public static YamlConfiguration world;
+    public static YamlConfiguration links;
+    public static YamlConfiguration strings;
     // File variables
     public static File mainf;
     public static File spawnf;
@@ -147,13 +148,13 @@ public class Config {
         }
         // instantiate the Configuration objects
         try {
-            main = new Configuration(mainf);
-            warps = new Configuration(warpsf);
-            users = new Configuration(usersf);
-            spawn = new Configuration(spawnf);
-            home = new Configuration(homef);
-            world = new Configuration(worldf);
-            links = new Configuration(linksf);
+            main = new Configuration();
+            warps = new Configuration();
+            users = new Configuration();
+            spawn = new Configuration();
+            home = new Configuration();
+            world = new Configuration();
+            links = new Configuration();
         }
         catch (Exception e) {
             return false;
@@ -164,13 +165,13 @@ public class Config {
     public static void load() {
         // load all of the configurations
         log.info("[Waypoint] Reading configurations.");
-        main.load();
-        warps.load();
-        users.load();
-        spawn.load();
-        home.load();
-        world.load();
-        links.load();
+        main.load(mainf);
+        warps.load(warpsf);
+        users.load(usersf);
+        spawn.load(spawnf);
+        home.load(homef);
+        world.load(worldf);
+        links.load(linksf);
         // world variables
         List<World> world_l;
         Iterator world_l_i;

@@ -1,15 +1,18 @@
 package me.pirogoeth.Waypoint.Commands;
 
+// internal imports
 import me.pirogoeth.Waypoint.Util.Command;
 import me.pirogoeth.Waypoint.Util.CommandException;
 import me.pirogoeth.Waypoint.Util.Config;
 import me.pirogoeth.Waypoint.Util.Permission;
 import me.pirogoeth.Waypoint.Waypoint;
+
+// bukkit imports
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.Configuration;
 
 class Spawn extends Command {
   public Configuration main;
