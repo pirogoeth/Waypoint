@@ -2,6 +2,8 @@ Waypoint
 ========
 * * *
 
+NOTE: See this: http://phabricator.maio.me/T23
+
 [Waypoint][] is a multi-purpose teleportation, world, home, warp, and spawn management plugin written in Java for the [Bukkit][] Minecraft server.
 
 Current Stable Version: 1.6.4
