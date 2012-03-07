@@ -5,3 +5,9 @@ backup/
 .arcconfig
 downloads/
 Waypoint.jar
+*.*~
+src/me/pirogoeth/waypoint/Commands/*
+.doxy
+.divinerconfig
+*.txt
+*.py
