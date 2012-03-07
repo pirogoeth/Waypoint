@@ -1,4 +1,4 @@
-package me.pirogoeth.Waypoint.Util;
+package me.pirogoeth.waypoint.util;
 
 // java imports
 import java.io.File;
@@ -16,17 +16,17 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 // internal imports
-import me.pirogoeth.Waypoint.Waypoint;
+import me.pirogoeth.waypoint.Waypoint;
 
 public class AutoUpdate {
     public File jar;
     public Logger log = Logger.getLogger("Minecraft");
-    public Waypoint plugin;
+    public Waypoint controller;
     public Configuration main;
 
     public AutoUpdate (Waypoint instance) {
-        plugin = instance;
-        main = (Configuration) plugin.config.getMain();
+        controller = instance;
+        main = (Configuration) controller.config.getMain();
     }
 
     // borrowed from Afforess
@@ -36,7 +36,7 @@ public class AutoUpdate {
             if (directory.exists()) {
                 File p = new File(directory.getPath(), "Waypoint.jar");
                 if (p.exists()) {
-                    FileUtil.copy(p, plugin.fileGet());
+                    FileUtil.copy(p, controller.fileGet());
                     p.delete();
                     log.info("[Waypoint] Update finalised.");
                 }
@@ -47,7 +47,7 @@ public class AutoUpdate {
 
     protected int getVersion () {
         try {
-            String[] split = plugin.getDescription().getVersion().split("\\.");
+            String[] split = controller.getDescription().getVersion().split("\\.");
             return Integer.parseInt(split[0]) * 100 + Integer.parseInt(split[1]) * 10 + Integer.parseInt(split[2]);
         }
         catch (Exception e) {}
@@ -92,11 +92,11 @@ public class AutoUpdate {
             if (!directory.exists()) {
                directory.mkdir();
             }
-            File plugin = new File(directory.getPath(), "Waypoint.jar");
-            if (!plugin.exists()) {
+            File controller = new File(directory.getPath(), "Waypoint.jar");
+            if (!controller.exists()) {
                 HttpURLConnection con = (HttpURLConnection)(source.openConnection());
                 ReadableByteChannel rbc = Channels.newChannel(con.getInputStream());
-                FileOutputStream fos = new FileOutputStream(plugin);
+                FileOutputStream fos = new FileOutputStream(controller);
                 fos.getChannel().transferFrom(rbc, 0, 1 << 24);
                 fos.close();
             }

@@ -1,17 +1,20 @@
-package me.pirogoeth.Waypoint.Util;
+package me.pirogoeth.waypoint.util;
 
 // bukkit imports
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+
 // java imports
 import java.util.Map;
 import java.util.HashMap;
+
 // internals imports
-import me.pirogoeth.Waypoint.Util.Config;
-import me.pirogoeth.Waypoint.Waypoint;
+import me.pirogoeth.waypoint.Waypoint;
+import me.pirogoeth.waypoint.util.Config;
 
 public enum ConfigInventory {
+
     MAIN(Config.main),
 
     WARP(Config.warps),

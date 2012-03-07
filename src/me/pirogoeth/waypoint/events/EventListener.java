@@ -1,4 +1,4 @@
-package me.pirogoeth.Waypoint.Events;
+package me.pirogoeth.waypoint.Events;
 
 // bukkit imports
 import org.bukkit.event.Event;
@@ -37,15 +37,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 // internal imports
-import me.pirogoeth.Waypoint.Waypoint;
-import me.pirogoeth.Waypoint.Util.Config;
-import me.pirogoeth.Waypoint.Util.Permission;
-import me.pirogoeth.Waypoint.Util.Cooldown;
-import me.pirogoeth.Waypoint.Core.Warps;
-import me.pirogoeth.Waypoint.Core.Links;
-import me.pirogoeth.Waypoint.Util.EconomyHandler;
-import me.pirogoeth.Waypoint.Util.EconomyCost;
-import me.pirogoeth.Waypoint.Util.ConfigInventory;
+import me.pirogoeth.waypoint.Waypoint;
+import me.pirogoeth.waypoint.Util.Config;
+import me.pirogoeth.waypoint.Util.Permission;
+import me.pirogoeth.waypoint.Util.Cooldown;
+import me.pirogoeth.waypoint.Core.Warps;
+import me.pirogoeth.waypoint.Core.Links;
+import me.pirogoeth.waypoint.Util.EconomyHandler;
+import me.pirogoeth.waypoint.Util.EconomyCost;
+import me.pirogoeth.waypoint.Util.ConfigInventory;
 
 public class EventListener implements Listener {
     public static Waypoint plugin;
@@ -75,6 +75,38 @@ public class EventListener implements Listener {
     public static String HomeNodeChomp (Player p, World w, String sub) {
         String a = "home." + p.getName().toString() + "." + w.getName().toString() + "." + sub;
         return a;
+    }
+
+    /**
+     * Called when a player tries to use a command.
+     *
+     * Most of this method is "borrowed" from WorldEdit.
+     */
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        if (event.isCancelled()) return;
+
+        String[] split = event.getMessage().split(" ");
+
+        if (split.length > 0) {
+            split = this.oa.detectCommands(split);
+            final String label = split[0];
+            split[0] = "/" + split[0];
+        }
+
+        final String new_message = StringUtil.joinString(split, " ");
+        if (!(new_message.equals(event.getMessage()))) {
+            event.setMessage(new_message);
+            this.oa.getServer().getPluginManager().callEvent(event);
+            if (!(event.isCancelled())) {
+                if (event.getMessage().length() > 0) {
+                    this.oa.getServer().dispatchCommand(
+                        event.getPlayer(),
+                        event.getMessage().substring(1));
+                }
+                event.setCancelled(true);
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)

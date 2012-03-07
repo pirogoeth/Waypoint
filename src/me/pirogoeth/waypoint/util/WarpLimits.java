@@ -1,4 +1,4 @@
-package me.pirogoeth.Waypoint.Util;
+package me.pirogoeth.waypoint.util;
 
 // bukkit imports
 import org.bukkit.ChatColor;
@@ -6,38 +6,43 @@ import org.bukkit.entity.Player;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 // internal imports
-import me.pirogoeth.Waypoint.Waypoint;
-import me.pirogoeth.Waypoint.Util.Limits;
+import me.pirogoeth.waypoint.Waypoint;
+import me.pirogoeth.waypoint.util.Limits;
 // java imports
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
 public class WarpLimits {
+
+    /**
+     * This is a small implementation of warp limitation.
+     */
+
     // this is the base path where our limiting will work.
     private String base_path;
     private int threshold;
-    private Waypoint plugin;
+    private Waypoint controller;
     private Configuration source;
     private Logger log = Logger.getLogger("Minecraft");
 
     // this constructor represents a limiter with a custom threshold.
     WarpLimits(Waypoint instance, String path, Configuration input, int limit) {
-        this.plugin = instance;
+        this.controller = instance;
         this.base_path = path;
         this.source = input;
         this.threshold = limit;
     };
     // this constructor represents a limiter with the default threshold (10)
     WarpLimits(Waypoint instance, String path, Configuration input) {
-        this.plugin = instance;
+        this.controller = instance;
         this.base_path = path;
         this.source = input;
         this.threshold = 10;
     };
     // this constructor represents a disabled limiter.
     WarpLimits(Waypoint instance) {
-        this.plugin = instance;
+        this.controller = instance;
         this.base_path = ".";
     };
     public boolean isEnabled () {

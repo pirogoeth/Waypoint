@@ -1,15 +1,15 @@
-package me.pirogoeth.Waypoint.Util;
+package me.pirogoeth.waypoint.util;
 
 // internal imports
-import me.pirogoeth.Waypoint.Waypoint;
-import me.pirogoeth.Waypoint.Util.Config;
-import me.pirogoeth.Waypoint.Util.EconomyCost;
+import me.pirogoeth.waypoint.Waypoint;
+import me.pirogoeth.waypoint.util.Config;
+import me.pirogoeth.waypoint.util.EconomyCost;
 
 // bukkit imports
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.controller.RegisteredServiceProvider;
 
 // java imports
 import java.util.logging.Logger;
@@ -24,10 +24,10 @@ import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 public class EconomyHandler {
 
     /**
-     * This implements a handler for economy plugins inside Waypoint.
+     * This implements a handler for economy controllers inside Waypoint.
      */
 
-    public Waypoint plugin;
+    public Waypoint controller;
     public static Config config;
     private Economy economy;
     private boolean enableable;
@@ -39,7 +39,7 @@ public class EconomyHandler {
          * Constructs the basic properties for the handler to work.
          */
 
-        this.plugin = instance;
+        this.controller = instance;
         this.config = instance.config;
         this.log = Logger.getLogger("Minecraft");
         this.enableable = this.configured();
@@ -71,11 +71,11 @@ public class EconomyHandler {
             this.log.info("[Waypoint] Economy support disabled.");
             return false;
         }
-        if (this.plugin.getServer().getPluginManager().getPlugin("Vault") == null) {
-            this.log.info("[Waypoint] Economy support disabled due to lack of the Vault plugin.");
+        if (this.controller.getServer().getPluginManager().getPlugin("Vault") == null) {
+            this.log.info("[Waypoint] Economy support disabled due to lack of the Vault controller.");
             return false;
         }
-        RegisteredServiceProvider<Economy> economyProvider = this.plugin.getServer().getServicesManager().getRegistration(Economy.class);
+        RegisteredServiceProvider<Economy> economyProvider = this.controller.getServer().getServicesManager().getRegistration(Economy.class);
         this.economy = economyProvider.getProvider();
         this.enabled = true;
         return economy != null;
@@ -105,11 +105,11 @@ public class EconomyHandler {
             // the player has the money, take it
             EconomyResponse response = this.economy.withdrawPlayer(player, amount);
             if (response.type == ResponseType.SUCCESS) {
-                this.plugin.getServer().getPlayer(player).sendMessage(String.format(
+                this.controller.getServer().getPlayer(player).sendMessage(String.format(
                     "%s[Waypoint] Your balance has been debited %s.", ChatColor.GREEN, this.economy.format(response.amount)));
                 return true;
             } else if (response.type == ResponseType.FAILURE) {
-                this.plugin.getServer().getPlayer(player).sendMessage(String.format(
+                this.controller.getServer().getPlayer(player).sendMessage(String.format(
                     "%s[Waypoint] Transaction of %s has failed: %s", ChatColor.RED, this.economy.format(response.amount), response.errorMessage));
                 return false;
             } else {
@@ -120,7 +120,7 @@ public class EconomyHandler {
             }
         } else if (!(this.economy.has(player, amount))) {
             // the player's balance is too low.
-            this.plugin.getServer().getPlayer(player).sendMessage(String.format(
+            this.controller.getServer().getPlayer(player).sendMessage(String.format(
                 "%s[Waypoint] Your balance is too low to make this transaction. [%s required]", ChatColor.RED, this.economy.format(amount)));
             return false;
         }

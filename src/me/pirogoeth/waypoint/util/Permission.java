@@ -1,4 +1,4 @@
-package me.pirogoeth.Waypoint.Util;
+package me.pirogoeth.waypoint.util;
 
 // java imports
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 // bukkit imports
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.controller.Plugin;
 
 // permissions imports
 import com.nijiko.permissions.PermissionHandler;
@@ -16,33 +16,38 @@ import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 // internal imports
-import me.pirogoeth.Waypoint.Waypoint;
+import me.pirogoeth.waypoint.Waypoint;
 
 public class Permission {
 
-    private Waypoint plugin;
+    /**
+     * This is a static implementation of a plugin Permissions handler for checking permissions of users
+     * and initialising support for specific plugins or different permission types.
+     */
+
+    private Waypoint controller;
     private static HandlerType handler = HandlerType.NONE;
     private static Plugin permissions;
     public static boolean loaded = false;
 
     public Permission (Waypoint instance) {
-        plugin = instance;
+        controller = instance;
         Logger log = Logger.getLogger("Minecraft");
         log.info("[Waypoint] Searching for a suitable permissions plugin..");
         permissions = null;
-        if (plugin.getServer().getPluginManager().isPluginEnabled("PermissionsEx")) {
+        if (controller.getServer().getPluginManager().isPluginEnabled("PermissionsEx")) {
             handler = HandlerType.PERMISSIONS_EX;
-            permissions = plugin.getServer().getPluginManager().getPlugin("PermissionsEx");
+            permissions = controller.getServer().getPluginManager().getPlugin("PermissionsEx");
             loaded = true;
-        } else if (plugin.getServer().getPluginManager().isPluginEnabled("PermissionsBukkit")) {
+        } else if (controller.getServer().getPluginManager().isPluginEnabled("PermissionsBukkit")) {
             handler = HandlerType.SUPERPERMS;
             loaded = true;
-        } else if (plugin.getServer().getPluginManager().isPluginEnabled("bPermissions")) {
+        } else if (controller.getServer().getPluginManager().isPluginEnabled("bPermissions")) {
             handler = HandlerType.SUPERPERMS;
             loaded = true;
-        } else if (plugin.getServer().getPluginManager().isPluginEnabled("Permissions")) {
+        } else if (controller.getServer().getPluginManager().isPluginEnabled("Permissions")) {
             handler = HandlerType.PERMISSIONS;
-            permissions = plugin.getServer().getPluginManager().getPlugin("Permissions");
+            permissions = controller.getServer().getPluginManager().getPlugin("Permissions");
             loaded = true;
         } else {
             handler = HandlerType.OP;
@@ -55,7 +60,7 @@ public class Permission {
         } else if (handler == HandlerType.SUPERPERMS) {
             log.info("[Waypoint] Using Bukkit SuperPerms.");
         } else if (handler == HandlerType.OP) {
-            log.info("[Waypoint] No Permissions plugin detected. Using OP");
+            log.info("[Waypoint] No Permissions controller detected. Using OP");
         }
     }
 

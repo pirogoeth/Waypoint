@@ -1,4 +1,4 @@
-package me.pirogoeth.Waypoint.Util;
+package me.pirogoeth.waypoint.util;
 
 // bukkit imports
 import org.bukkit.configuration.Configuration;
@@ -17,14 +17,14 @@ import java.util.ArrayList;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 // internals imports
-import me.pirogoeth.Waypoint.Waypoint;
-import me.pirogoeth.Waypoint.Util.ConfigInventory;
+import me.pirogoeth.waypoint.Waypoint;
+import me.pirogoeth.waypoint.util.ConfigInventory;
 
 public class Config {
     // main vars
-    public static Waypoint plugin;
+    public static Waypoint controller;
     public static Logger log = Logger.getLogger("Minecraft");
-    public static String maindir = "plugins/Waypoint";
+    public static String maindir = "controllers/Waypoint";
     // quizzical vars
     public static String extension = ".yml";
     public static boolean loaded = false;
@@ -48,7 +48,7 @@ public class Config {
     public static File stringf;
     // constructor
     public Config (Waypoint instance) {
-        plugin = instance;
+        controller = instance;
         new File(maindir).mkdir();
         new File(maindir + "/data").mkdir();
         if (new File(maindir + File.separator + ".usetxt").exists() == true) {
@@ -203,7 +203,7 @@ public class Config {
             warpgroups.add("Admin");
             main.setProperty("warp.permissions", warpgroups);
             // write the spawn points to config file
-            plugin.spawnManager.ConfigWriteSpawnLocations();
+            controller.spawnManager.ConfigWriteSpawnLocations();
             // warp settings
             main.setProperty("warp.traverse_world_only", false);
             main.setProperty("warp.list_world_only", false);
@@ -217,7 +217,7 @@ public class Config {
             // placeholder
             links.setProperty("links", "");
             // world base and currently loaded world settings
-            world_l = plugin.getServer().getWorlds();
+            world_l = controller.getServer().getWorlds();
             world_l_i = world_l.iterator();
             while (world_l_i.hasNext()) {
                 world_o = (World) world_l_i.next();

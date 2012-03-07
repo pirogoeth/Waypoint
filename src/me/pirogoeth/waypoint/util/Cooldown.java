@@ -1,19 +1,25 @@
-package me.pirogoeth.Waypoint.Util;
+package me.pirogoeth.waypoint.util;
 
 // internal imports
-import me.pirogoeth.Waypoint.Waypoint;
-import me.pirogoeth.Waypoint.Util.Config;
+import me.pirogoeth.waypoint.Waypoint;
+import me.pirogoeth.waypoint.util.Config;
+
 // bukkit imports
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
+
 // java utility imports
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 public class Cooldown {
-    public Waypoint plugin;
+
+    /**
+     * This is a very small implementation of teleportation-event cooldowns.
+     */
+    public Waypoint controller;
     public Logger log;
     private Config configProvider;
     public Configuration configuration;
@@ -26,7 +32,7 @@ public class Cooldown {
          * Cooldown constructor
          * @params: instance
          */
-        this.plugin = instance;
+        this.controller = instance;
         this.log = Logger.getLogger("Minecraft");
         this.configProvider = instance.config;
         this.configuration = this.configProvider.getMain();
@@ -81,8 +87,8 @@ public class Cooldown {
          * @returns: none
          * @calls: unholdUser((Player))
          */
-        this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(
-            this.plugin,
+        this.controller.getServer().getScheduler().scheduleSyncDelayedTask(
+            this.controller,
             new Runnable () {
                 public void run () {
                     releaseUser(player);

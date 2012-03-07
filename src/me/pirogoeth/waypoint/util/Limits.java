@@ -1,4 +1,4 @@
-package me.pirogoeth.Waypoint.Util;
+package me.pirogoeth.waypoint.util;
 
 // bukkit imports
 import org.bukkit.ChatColor;
@@ -7,7 +7,7 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 
 // internal improts
-import me.pirogoeth.Waypoint.Waypoint;
+import me.pirogoeth.waypoint.Waypoint;
 
 // java imports
 import java.util.Map;
@@ -16,16 +16,21 @@ import java.util.logging.Logger;
 import java.lang.Integer;
 
 public class Limits {
+
+    /**
+     * This is a small implementation of waypoint limitation.
+     */
+
     // this is the base path where our limiting will work.
     private String base_path;
     private int threshold;
-    private Waypoint plugin;
+    private Waypoint controller;
     private Configuration source;
     private Logger log;
 
     // this constructor represents a limiter with a custom threshold.
     Limits(Waypoint instance, String path, Configuration input, int limit) {
-        this.plugin = instance;
+        this.controller = instance;
         this.base_path = path;
         this.threshold = limit;
         this.source = input;
@@ -33,7 +38,7 @@ public class Limits {
     };
     // this constructor represents a limiter with the default threshold (10)
     Limits(Waypoint instance, String path, Configuration input) {
-        this.plugin = instance;
+        this.controller = instance;
         this.base_path = path;
         this.threshold = 10;
         this.source = input;
@@ -41,7 +46,7 @@ public class Limits {
     };
     // this constructor represents a disabled limiter.
     Limits(Waypoint instance) {
-        this.plugin = instance;
+        this.controller = instance;
         this.base_path = ".";
         this.threshold = 0;
         this.log = Logger.getLogger("Minecraft");

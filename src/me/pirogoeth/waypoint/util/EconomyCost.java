@@ -1,12 +1,14 @@
-package me.pirogoeth.Waypoint.Util;
+package me.pirogoeth.waypoint.util;
 
 // internal imports
-import me.pirogoeth.Waypoint.Util.EconomyHandler;
+import me.pirogoeth.waypoint.util.EconomyHandler;
+
 // java imports
 import java.util.Map;
 import java.util.HashMap;
 
 public enum EconomyCost {
+
     TELEPORT(getCostValue("economy.cost.teleport"));
 
     public final double value;
