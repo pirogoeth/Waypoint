@@ -38,33 +38,27 @@ import java.util.Map;
 
 // internal imports
 import me.pirogoeth.waypoint.Waypoint;
-import me.pirogoeth.waypoint.Util.Config;
-import me.pirogoeth.waypoint.Util.Permission;
-import me.pirogoeth.waypoint.Util.Cooldown;
-import me.pirogoeth.waypoint.Core.Warps;
-import me.pirogoeth.waypoint.Core.Links;
-import me.pirogoeth.waypoint.Util.EconomyHandler;
-import me.pirogoeth.waypoint.Util.EconomyCost;
-import me.pirogoeth.waypoint.Util.ConfigInventory;
+import me.pirogoeth.waypoint.util.Config;
+import me.pirogoeth.waypoint.util.ConfigInventory;
+import me.pirogoeth.waypoint.util.Cooldown;
+import me.pirogoeth.waypoint.util.EconomyHandler;
+import me.pirogoeth.waypoint.util.EconomyCost;
+import me.pirogoeth.waypoint.util.LogHandler;
+import me.pirogoeth.waypoint.util.Permission;
+import me.pirogoeth.waypoint.core.Warps;
+import me.pirogoeth.waypoint.core.Links;
 
 public class EventListener implements Listener {
-    public static Waypoint plugin;
-    public static Config config;
-    private Cooldown cooldownManager;
+
+    public static Waypoint controller;
     public static Warps warpManager;
     public static Links linkManager;
-    public Permission permissions;
-    public final EconomyHandler economy;
-    Logger log = Logger.getLogger("Minecraft");
+    private static final LogHandler log = new LogHandler();
 
     public EventListener (Waypoint instance) {
-        plugin = instance;
-        economy = instance.getEconomy();
-        permissions = plugin.permissions;
-        config = plugin.config;
-        warpManager = plugin.warpManager;
-        linkManager = plugin.linkManager;
-        cooldownManager = instance.getCooldownManager();
+        controller = instance;
+        warpManager = controller.warpManager;
+        linkManager = controller.linkManager;
     }
 
     public static String UserNodeChomp (Player p, String arg, String sub) {
@@ -89,7 +83,7 @@ public class EventListener implements Listener {
         String[] split = event.getMessage().split(" ");
 
         if (split.length > 0) {
-            split = this.oa.detectCommands(split);
+            split = this.controller.detectCommands(split);
             final String label = split[0];
             split[0] = "/" + split[0];
         }
@@ -97,10 +91,10 @@ public class EventListener implements Listener {
         final String new_message = StringUtil.joinString(split, " ");
         if (!(new_message.equals(event.getMessage()))) {
             event.setMessage(new_message);
-            this.oa.getServer().getPluginManager().callEvent(event);
+            this.controller.getServer().getPluginManager().callEvent(event);
             if (!(event.isCancelled())) {
                 if (event.getMessage().length() > 0) {
-                    this.oa.getServer().dispatchCommand(
+                    this.controller.getServer().dispatchCommand(
                         event.getPlayer(),
                         event.getMessage().substring(1));
                 }
@@ -112,7 +106,7 @@ public class EventListener implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onPluginEnable(PluginEnableEvent event) {
         // this is probably just a temporary solution to get Waypoint's permission support fully locked on.
-        plugin.reloadPermissions();
+        this.controller.reloadPermissions();
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -127,18 +121,18 @@ public class EventListener implements Listener {
             // this is the second teleport to get an absolute fix on the correct position. allow it.
             return;
         }
-        if (cooldownManager.checkUser(player) == false) {
-            cooldownManager.holdUser(player);
-        } else if (cooldownManager.checkUser(player) == true) {
+        if (this.controller.getCooldownManager().checkUser(player) == false) {
+            this.controller.getCooldownManager().holdUser(player);
+        } else if (this.controller.getCooldownManager().checkUser(player) == true) {
             player.sendMessage("[Waypoint] Please wait, cooling down...");
             event.setCancelled(true);
             return;
         }
-        if (!(permissions.has(player, "waypoint.cost_exempt.teleport"))) {
+        if (!(Permission.has(player, "waypoint.cost_exempt.teleport"))) {
             // the player is allowed to teleport for free because of this node.
             // we have to charge the player since they don't have this node
             EconomyCost cost = EconomyCost.TELEPORT;
-            if(!(economy.debitPlayer(player.getName().toString(), cost.getValue()))) {
+            if(!(this.controller.getEconomy().debitPlayer(player.getName().toString(), cost.getValue()))) {
                 event.setCancelled(true);
             } else {
                 return;
@@ -147,31 +141,33 @@ public class EventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void onPlayerBedEnter(PlayerBedEnterEvent event) {
+    public void onPlayerBedEnter(PlayerBedEnterEnter event) {
         Player player = event.getPlayer();
-        if (plugin.config.getMain().getBoolean("home.set_home_at_bed", false) == false) { return; };
-        if (!permissions.has(player, "waypoint.home.set_on_bed_leave")) { return; };
-        double x = player.getLocation().getX();
-        double y = player.getLocation().getY();
-        double z = player.getLocation().getZ();
+
+        /**
+         * This will set a player's home location to the bed that
+         * they just got into, if the server has the option enabled.
+         */
+
+        String template = String.format("users.%s", player.getName());
+
+        if (this.controller.config.getMain().getBoolean("home.bedsetting", false) == false)
+            return;
+        double x = player.getLocation().getX(), y = player.getLocation().getY(), z = player.getLocation.getZ();
         World w = player.getLocation().getWorld();
-        plugin.config.getUsers().setProperty(HomeNodeChomp(player, w, "coord.X"), x);
-        plugin.config.getUsers().setProperty(HomeNodeChomp(player, w, "coord.Y"), y);
-        plugin.config.getUsers().setProperty(HomeNodeChomp(player, w, "coord.Z"), z);
-        plugin.config.getUsers().save();
-        if (player != null) {
-            player.sendMessage(ChatColor.AQUA + "[Waypoint] " + player.getName().toString() + ", your home for world " + player.getWorld().getName().toString() + " has been set to the bed you just entered.");
-        }
+        ConfigInventory.USERS.getConfig().set(
+            String.format("%s.location", template),
+            player.getLocation());
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerJoin (PlayerJoinEvent event) {
         Player player = event.getPlayer();
         String worldname = player.getLocation().getWorld().getName().toString();
-        if (plugin.config.getWorld().getProperty(String.format("worlds.%s.env", worldname)) == null)
+        if (ConfigInventory.WORLD.getConfig().getInt(String.format("worlds.%s.env", worldname)) == null)
             return;
         else {
-            GameMode mode = GameMode.getByValue(plugin.config.getWorld().getInt(String.format("worlds.%s.mode", worldname), 0));
+            GameMode mode = GameMode.getByValue(ConfigInventory.WORLD.getConfig().getInt(String.format("worlds.%s.mode", worldname), 0));
             player.setGameMode(mode);
             return;
         }
@@ -181,10 +177,10 @@ public class EventListener implements Listener {
     public void onPlayerRespawn (PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         String worldname = event.getRespawnLocation().getWorld().getName().toString();
-        if (plugin.config.getWorld().getProperty(String.format("worlds.%s.env", worldname)) == null)
+        if (ConfigInventory.WORLD.getConfig().getInt(String.format("worlds.%s.env", worldname)) == null)
             return;
         else {
-            GameMode mode = GameMode.getByValue(plugin.config.getWorld().getInt(String.format("worlds.%s.mode", worldname), 0));
+            GameMode mode = GameMode.getByValue(ConfigInventory.WORLD.getConfig().getInt(String.format("worlds.%s.mode", worldname), 0));
             player.setGameMode(mode);
             return;
         }
@@ -197,17 +193,18 @@ public class EventListener implements Listener {
         if (ConfigInventory.MAIN.getConfig().getBoolean("external.worldmg", true) == true) {
             return;
         }
+
         /**
          * Watching for players, we should be able to cancel their world change if they do not have the permissions to change.
          */
-        if (!permissions.has(player, String.format("waypoint.world.access.%s", player.getLocation().getWorld().getName().toString()))) {
+        if (!Permission.has(player, String.format("waypoint.world.access.%s", player.getLocation().getWorld().getName()))) {
             World player_prev_w = event.getFrom();
             Location prev_sl = player_prev_w.getSpawnLocation();
             player.teleport(prev_sl);
             player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have permission to access this world.");
             return;
         }
-        GameMode mode = GameMode.getByValue(plugin.config.getWorld().getInt(String.format("worlds.%s.mode", player.getLocation().getWorld().getName().toString()), 0));
+        GameMode mode = GameMode.getByValue(ConfigInventory.WORLD.getConfig().getInt(String.format("worlds.%s.mode", player.getLocation().getWorld().getName().toString()), 0));
         player.setGameMode(mode);
         return;
     }
@@ -219,91 +216,57 @@ public class EventListener implements Listener {
          * Target IDs:
          * 63: Sign Post
          * 68: Wall sign
-         *
-         * New sign format as of 1.6.5:
-         *   [WP:(WARP/WORLD/GAMEMODE)]
-         *   <world/warpname/gamemode>
-         *   <description>
-         *   <description>
          */
         Block clicked_b = event.getClickedBlock();
-        if (clicked_b == null) { return; }; // prevents spewage of NullPointerException everywhere
+
+        if (clicked_b == null)
+            return; // prevents spewage of NullPointerException everywhere
+
         if ((clicked_b.getTypeId() == 63 || clicked_b.getTypeId() == 68) && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Sign clicked_s = (Sign) clicked_b.getState();
-            if (!((String) clicked_s.getLine(0)).split("\\:")[0].equalsIgnoreCase("[WP")) {
+            if (!((String) clicked_s.getLine(0)).split("\\:")[0].equalsIgnoreCase("[WP"))
                 return;
-            }
             String signtype = (String) clicked_s.getLine(0).split("\\:")[1].split("]")[0];
             String target = null;
-            String target_o = null;
-            if (signtype.equalsIgnoreCase("link")) {
-                if (!permissions.has(player, "waypoint.sign.link.use")) {
-                    player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have permission to use this sign.");
-                    return;
-                }
-                try {
-                    linkManager.PlayerBetweenNetwork(player, clicked_s, (String[]) ((Sign) clicked_b.getState()).getLines());
-                } catch (NullPointerException e) {
-                    // this block is probably being broken right now.
-                    return;
-                }
-                return;
-            }
-            try {
-                target = (String) clicked_s.getLine(1);
-            }
-            catch (java.lang.IndexOutOfBoundsException e) {
-                return;
-            }
-            target_o = target;
-            target = ((String) target).replaceAll("\\p{Cntrl}", "");;
-            if (signtype.equalsIgnoreCase("warp") && target_o != null) {
-                if (!permissions.has(player, "waypoint.sign.warp")) {
+            if (signtype.equalsIgnoreCase("warp")) {
+                if (!Permission.has(player, "waypoint.sign.warp")) {
                    player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have permission to use this sign.");
                    return;
                 }
-                boolean result = warpManager.PlayerToWarp(player, target);
-                if (result == false) {
+                Location loc = this.controller.getHelper().getWarp(target);
+                if (loc == null) {
                     player.sendMessage(ChatColor.BLUE + "[Waypoint] The warp name listed on this sign is invalid.");
-                    final int id = new Integer("63");
-                    ItemStack sign_dr = new ItemStack(id);
-                    clicked_b.setTypeId(0);
-                    clicked_b.getLocation().getWorld().dropItemNaturally(clicked_b.getLocation(), sign_dr);
                     return;
                 }
+                player.teleport(loc);
                 return;
-            }
-            else if (signtype.equalsIgnoreCase("world") && target_o != null) {
-                if (!permissions.has(player, "waypoint.sign.world")) {
+            } else if (signtype.equalsIgnoreCase("world")) {
+                if (!Permission.has(player, "waypoint.sign.world")) {
                    player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have permission to use this sign.");
                    return;
                 }
-                if (!permissions.has(player, String.format("waypoint.world.access.%s", target))) {
+                if (!Permission.has(player, String.format("waypoint.world.access.%s", target))) {
                     player.sendMessage(ChatColor.BLUE + "[Waypoint] You do not have permission to access this world.");
                     return;
                 }
-                World world_t = plugin.getServer().getWorld(target);
+                World world_t = this.controller.getServer().getWorld(target);
                 Location world_l = null;
                 if (world_t == null) {
                     // try a match in the worlds list.
-                    List<World> wlist = plugin.getServer().getWorlds();
+                    List<World> wlist = this.controller.getServer().getWorlds();
                     Iterator witer = wlist.iterator();
                     World w;
                     while (witer.hasNext()) {
                         w = (World) witer.next();
                         if (w.getName().toString().contains(target)) {
                             target = w.getName().toString();
-                            world_t = plugin.getServer().getWorld(target);
+                            world_t = this.controller.getServer().getWorld(target);
                             player.teleport(world_t.getSpawnLocation());
                             player.sendMessage(ChatColor.GREEN + "[Waypoint] You have been teleported to the spawn of " + target);
                             return;
                         }
                     }
                     player.sendMessage(ChatColor.BLUE + "[Waypoint] The world name listed on this sign is invalid.");
-                    final int id = new Integer("63");
-                    ItemStack sign_dr = new ItemStack(id);
-                    clicked_b.setTypeId(0);
-                    clicked_b.getLocation().getWorld().dropItemNaturally(clicked_b.getLocation(), sign_dr);
                     return;
                 }
                 else if (world_t != null) {
@@ -313,7 +276,7 @@ public class EventListener implements Listener {
                 player.sendMessage(ChatColor.GREEN + "[Waypoint] You have been teleported to the spawn of " + target);
                 return;
             } else if (signtype.equalsIgnoreCase("gamemode")) {
-                if (!permissions.has(player, "waypoint.sign.gamemode")) {
+                if (!Permission.has(player, "waypoint.sign.gamemode")) {
                     player.sendMessage(ChatColor.RED +
                         "[Waypoint] You do not have the permission to use this sign.");
                     return;
@@ -325,12 +288,6 @@ public class EventListener implements Listener {
                 if (gm != 1 && gm != 0) {
                     player.sendMessage(ChatColor.RED +
                         "[Waypoint] This sign was created with an invalid game mode.");
-                    final int s_id = new Integer("63");
-                    ItemStack sign_dr = new ItemStack(s_id);
-                    clicked_b.setTypeId(0);
-                    clicked_b.getLocation().getWorld().dropItemNaturally(
-                        clicked_b.getLocation(),
-                        sign_dr
                     );
                     return;
                 }
@@ -339,41 +296,6 @@ public class EventListener implements Listener {
                 return;
             }
             return;
-        }
-    }
-
-    @EventHandler(priority = EventPriority.LOW)
-    public void onSignChange(SignChangeEvent event) {
-        Player player = event.getPlayer();
-        Sign sign = (Sign)event.getBlock().getState();
-        Location sign_l = sign.getBlock().getLocation();
-        if (!event.getLine(0).equalsIgnoreCase("[Waypoint]")) return;
-        if (!Permission.has(player, "waypoint.sign.link.create")) {
-            player.sendMessage(ChatColor.RED + "[Waypoint] You do not have permission to create a link sign.");
-            int id = new Integer("63").intValue();
-            ItemStack sign_st = new ItemStack(id);
-            sign.getBlock().setTypeId(0);
-            sign_l.getWorld().dropItemNaturally(sign_l, sign_st);
-            return;
-        }
-        if (!event.getLine(1).split("\\:")[0].equalsIgnoreCase("link")) return;
-        if (event.getLine(1).split("\\:")[0].equalsIgnoreCase("link")) {
-            linkManager.CreateLink(player, event.getBlock(), (String[])event.getLines());
-        }
-    }
-    @EventHandler(priority = EventPriority.LOW)
-    public void onBlockBreak(BlockBreakEvent event) {
-        if (((event.getBlock().getTypeId() == 63) || (event.getBlock().getTypeId() == 68)) && (((Sign)event.getBlock().getState()).getLine(0).equalsIgnoreCase("[Waypoint]"))) {
-            Sign sign = (Sign)event.getBlock().getState();
-            if ((sign.getLine (1).split("\\:")[0].equalsIgnoreCase("link")) && (Permission.has(event.getPlayer(), "waypoint.sign.link.delete"))) {
-                linkManager.DeleteSign((Sign)event.getBlock().getState(), (String[])((Sign)event.getBlock().getState()).getLines());
-                return;
-            }
-            if ((sign.getLine(1).split("\\:")[0].equalsIgnoreCase("link")) && !(Permission.has(event.getPlayer(), "waypoint.sign.link.delete"))) {
-                event.setCancelled(true);
-                event.getPlayer().sendMessage(ChatColor.RED + "[Waypoint] You are not allowed to break this sign!");
-                return;
-            }
         }
     }
 }

@@ -27,6 +27,7 @@ import me.pirogoeth.waypoint.util.Config;
 import me.pirogoeth.waypoint.util.Cooldown;
 import me.pirogoeth.waypoint.util.EconomyHandler;
 import me.pirogoeth.waypoint.util.Governor;
+import me.pirogoeth.waypoint.util.Helper;
 import me.pirogoeth.waypoint.util.Limits;
 import me.pirogoeth.waypoint.util.LogHandler;
 import me.pirogoeth.waypoint.util.Permission;
@@ -34,12 +35,6 @@ import me.pirogoeth.waypoint.util.WarpLimits;
 
 // basic listeners
 import me.pirogoeth.waypoint.events.EventListener;
-
-// core support classes
-import me.pirogoeth.waypoint.core.Spawn;
-import me.pirogoeth.waypoint.core.Warps;
-import me.pirogoeth.waypoint.core.Worlds;
-import me.pirogoeth.waypoint.core.Links;
 
 // bundled imports
 import com.sk89q.bukkit.util.CommandRegistration; // dynamic command registry
@@ -89,12 +84,10 @@ public class Waypoint extends JavaPlugin {
     private CommandRegistration dynamicCommandRegistry;
 
     /**
-     * These are instances of core support classes that may or may not still be here once 1.7 has progressed farther.
+     * This is a helper class to perform certain functions that
+     * may end up getting used quite a bit elsewhere in the plugin.
      */
-    public final me.pirogoeth.waypoint.core.Spawn spawnManager = new me.pirogoeth.waypoint.core.Spawn(this);
-    public final Warps warpManager = new Warps(this);
-    public final Worlds worldManager = new Worlds(this);
-    public final Links linkManager = new Links(this);
+    private final Helper = new Helper(this.getServer());
 
     /**
      * Instance of the automatic update manager.
@@ -139,16 +132,18 @@ public class Waypoint extends JavaPlugin {
 
     	// check for updates
     	this.updateManager.doUpdate();
+
         // load limits
         this.limitProvider.initialiseLimits();
+
         /**
          * The following methods may be condensed into something different in the future of 1.7, most likely before the full release a new
          * global support class containing a bunch of methods and group of things to run all at once will be created. Perhaps? Perhaps.
          */
     	// load warp permission groups
-    	this.warpManager.LoadGroups();
+    	this.helper.loadWarpGroups();
     	// run the world manager world import routine
-    	this.worldManager.LoadWorlds();
+    	// this.worldManager.LoadWorlds();
     }
 
     public void onDisable () {
