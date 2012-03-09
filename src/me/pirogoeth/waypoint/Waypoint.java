@@ -108,7 +108,7 @@ public class Waypoint extends JavaPlugin {
         // event listener
         this.registerEvents(new EventListener(this));
         // run permissions setup
-    	this.permissions = new Permission(this);
+        this.permissions = new Permission(this);
     	this.log.info("[Waypoint] Enabled version " + this.getDescription().getVersion());
     	this.config.save();
     	// setup economy
