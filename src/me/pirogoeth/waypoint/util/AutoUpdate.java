@@ -19,6 +19,7 @@ import java.nio.channels.ReadableByteChannel;
 import me.pirogoeth.waypoint.Waypoint;
 
 public class AutoUpdate {
+
     public File jar;
     public Logger log = Logger.getLogger("Minecraft");
     public Waypoint controller;
@@ -26,7 +27,7 @@ public class AutoUpdate {
 
     public AutoUpdate (Waypoint instance) {
         controller = instance;
-        main = (Configuration) controller.config.getMain();
+        main = (Configuration) ConfigInventory.MAIN.getConfig();
     }
 
     // borrowed from Afforess
@@ -36,7 +37,7 @@ public class AutoUpdate {
             if (directory.exists()) {
                 File p = new File(directory.getPath(), "Waypoint.jar");
                 if (p.exists()) {
-                    FileUtil.copy(p, controller.fileGet());
+                    FileUtil.copy(p, controller.getFile());
                     p.delete();
                     log.info("[Waypoint] Update finalised.");
                 }

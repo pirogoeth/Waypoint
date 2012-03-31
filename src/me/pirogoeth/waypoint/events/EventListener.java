@@ -1,4 +1,4 @@
-package me.pirogoeth.waypoint.Events;
+package me.pirogoeth.waypoint.events;
 
 // bukkit imports
 import org.bukkit.event.Event;
@@ -6,26 +6,23 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerBedEnterEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.server.PluginEnableEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.block.Sign;
+import org.bukkit.block.BlockState;
 import org.bukkit.World;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.Action;
-import org.bukkit.block.Sign;
-import org.bukkit.block.BlockState;
 import org.bukkit.ChatColor;
 
 // java imports
@@ -45,30 +42,16 @@ import me.pirogoeth.waypoint.util.EconomyHandler;
 import me.pirogoeth.waypoint.util.EconomyCost;
 import me.pirogoeth.waypoint.util.LogHandler;
 import me.pirogoeth.waypoint.util.Permission;
-import me.pirogoeth.waypoint.core.Warps;
-import me.pirogoeth.waypoint.core.Links;
+
+import com.sk89q.util.StringUtil; // string processing
 
 public class EventListener implements Listener {
 
     public static Waypoint controller;
-    public static Warps warpManager;
-    public static Links linkManager;
     private static final LogHandler log = new LogHandler();
 
     public EventListener (Waypoint instance) {
         controller = instance;
-        warpManager = controller.warpManager;
-        linkManager = controller.linkManager;
-    }
-
-    public static String UserNodeChomp (Player p, String arg, String sub) {
-        String a = "users." + p.getName().toString() + "." + arg + "." + sub;
-        return a;
-    }
-
-    public static String HomeNodeChomp (Player p, World w, String sub) {
-        String a = "home." + p.getName().toString() + "." + w.getName().toString() + "." + sub;
-        return a;
     }
 
     /**
@@ -141,7 +124,7 @@ public class EventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void onPlayerBedEnter(PlayerBedEnterEnter event) {
+    public void onPlayerBedEnter(PlayerBedEnterEvent event) {
         Player player = event.getPlayer();
 
         /**
@@ -153,7 +136,7 @@ public class EventListener implements Listener {
 
         if (this.controller.config.getMain().getBoolean("home.bedsetting", false) == false)
             return;
-        double x = player.getLocation().getX(), y = player.getLocation().getY(), z = player.getLocation.getZ();
+        double x = player.getLocation().getX(), y = player.getLocation().getY(), z = player.getLocation().getZ();
         World w = player.getLocation().getWorld();
         ConfigInventory.USERS.getConfig().set(
             String.format("%s.location", template),
@@ -164,26 +147,30 @@ public class EventListener implements Listener {
     public void onPlayerJoin (PlayerJoinEvent event) {
         Player player = event.getPlayer();
         String worldname = player.getLocation().getWorld().getName().toString();
-        if (ConfigInventory.WORLD.getConfig().getInt(String.format("worlds.%s.env", worldname)) == null)
-            return;
-        else {
-            GameMode mode = GameMode.getByValue(ConfigInventory.WORLD.getConfig().getInt(String.format("worlds.%s.mode", worldname), 0));
-            player.setGameMode(mode);
+
+        // this is for people who don't want to use Waypoint's world/teleportation services.
+        if (ConfigInventory.MAIN.getConfig().getBoolean("external.worldmg", true) == true) {
             return;
         }
+
+        GameMode mode = GameMode.getByValue(ConfigInventory.WORLD.getConfig().getInt(String.format("worlds.%s.mode", worldname), 0));
+        player.setGameMode(mode);
+        return;
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerRespawn (PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         String worldname = event.getRespawnLocation().getWorld().getName().toString();
-        if (ConfigInventory.WORLD.getConfig().getInt(String.format("worlds.%s.env", worldname)) == null)
-            return;
-        else {
-            GameMode mode = GameMode.getByValue(ConfigInventory.WORLD.getConfig().getInt(String.format("worlds.%s.mode", worldname), 0));
-            player.setGameMode(mode);
+
+        // this is for people who don't want to use Waypoint's world/teleportation services.
+        if (ConfigInventory.MAIN.getConfig().getBoolean("external.worldmg", true) == true) {
             return;
         }
+
+        GameMode mode = GameMode.getByValue(ConfigInventory.WORLD.getConfig().getInt(String.format("worlds.%s.mode", worldname), 0));
+        player.setGameMode(mode);
+        return;
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -288,7 +275,6 @@ public class EventListener implements Listener {
                 if (gm != 1 && gm != 0) {
                     player.sendMessage(ChatColor.RED +
                         "[Waypoint] This sign was created with an invalid game mode.");
-                    );
                     return;
                 }
                 mode = GameMode.getByValue(gm);

@@ -32,7 +32,7 @@ public class EconomyHandler {
     private Economy economy;
     private boolean enableable;
     private boolean enabled;
-    private Logger log = new LogHandler();
+    private LogHandler log = new LogHandler();
 
     public EconomyHandler (Waypoint instance) {
         /**

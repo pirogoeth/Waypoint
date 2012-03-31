@@ -68,6 +68,59 @@ public class Config {
         return f;
     }
 
+    // support method to move old data. 1.6 -> 1.6.1
+    // I'll use IOStreams.
+    public static boolean moveOldData () {
+        // old files
+        File old_warps = getFile("warps");
+        File old_users = getFile("users");
+        File old_home = getFile("home");
+        // file io stream and transfer variables
+        FileInputStream fis;
+        FileOutputStream fos;
+        byte[] buf;
+        int len;
+        // this is a test. we'll recycle the io streams each time. this is gonna be a long method :/
+        try {
+            // warps
+            fis = new FileInputStream(old_warps);
+            fos = new FileOutputStream(warpsf);
+            buf = new byte[1024];
+            while ((len = fis.read(buf)) > 0) {
+                fos.write(buf, 0, len);
+            }
+            fis.close(); fos.close();
+            old_warps.delete();
+            log.info("[Waypoint] Copied warps.");
+            // users
+            fis = new FileInputStream(old_users);
+            fos = new FileOutputStream(usersf);
+            buf = new byte[1024];
+            while ((len = fis.read(buf)) > 0) {
+                fos.write(buf, 0, len);
+            }
+            fis.close(); fos.close();
+            old_users.delete();
+            log.info("[Waypoint] Copied users.");
+            // home
+            fis = new FileInputStream(old_home);
+            fos = new FileOutputStream(homef);
+            buf = new byte[1024];
+            while ((len = fis.read(buf)) > 0) {
+                fos.write(buf, 0, len);
+            }
+            fis.close(); fos.close();
+            old_home.delete();
+            log.info("[Waypoint] Copied homes.");
+        } catch (Exception e) {
+            log.info("[Waypoint] Failed moving old configuration data.");
+            return false;
+        }
+        log.info("[Waypoint] Successfully moved old configuration data.");
+        load();
+        return true;
+    }
+
     // initialise the Configuration setup
     public static boolean initialise () {
         log.info("[Waypoint] Initialising configurations.");
@@ -101,17 +154,12 @@ public class Config {
     public static void load() {
         // load all of the configurations
         log.info("[Waypoint] Reading configurations.");
-        try {
-            main.load(mainf);
-            warps.load(warpsf);
-            users.load(usersf);
-            spawn.load(spawnf);
-            home.load(homef);
-            world.load(worldf);
-        } catch (java.lang.Exception e) {
-            e.printStackTrace();
-            return;
-        }
+        main.load(mainf);
+        warps.load(warpsf);
+        users.load(usersf);
+        spawn.load(spawnf);
+        home.load(homef);
+        world.load(worldf);
         // world variables
         List<World> world_l;
         Iterator world_l_i;
@@ -127,7 +175,6 @@ public class Config {
             main.set("version", "1.7");
             main.set("autoupdate", false);
             // cooldown timer
-            main.set("cooldown.enabled", false);
             main.set("cooldown.duration", 0);
             // economy
             main.set("economy", false);
@@ -184,26 +231,35 @@ public class Config {
                         break;
                 }
             }
-            save();
+            world.save(worldf);
             // TODO: actually implement case insensitive warps
             log.info("[Waypoint] Wrote defaults.");
-            save();
+            main.save(mainf);
         }
-        else if (!((String)main.getString("version")).equals("1.7")) {
+        else if (!((String) main.getString("version")).equals("1.7")) {
             // write values not entered in the 1.6.1 update, but were added during
             // the 1.6.2 alpha testing.
             log.info("[Waypoint] Finalising 1.7 configuration.");
             // set version
             main.set("version", "1.7");
             // cooldown timers
-            main.set("cooldown.enabled", false);
+            main.set("cooldown.duration", 0);
             // economy
             main.set("economy", false);
             main.set("economy.cost.teleport", 5);
+            // add config option added after 1.5-dev
+            main.set("warp.warpstring_enabled", true);
+            main.set("warp.string", "welcome to %w, %p");
             // external uses
             main.set("external.teleport", false); // use something else for teleportation management
             main.set("external.worldmg", false); // use something else for world management
-            save();
+            // limits
+            main.set("limits.warp.enabled", false);
+            main.set("limits.warp.threshold", 10);
+            main.set("limits.waypoint.enabled", false);
+            main.set("limits.waypoint.threshold", 10);
+            main.save();
+            moveOldData();
         }
         log.info("[Waypoint] Configuration successfully loaded.");
         loaded = true;
@@ -212,16 +268,11 @@ public class Config {
 
     public static void save () {
         // use the save() method of all of the Configuration instances.
-        try {
-            main.save(mainf);
-            users.save(usersf);
-            warps.save(warpsf);
-            spawn.save(spawnf);
-            home.save(homef);
-        } catch (java.lang.Exception e) {
-            e.printStackTrace();
-            return;
-        }
+        main.save(mainf);
+        users.save(users);
+        warps.save(warpsf);
+        spawn.save(spawnf);
+        home.save(homef);
         log.info("[Waypoint] Saved all configurations.");
     }
 

@@ -25,9 +25,7 @@ public enum ConfigInventory {
 
     HOME(Config.home),
 
-    WORLD(Config.world),
-
-    LINKS(Config.links);
+    WORLD(Config.world);
 
     public final YamlConfiguration config;
     private final static Map<ConfigInventory, YamlConfiguration> store = new HashMap<ConfigInventory, YamlConfiguration>();

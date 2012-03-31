@@ -1,6 +1,7 @@
 package me.pirogoeth.waypoint;
 
 // Bukkit imports
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.command.CommandSender;
@@ -33,6 +34,9 @@ import me.pirogoeth.waypoint.util.LogHandler;
 import me.pirogoeth.waypoint.util.Permission;
 import me.pirogoeth.waypoint.util.WarpLimits;
 
+// commands
+import me.pirogoeth.waypoint.commands.*;
+
 // basic listeners
 import me.pirogoeth.waypoint.events.EventListener;
 
@@ -47,6 +51,11 @@ public class Waypoint extends JavaPlugin {
      *
      * This handles all variables relating to later function of the plugin, as well as the onEnable() and onDisable() methods.
      */
+
+    /**
+     * Initialise the permissions handler.
+     */
+    public Permission permissions;
 
     /**
      * Instance of out configuration manager.
@@ -81,13 +90,13 @@ public class Waypoint extends JavaPlugin {
     /**
      * Dynamically registers commands.
      */
-    private CommandRegistration dynamicCommandRegistry;
+    private CommandRegistration dcr;
 
     /**
      * This is a helper class to perform certain functions that
      * may end up getting used quite a bit elsewhere in the plugin.
      */
-    private final Helper = new Helper(this.getServer());
+    private final Helper helper = new Helper(this.getServer());
 
     /**
      * Instance of the automatic update manager.
@@ -110,6 +119,7 @@ public class Waypoint extends JavaPlugin {
         // run permissions setup
         this.permissions = new Permission(this);
     	this.log.info("[Waypoint] Enabled version " + this.getDescription().getVersion());
+    	this.dcr = new CommandRegistration(this);
     	this.config.save();
     	// setup economy
         this.economy.setupEconomy();
@@ -124,11 +134,9 @@ public class Waypoint extends JavaPlugin {
         // setup instance injector
         this.commands.setInjector(new SimpleInjector(this));
 
-        // register listener(s)
-        this.registerEvents(new OAListener(this));
-
         // register command classes.
-        this.registerCommands(this.commands.registerAndReturn(OACommands.OAParentCommand.class));
+        this.registerCommands(this.commands.registerAndReturn(WorldCommand.WorldParent.class)); // world commands
+        this.registerCommands(this.commands.registerAndReturn(PagerCommand.PagerParent.class)); // pager control commands
 
     	// check for updates
     	this.updateManager.doUpdate();
@@ -178,7 +186,7 @@ public class Waypoint extends JavaPlugin {
      * Register commands with the magical dynamic handler.
      */
     protected void registerCommands(List<com.sk89q.minecraft.util.commands.Command> commands) {
-        this.dynamicCommandRegistry.registerAll(commands);
+        this.dcr.registerAll(commands);
     }
 
     /**
@@ -236,7 +244,14 @@ public class Waypoint extends JavaPlugin {
         return;
     }
 
-    public boolean onCommand(CommandSender sender, Command cmd,
+    /**
+     * Returns the helper instance.
+     */
+    public Helper getHelper() {
+        return this.helper;
+    }
+
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd,
         String cmdlabel, String args[]) {
 
         try {

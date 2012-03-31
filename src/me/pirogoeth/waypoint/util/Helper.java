@@ -17,8 +17,11 @@ import java.util.Iterator;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Server;
-import org.bukkit.World
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
 import org.bukkit.World.Environment;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -28,8 +31,7 @@ public class Helper {
     private final LogHandler log = new LogHandler();
     private final Server server;
 
-    private List<String> warp_groups = ConfigInventory.MAIN.getStringList(
-        "groups");
+    private List<String> warp_groups = (List<String>) ConfigInventory.MAIN.getConfig().get("warp.permissions", new ArrayList<String>(0));
 
     public Helper(Server server) {
         this.server = server;
@@ -38,15 +40,17 @@ public class Helper {
     // warp helper methods
     public void loadWarpGroups() {
         Iterator i = this.warp_groups.iterator();
-        StringBuffer s = new StringBuffer((String) i.next());
+        StringBuffer s = new StringBuffer();
+        this.log.info(Integer.toString(this.warp_groups.size()));
         while (i.hasNext()) {
-            s.append(", ").append((String) i.next());
+            s.append(((String) i.next()) + ",");
+            this.log.info(s.toString());
         }
         this.log.info(String.format("Permission groups loaded: %s", s.toString()));
     };
 
     public Location getWarp(final String warpname) {
-        Location l = ConfigInventory.WARPS.getConfig().get(
+        Location l = (Location) ConfigInventory.WARP.getConfig().get(
             String.format("%s.location", warpname),
             null);
         return l;
@@ -62,9 +66,9 @@ public class Helper {
             );
             warpstring = warpstring.replaceAll("%w", warpname);
             warpstring = warpstring.replaceAll("%p", player.getName());
-            warpstring = warpstring.replaceAll("%lX", loc.getX());
-            warpstring = warpstring.replaceAll("%lY", loc.getY());
-            warpstring = warpstring.replaceAll("%lZ", loc.getZ());
+            warpstring = warpstring.replaceAll("%lX", Double.toString(loc.getX()));
+            warpstring = warpstring.replaceAll("%lY", Double.toString(loc.getY()));
+            warpstring = warpstring.replaceAll("%lZ", Double.toString(loc.getZ()));
             warpstring = warpstring.replaceAll("%W", loc.getWorld().getName());
             return warpstring;
         } else {
@@ -76,22 +80,22 @@ public class Helper {
         final Location loc) {
 
         // set location
-        ConfigInventory.WARPS.set(String.format(
+        ConfigInventory.WARP.getConfig().set(String.format(
             "%s.location", warpname),
             loc
         );
         // set world
-        ConfigInventory.WARPS.set(String.format(
+        ConfigInventory.WARP.getConfig().set(String.format(
             "%s.world", warpname),
             loc.getWorld().getName()
         );
         // set owner
-        ConfigInventory.WARPS.set(String.format(
+        ConfigInventory.WARP.getConfig().set(String.format(
             "%s.owner", warpname),
             player.getName()
         );
         // set permission group
-        ConfigInventory.WARPS.set(String.format(
+        ConfigInventory.WARP.getConfig().set(String.format(
             "%s.permission", warpname),
             (String) this.warp_groups.get(0)
         );
@@ -100,7 +104,7 @@ public class Helper {
 
     // world helper methods
     public void loadWorldProperties() {
-        Map<String, ConfigurationSection> worlds = ConfigInventory.WORLD.getConfig().getConfigurationSection("worlds");
+        Map<String, Object> worlds = ConfigInventory.WORLD.getConfig().getConfigurationSection("worlds").getValues(true);
         if (worlds == null) {
             this.log.info("No world properties to load.");
             return;
@@ -109,27 +113,65 @@ public class Helper {
         List<String> worldnames = new ArrayList<String>();
         Iterator worldlister = worldlist.iterator();
         while (worldlister.hasNext()) {
-            worldnames.append((String) worldlister.next().getName());
+            worldnames.add((String) ((World) worldlister.next()).getName());
         }
-        String name, env, boolean pvp, int mode, ConfigurationSection e;
-        for (Map.Entry<String, ConfigurationSection> entry : worlds.entrySet()) {
+        String worldname, env; boolean pvp; int mode; ConfigurationSection e;
+        for (Map.Entry<String, Object> entry : worlds.entrySet()) {
             worldname = entry.getKey();
-            e = entry.getValue();
-            env = e.getString("env", NORMAL);
+            e = (ConfigurationSection) entry.getValue();
+            env = e.getString("env", Environment.NORMAL.toString());
             mode = e.getInt("mode", 0);
             pvp = e.getBoolean("pvp", true);
             if (!(worldnames.contains(worldname)))
-                this.importWorld(worldname, env, mode, pvp);
+                // this.importWorld(worldname, env, mode, pvp);
+                return;
             else {
                 this.log.info(String.format(
                     "Loaded world properties: %s { ENV: %s, MODE: %s, PVP: %s }",
                     worldname, env, Integer.toString(mode), Boolean.toString(pvp)
                 ));
-            }
+            };
+        };
         return;
     };
 
-    // importWorld and its overloads
+    public World addWorld(String name, Environment env, String seed, WorldType type,
+                            boolean generateStructures, String generator, boolean save) {
+        long _seed = null;
+        WorldCreator creator = new WorldCreator(name);
+        if (seed && seed.length() > 0) {
+            try {
+                _seed = Long.parseLong(seed);
+            } catch (java.lang.NumberFormatException e) {
+                _seed = (long) seedString.hashCode();
+            }
+            creator.seed(_seed);
+        }
+        creator.generator(((generator != null) ? generator : null));
+        creator.environment(env);
+        if (type != null) creator.type(type);
+        creator.generateStructures((generateStructures != null ? generateStructures : null));
+        String message = String.format("Loading world: '%s' - [ENV: %s, TYPE %s]", name, env, type);
+        if (seed) message += " {seed:" + seed + "}";
+        if (generator) message += " {generator:" + generator + "}";
+        this.log.info(message);
 
-    // createWorld and its overloads
+        World world;
+
+        try { world = creator.createWorld(); }
+        catch (java.lang.Exception e) {
+            this.log.info("An error occurred while creating world " + name + ":");
+            this.log.info(e.getMessage());
+            return;
+        }
+        if (save) {
+            String node = String.format("world.%s", name);
+            YamlConfiguration c = ConfigInventory.WORLD.getConfig();
+            c.set(node + ".env", env);
+            c.set(node + ".seed", seed);
+            c.set(node + ".type", type);
+            c.set(node + ".structures", generateStructures);
+            c.set(node + ".generator", generator);
+        }
+    }
 };

@@ -5,6 +5,7 @@ import me.pirogoeth.waypoint.Waypoint;
 import me.pirogoeth.waypoint.util.Limits;
 import me.pirogoeth.waypoint.util.WarpLimits;
 import me.pirogoeth.waypoint.util.Config;
+import me.pirogoeth.waypoint.util.ConfigInventory;
 
 // bukkit imports
 import org.bukkit.ChatColor;
@@ -18,7 +19,7 @@ import java.util.logging.Logger;
 public class Governor {
 
     private Waypoint controller;
-    public Config configuration;
+    public Configuration configuration;
     public Limits wpLimits;
     public WarpLimits warpLimits;
     public Logger log;
@@ -27,7 +28,7 @@ public class Governor {
     public Governor (Waypoint instance) {
         this.controller = instance;
         this.log = Logger.getLogger("Minecraft");
-        this.configuration = instance.config;
+        this.configuration = ConfigInventory.MAIN.getConfig();
     }
 
     public void initialiseLimits () {
@@ -37,22 +38,21 @@ public class Governor {
          * Waypoints: users. || Configuration: this.configuration.getUsers()
          * Warps: warps. || Configuration: this.configuration.getWarps()
          */
-        Configuration main = this.configuration.getMain();
-        boolean wp_limits_enabled = main.getBoolean("limits.waypoint.enabled", false);
-        boolean warp_limits_enabled = main.getBoolean("limits.warp.enabled", false);
+        boolean wp_limits_enabled = this.configuration.getBoolean("limits.waypoint.enabled", false);
+        boolean warp_limits_enabled = this.configuration.getBoolean("limits.warp.enabled", false);
         if (wp_limits_enabled == true) {
-            int wp_threshold = main.getInt("limits.waypoint.threshold", 10);
+            int wp_threshold = this.configuration.getInt("limits.waypoint.threshold", 10);
             String wp_path = "users";
-            this.wpLimits = new Limits(this.controller, wp_path, this.configuration.getUsers(), wp_threshold);
+            this.wpLimits = new Limits(this.controller, wp_path, ConfigInventory.USERS.getConfig(), wp_threshold);
             this.log.info(String.format("[Waypoint] Limits enabled with threshold %d", wp_threshold));
         } else if (wp_limits_enabled == false) {
             this.wpLimits = new Limits(this.controller);
             this.log.info(String.format("[Waypoint] Limits are disabled."));
         }
         if (warp_limits_enabled == true) {
-            int warp_threshold = main.getInt("limits.warp.threshold", 10);
+            int warp_threshold = this.configuration.getInt("limits.warp.threshold", 10);
             String warp_path = "warps";
-            this.warpLimits = new WarpLimits(this.controller, warp_path, this.configuration.getWarp(), warp_threshold);
+            this.warpLimits = new WarpLimits(this.controller, warp_path, ConfigInventory.WARP.getConfig(), warp_threshold);
             this.log.info(String.format("[Waypoint] WarpLimits enabled with threshold %d", warp_threshold));
         } else if (warp_limits_enabled == false) {
             this.warpLimits = new WarpLimits(this.controller);

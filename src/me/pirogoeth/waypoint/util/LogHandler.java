@@ -11,7 +11,7 @@ public class LogHandler {
     // main
     public final static Logger log = Logger.getLogger("Minecraft");
     public final static String prefix = "Waypoint";
-    public final static ChatColor prefix-colour = ChatColor.BLUE;
+    public final static ChatColor prefix_colour = ChatColor.BLUE;
 
     // dynamic
     protected static boolean ex_debug = false;
@@ -34,24 +34,24 @@ public class LogHandler {
 
     public static void exDebug (String message) {
         if (!getExtraneousDebugging()) return;
-        String logged = String.format("%s[%s-debug] %s", prefix-colour, prefix, message);
+        String logged = String.format("%s[%s-debug] %s", prefix_colour, prefix, message);
         log.info(logged);
     }
 
     // normal methods to wrap Logger
 
     public static void info (String message) {
-        String logged = String.format("%s[%s] %s", prefix-colour, prefix, message);
+        String logged = String.format("%s[%s] %s", prefix_colour, prefix, message);
         log.info(logged);
     }
 
     public static void severe (String message) {
-        String logged = String.format("%s[%s] %s", prefix-colour, prefix, message);
+        String logged = String.format("%s[%s] %s", prefix_colour, prefix, message);
         log.severe(logged);
     }
 
     public static void warning (String message) {
-        String logged = String.format("%s[%s] %s", prefix-colour, prefix, message);
+        String logged = String.format("%s[%s] %s", prefix_colour, prefix, message);
         log.warning(logged);
     }
 }

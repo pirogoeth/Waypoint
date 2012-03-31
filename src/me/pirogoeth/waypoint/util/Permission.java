@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 // bukkit imports
 import org.bukkit.entity.Player;
-import org.bukkit.controller.Plugin;
+import org.bukkit.plugin.Plugin;
 
 // permissions imports
 import com.nijiko.permissions.PermissionHandler;

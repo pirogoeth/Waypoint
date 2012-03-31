@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 // internal improts
 import me.pirogoeth.waypoint.Waypoint;
@@ -25,25 +26,27 @@ public class Limits {
     private String base_path;
     private int threshold;
     private Waypoint controller;
-    private Configuration source;
+    private ConfigurationSection source;
     private Logger log;
 
     // this constructor represents a limiter with a custom threshold.
-    Limits(Waypoint instance, String path, Configuration input, int limit) {
+    Limits(Waypoint instance, String path, YamlConfiguration input, int limit) {
         this.controller = instance;
         this.base_path = path;
         this.threshold = limit;
-        this.source = input;
+        this.source = input.getConfigurationSection(path);
         this.log = Logger.getLogger("Minecraft");
     };
+
     // this constructor represents a limiter with the default threshold (10)
-    Limits(Waypoint instance, String path, Configuration input) {
+    Limits(Waypoint instance, String path, YamlConfiguration input) {
         this.controller = instance;
         this.base_path = path;
         this.threshold = 10;
-        this.source = input;
+        this.source = input.getConfigurationSection(path);
         this.log = Logger.getLogger("Minecraft");
     };
+
     // this constructor represents a disabled limiter.
     Limits(Waypoint instance) {
         this.controller = instance;
@@ -51,6 +54,7 @@ public class Limits {
         this.threshold = 0;
         this.log = Logger.getLogger("Minecraft");
     };
+
     public boolean isEnabled () {
         if (this.base_path.equals("."))
             return false;
@@ -59,11 +63,13 @@ public class Limits {
         else
             return false;
     };
+
     public boolean playerReachedLimit (Player player) {
         if (this.isEnabled() == false) {
             return false;
         }
-        Map<String, ConfigurationNode> node_map = this.source.getNodes(String.format("%s.%s", this.base_path, player.getName().toString()));
+        ConfigurationSection source = this.source.getConfigurationSection(String.format("%s", player.getName()));
+        Map<String, Object> node_map = source.getValues(true);
         if (((int) node_map.size()) < threshold)
             return false;
         else if (((int) node_map.size()) == threshold)
