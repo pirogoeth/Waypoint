@@ -1,6 +1,7 @@
 package me.pirogoeth.waypoint.commands;
 
 // internal imports
+<<<<<<< HEAD
 import me.pirogoeth.waypoint.Waypoint;
 import me.pirogoeth.waypoint.util.ConfigInventory;
 import me.pirogoeth.waypoint.util.LogHandler;
@@ -16,6 +17,14 @@ import com.sk89q.minecraft.util.commands.*;
 
 // etCommon imports
 import net.eisental.common.page.Pager;
+=======
+import me.pirogoeth.waypoint.Waypoint
+import me.pirogoeth.waypoint.util.ConfigInventory;
+import me.pirogoeth.waypoint.util.LogHandler;
+
+// bundled imports
+import com.sk89q.minecraft.util.*;
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
 
 // bukkit
 import org.bukkit.ChatColor;
@@ -23,19 +32,26 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.Server;
 import org.bukkit.World;
+<<<<<<< HEAD
 import org.bukkit.Location;
+=======
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
 
 public class WorldCommand {
 
     private static Waypoint controller;
     private static Server server;
+<<<<<<< HEAD
     private static LogHandler log = new LogHandler();
+=======
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
 
     public WorldCommand (Waypoint instance) {
         controller = instance;
         server = controller.getServer();
     }
 
+<<<<<<< HEAD
     public static boolean delete_r (File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
@@ -124,5 +140,14 @@ public class WorldCommand {
             ChatColor.GREEN,
             ChatColor.RED);
         return;
+=======
+    public static class WorldParentCommand {
+
+        private final Waypoint controller;
+
+        public WorldParentCommand(Waypoint instance) {
+            controller = instance;
+        }
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
     }
 }

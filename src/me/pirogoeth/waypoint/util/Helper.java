@@ -17,11 +17,16 @@ import java.util.Iterator;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Server;
+<<<<<<< HEAD
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.bukkit.World.Environment;
 import org.bukkit.configuration.ConfigurationSection;
+=======
+import org.bukkit.World
+import org.bukkit.World.Environment;
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -31,7 +36,12 @@ public class Helper {
     private final LogHandler log = new LogHandler();
     private final Server server;
 
+<<<<<<< HEAD
     private List<String> warp_groups = (List<String>) ConfigInventory.MAIN.getConfig().get("warp.permissions", new ArrayList<String>(0));
+=======
+    private List<String> warp_groups = ConfigInventory.MAIN.getStringList(
+        "groups");
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
 
     public Helper(Server server) {
         this.server = server;
@@ -40,17 +50,27 @@ public class Helper {
     // warp helper methods
     public void loadWarpGroups() {
         Iterator i = this.warp_groups.iterator();
+<<<<<<< HEAD
         StringBuffer s = new StringBuffer();
         this.log.info(Integer.toString(this.warp_groups.size()));
         while (i.hasNext()) {
             s.append(((String) i.next()) + ",");
             this.log.info(s.toString());
+=======
+        StringBuffer s = new StringBuffer((String) i.next());
+        while (i.hasNext()) {
+            s.append(", ").append((String) i.next());
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
         }
         this.log.info(String.format("Permission groups loaded: %s", s.toString()));
     };
 
     public Location getWarp(final String warpname) {
+<<<<<<< HEAD
         Location l = (Location) ConfigInventory.WARP.getConfig().get(
+=======
+        Location l = ConfigInventory.WARPS.getConfig().get(
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
             String.format("%s.location", warpname),
             null);
         return l;
@@ -66,9 +86,15 @@ public class Helper {
             );
             warpstring = warpstring.replaceAll("%w", warpname);
             warpstring = warpstring.replaceAll("%p", player.getName());
+<<<<<<< HEAD
             warpstring = warpstring.replaceAll("%lX", Double.toString(loc.getX()));
             warpstring = warpstring.replaceAll("%lY", Double.toString(loc.getY()));
             warpstring = warpstring.replaceAll("%lZ", Double.toString(loc.getZ()));
+=======
+            warpstring = warpstring.replaceAll("%lX", loc.getX());
+            warpstring = warpstring.replaceAll("%lY", loc.getY());
+            warpstring = warpstring.replaceAll("%lZ", loc.getZ());
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
             warpstring = warpstring.replaceAll("%W", loc.getWorld().getName());
             return warpstring;
         } else {
@@ -80,22 +106,38 @@ public class Helper {
         final Location loc) {
 
         // set location
+<<<<<<< HEAD
         ConfigInventory.WARP.getConfig().set(String.format(
+=======
+        ConfigInventory.WARPS.set(String.format(
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
             "%s.location", warpname),
             loc
         );
         // set world
+<<<<<<< HEAD
         ConfigInventory.WARP.getConfig().set(String.format(
+=======
+        ConfigInventory.WARPS.set(String.format(
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
             "%s.world", warpname),
             loc.getWorld().getName()
         );
         // set owner
+<<<<<<< HEAD
         ConfigInventory.WARP.getConfig().set(String.format(
+=======
+        ConfigInventory.WARPS.set(String.format(
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
             "%s.owner", warpname),
             player.getName()
         );
         // set permission group
+<<<<<<< HEAD
         ConfigInventory.WARP.getConfig().set(String.format(
+=======
+        ConfigInventory.WARPS.set(String.format(
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
             "%s.permission", warpname),
             (String) this.warp_groups.get(0)
         );
@@ -104,7 +146,11 @@ public class Helper {
 
     // world helper methods
     public void loadWorldProperties() {
+<<<<<<< HEAD
         Map<String, Object> worlds = ConfigInventory.WORLD.getConfig().getConfigurationSection("worlds").getValues(true);
+=======
+        Map<String, ConfigurationSection> worlds = ConfigInventory.WORLD.getConfig().getConfigurationSection("worlds");
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
         if (worlds == null) {
             this.log.info("No world properties to load.");
             return;
@@ -113,6 +159,7 @@ public class Helper {
         List<String> worldnames = new ArrayList<String>();
         Iterator worldlister = worldlist.iterator();
         while (worldlister.hasNext()) {
+<<<<<<< HEAD
             worldnames.add((String) ((World) worldlister.next()).getName());
         }
         String worldname, env; boolean pvp; int mode; ConfigurationSection e;
@@ -125,11 +172,25 @@ public class Helper {
             if (!(worldnames.contains(worldname)))
                 // this.importWorld(worldname, env, mode, pvp);
                 return;
+=======
+            worldnames.append((String) worldlister.next().getName());
+        }
+        String name, env, boolean pvp, int mode, ConfigurationSection e;
+        for (Map.Entry<String, ConfigurationSection> entry : worlds.entrySet()) {
+            worldname = entry.getKey();
+            e = entry.getValue();
+            env = e.getString("env", NORMAL);
+            mode = e.getInt("mode", 0);
+            pvp = e.getBoolean("pvp", true);
+            if (!(worldnames.contains(worldname)))
+                this.importWorld(worldname, env, mode, pvp);
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
             else {
                 this.log.info(String.format(
                     "Loaded world properties: %s { ENV: %s, MODE: %s, PVP: %s }",
                     worldname, env, Integer.toString(mode), Boolean.toString(pvp)
                 ));
+<<<<<<< HEAD
             };
         };
         return;
@@ -175,3 +236,13 @@ public class Helper {
         }
     }
 };
+=======
+            }
+        return;
+    };
+    
+    // importWorld and its overloads
+    
+    // createWorld and its overloads
+};
+>>>>>>> 565fb9551038c736793147bbcfb4fd1ac63f3d5d
